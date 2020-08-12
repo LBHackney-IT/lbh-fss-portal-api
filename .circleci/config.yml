@@ -126,11 +126,11 @@ workflows:
       - check-code-formatting:
         filters:
           branches:
-            only: develop
+            ignore: master
       - build-and-test:
         filters:
           branches:
-            only: develop
+            ignore: master
       - assume-role-development:
           context: api-assume-role-development-context
           requires:
