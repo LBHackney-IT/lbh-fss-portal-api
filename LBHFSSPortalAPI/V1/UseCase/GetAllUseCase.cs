@@ -1,3 +1,4 @@
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways;
@@ -17,6 +18,20 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public ResponseObjectList Execute()
         {
             return new ResponseObjectList { ResponseObjects = _gateway.GetAll().ToResponse() };
+        }
+
+        public UsersResponseList Execute(UserQueryParam userQueryParam)
+        {
+            // TODO: Implement the below (MJC)
+
+            //var residents = _residentGateway.GetResidents(rqp.FirstName, rqp.LastName).ToResponse();
+
+            //return new ResidentResponseList
+            //{
+            //    Residents = residents
+            //};
+
+            throw new System.NotImplementedException();
         }
     }
 }
