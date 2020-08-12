@@ -123,11 +123,11 @@ jobs:
 workflows:
   check-and-deploy-development:
     jobs:
-      - check-code-formatting
+      - check-code-formatting:
         filters:
           branches:
             only: develop
-      - build-and-test
+      - build-and-test:
         filters:
           branches:
             only: develop
