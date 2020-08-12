@@ -126,24 +126,24 @@ workflows:
       - check-code-formatting
         filters:
           branches:
-            only: development
+            only: develop
       - build-and-test
-          filters:
-            branches:
-              only: development
+        filters:
+          branches:
+            only: develop
       - assume-role-development:
           context: api-assume-role-development-context
           requires:
             - build-and-test
           filters:
             branches:
-              only: development
+              only: develop
       - deploy-to-development:
           requires:
             - assume-role-development
           filters:
             branches:
-              only: development
+              only: develop
   check-and-deploy-staging-and-production:
     jobs:
       - build-and-test:
@@ -165,6 +165,8 @@ workflows:
               only: master
       - assume-role-production:
           context: api-assume-role-production-context
+          requires:
+            - deploy-to-staging
           filters:
             branches:
               only: master
