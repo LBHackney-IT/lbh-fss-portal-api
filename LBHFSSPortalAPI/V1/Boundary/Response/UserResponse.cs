@@ -11,5 +11,8 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         public string Email { get; set; }
         public string Name { get; set; }
         public string Status { get; set; }
+        public string SubId { get; set; }
+        public DateTime? CreatedAt { get; set; }
+
     }
 }

@@ -1,4 +1,6 @@
 
+using System;
+
 namespace LBHFSSPortalAPI.V1.Domain
 {
     public class UserDomain
@@ -7,5 +9,7 @@ namespace LBHFSSPortalAPI.V1.Domain
         public string Email { get; set; }
         public string Name { get; set; }
         public string Status { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public string SubId { get; set; }
     }
 }

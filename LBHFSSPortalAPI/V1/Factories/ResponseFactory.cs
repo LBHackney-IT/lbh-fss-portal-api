@@ -27,6 +27,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                 Name = domain.Name,
                 Email = domain.Email,
                 Status = domain.Status,
+                CreatedAt = domain.CreatedAt,
+                SubId = domain.SubId
             };
         }
 
