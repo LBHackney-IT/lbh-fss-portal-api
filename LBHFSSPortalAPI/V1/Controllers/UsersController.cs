@@ -15,13 +15,11 @@ namespace LBHFSSPortalAPI.V1.Controllers
     [ApiVersion("1.0")]
     public class UsersController : BaseController
     {
-        private IGetAllUseCase _getAllUseCase;
-        //private IGetByIdUseCase _getByIdUseCase;
+        private IGetAllUsersUseCase _getAllUseCase;
 
-        public UsersController(IGetAllUseCase getAllUseCase) //, IGetByIdUseCase getByIdUseCase)
+        public UsersController(IGetAllUsersUseCase getAllUseCase)
         {
             _getAllUseCase = getAllUseCase;
-            //_getByIdUseCase = getByIdUseCase;
         }
 
         [HttpGet]
