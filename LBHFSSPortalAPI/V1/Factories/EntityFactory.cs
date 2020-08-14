@@ -1,5 +1,7 @@
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Infrastructure;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LBHFSSPortalAPI.V1.Factories
 {
@@ -15,6 +17,22 @@ namespace LBHFSSPortalAPI.V1.Factories
                 Id = databaseEntity.Id,
                 CreatedAt = databaseEntity.CreatedAt,
             };
+        }
+
+        public static UserDomain ToDomain(this Users usersEntity)
+        {
+            return new UserDomain
+            {
+                Id = usersEntity.Id,
+                Email = usersEntity.Email,
+                Name = usersEntity.Name,
+                Status = usersEntity.Status
+            };
+        }
+
+        public static List<UserDomain> ToDomain(this IEnumerable<Users> users)
+        {
+            return users.Select(p => p.ToDomain()).ToList();
         }
     }
 }

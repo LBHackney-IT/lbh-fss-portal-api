@@ -10,17 +10,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
-    [Route("api/[users]")]
+    [Route("api/v1/users")]
     [ApiController]
-    public class UserController : BaseController
+    [ApiVersion("1.0")]
+    public class UsersController : BaseController
     {
         private IGetAllUseCase _getAllUseCase;
-        private IGetByIdUseCase _getByIdUseCase;
+        //private IGetByIdUseCase _getByIdUseCase;
 
-        public UserController(IGetAllUseCase getAllUseCase, IGetByIdUseCase getByIdUseCase)
+        public UsersController(IGetAllUseCase getAllUseCase) //, IGetByIdUseCase getByIdUseCase)
         {
             _getAllUseCase = getAllUseCase;
-            _getByIdUseCase = getByIdUseCase;
+            //_getByIdUseCase = getByIdUseCase;
         }
 
         [HttpGet]

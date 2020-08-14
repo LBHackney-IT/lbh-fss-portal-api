@@ -5,7 +5,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
     public interface IGetAllUseCase
     {
-        ResponseObjectList Execute();
+        //ResponseObjectList Execute();
 
         UsersResponseList Execute(UserQueryParam userQueryParam);
     }

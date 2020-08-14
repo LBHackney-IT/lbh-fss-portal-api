@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using System;
+using System.Globalization;
 
 namespace LBHFSSPortalAPI.V1.Infrastructure
 {
 
-    public class DatabaseContext : DbContext
+    public class UsersDatabaseContext : DbContext
     {
         //TODO: rename DatabaseContext to reflect the data source it is representing. eg. MosaicContext.
         //Guidance on the context class can be found here https://github.com/LBHackney-IT/lbh-base-api/wiki/DatabaseContext
-        public DatabaseContext(DbContextOptions options) : base(options)
+        public UsersDatabaseContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -342,7 +343,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.ToTable("user_roles");
 
-                entity.HasIndex(e => new {e.Id, e.RoleId})
+                entity.HasIndex(e => new { e.Id, e.RoleId })
                     .HasName("user_roles_id_role_id_idx");
 
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
@@ -387,12 +388,67 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnType("character varying");
             });
 
-            OnModelCreatingPartial(modelBuilder);
+            SetupSeedData(modelBuilder);
         }
 
-        public static void OnModelCreatingPartial(ModelBuilder modelBuilder)
+        private static void SetupSeedData(ModelBuilder modelBuilder)
         {
-            Debug.WriteLine(modelBuilder.GetType());
+            var cultureInfo = new CultureInfo("en-GB");
+
+            modelBuilder.Entity<Users>().HasData(
+                new Users
+                {
+                    Id = 1,
+                    Name = "Jane Doe",
+                    SubId = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTime.Parse("18/08/2018 11:22:16", cultureInfo),
+                    Email = "jane.doe@blueyonder.co.uk",
+                    Status = "active"
+                });
+
+            modelBuilder.Entity<Users>().HasData(
+                new Users
+                {
+                    Id = 2,
+                    Name = "Mark Williams",
+                    SubId = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTime.Parse("11/03/2019 15:42:55", cultureInfo),
+                    Email = "mark.williams@bighouse.org",
+                    Status = "active"
+                });
+
+            modelBuilder.Entity<Users>().HasData(
+                new Users
+                {
+                    Id = 3,
+                    Name = "Janet Graham",
+                    SubId = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTime.Parse("30/04/2020 14:36:32", cultureInfo),
+                    Email = "janet.graham@grcdentists.co.uk",
+                    Status = "unverified"
+                });
+
+            modelBuilder.Entity<Users>().HasData(
+                new Users
+                {
+                    Id = 4,
+                    Name = "Ronnie O'Sullivan",
+                    SubId = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTime.Parse("11/08/2020 08:28:46", cultureInfo),
+                    Email = "ronnie.osullivan@onefourseven.com",
+                    Status = "verified"
+                });
+
+            modelBuilder.Entity<Users>().HasData(
+                new Users
+                {
+                    Id = 5,
+                    Name = "Betty Davis",
+                    SubId = Guid.NewGuid().ToString(),
+                    CreatedAt = DateTime.Parse("13/08/2020 11:46:19", cultureInfo),
+                    Email = "betty.davis@baesystems.co.uk",
+                    Status = "verified"
+                });
         }
     }
 }

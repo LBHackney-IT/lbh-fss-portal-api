@@ -9,29 +9,34 @@ namespace LBHFSSPortalAPI.V1.UseCase
     //TODO: Rename class name and interface name to reflect the entity they are representing eg. GetAllClaimantsUseCase
     public class GetAllUseCase : IGetAllUseCase
     {
-        private readonly IExampleGateway _gateway;
-        public GetAllUseCase(IExampleGateway gateway)
+        private readonly IUsersGateway _usersGateway;
+        //private readonly IExampleGateway _gateway;
+
+        //public GetAllUseCase(IExampleGateway gateway)
+        //{
+        //    _gateway = gateway;
+        //}
+
+        public GetAllUseCase(IUsersGateway usersGateway)
         {
-            _gateway = gateway;
+            _usersGateway = usersGateway;
         }
 
-        public ResponseObjectList Execute()
-        {
-            return new ResponseObjectList { ResponseObjects = _gateway.GetAll().ToResponse() };
-        }
+        //public ResponseObjectList Execute()
+        //{
+        //    return new ResponseObjectList { ResponseObjects = _gateway.GetAll().ToResponse() };
+        //}
 
         public UsersResponseList Execute(UserQueryParam userQueryParam)
         {
-            // TODO: Implement the below (MJC)
+            var users = _usersGateway.GetAllUsers().ToResponse();
 
-            //var residents = _residentGateway.GetResidents(rqp.FirstName, rqp.LastName).ToResponse();
+            var usersList =  new UsersResponseList
+            {
+                Users = users
+            };
 
-            //return new ResidentResponseList
-            //{
-            //    Residents = residents
-            //};
-
-            throw new System.NotImplementedException();
+            return usersList;
         }
     }
 }

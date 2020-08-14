@@ -7,6 +7,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
 {
     public class UsersResponseList
     {
-            public List<UsersResponse> Users { get; set; }
+            public List<UserResponse> Users { get; set; }
     }
 }

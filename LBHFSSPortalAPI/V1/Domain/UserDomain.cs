@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace LBHFSSPortalAPI.V1.Boundary.Response
+namespace LBHFSSPortalAPI.V1.Domain
 {
-    public class UsersResponse
+    public class UserDomain
     {
         public int Id { get; set; }
         public string Email { get; set; }
