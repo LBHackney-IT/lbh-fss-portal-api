@@ -19,7 +19,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             var users = _usersGateway.GetAllUsers().ToResponse();
 
-            var usersList =  new UsersResponseList
+            var usersList = new UsersResponseList
             {
                 Users = users
             };
