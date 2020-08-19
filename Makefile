@@ -4,19 +4,19 @@ setup:
 
 .PHONY: build
 build:
-	docker-compose build base-api
+	docker-compose build lbh-fss-portal-api
 
 .PHONY: serve
 serve:
-	docker-compose build base-api && docker-compose up base-api
+	docker-compose build lbh-fss-portal-api && docker-compose up lbh-fss-portal-api
 
 .PHONY: shell
 shell:
-	docker-compose run base-api bash
+	docker-compose run lbh-fss-portal-api bash
 
 .PHONY: test
 test:
-	docker-compose up test-database & docker-compose build base-api-test && docker-compose up base-api-test
+	docker-compose up test-database & docker-compose build lbh-fss-portal-api-test && docker-compose up lbh-fss-portal-api-test
 
 .PHONY: lint
 lint:

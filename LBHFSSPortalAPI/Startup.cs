@@ -123,8 +123,9 @@ namespace LBHFSSPortalAPI
         {
             var connInfo = new ConnectionInfo
             {
-                AccessKeyId = Environment.GetEnvironmentVariable("ACCESS_KEY_ID"),
-                SecretAccessKey = Environment.GetEnvironmentVariable("SECRET_ACCESS_KEY")
+                AccessKeyId = Environment.GetEnvironmentVariable("COGNITO_USER"),
+                SecretAccessKey = Environment.GetEnvironmentVariable("COGNITO_KEY"),
+                ClientId = Environment.GetEnvironmentVariable("CLIENT_ID")
             };
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
@@ -133,6 +134,7 @@ namespace LBHFSSPortalAPI
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetAllUsersUseCase, GetAllUsersUseCase>();
+            services.AddScoped<ICreateUserRequestUseCase, CreateUserRequestUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
