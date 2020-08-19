@@ -15,11 +15,7 @@
       "launchUrl": "api/v1/healthcheck/ping",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ACCESS_KEY_ID": "AKIA4QCPMB2BIJCG6ATG",
-        "SECRET_ACCESS_KEY": "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",
-        "CLIENT_ID": "7nta48bdds8faq07om98f31s44",
-        "CONNECTION_STRING": ""
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }
