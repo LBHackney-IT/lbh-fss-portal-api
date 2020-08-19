@@ -60,6 +60,6 @@ bin/
 tmp/
 .vs/
 /base-api.Tests/Properties/launchSettings.json
-
+/base-api/Properties/launchSettings.json
 .fake
 .ionide
