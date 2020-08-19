@@ -59,7 +59,7 @@ bin/
 .idea/
 tmp/
 .vs/
-/LBHFSSPortalAPI.Tests/Properties/launchSettings.json
-/LBHFSSPortalAPI/Properties/launchSettings.json
+LBHFSSPortalAPI.Tests/Properties/launchSettings.json
+LBHFSSPortalAPI/Properties/launchSettings.json
 .fake
 .ionide
