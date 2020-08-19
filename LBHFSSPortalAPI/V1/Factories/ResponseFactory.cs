@@ -18,5 +18,23 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             return domainList.Select(domain => domain.ToResponse()).ToList();
         }
+
+        public static UserResponse ToResponse(this UserDomain domain)
+        {
+            return new UserResponse
+            {
+                Id = domain.Id,
+                Name = domain.Name,
+                Email = domain.Email,
+                Status = domain.Status,
+                CreatedAt = domain.CreatedAt,
+                SubId = domain.SubId
+            };
+        }
+
+        public static List<UserResponse> ToResponse(this IEnumerable<UserDomain> users)
+        {
+            return users.Select(p => p.ToResponse()).ToList();
+        }
     }
 }
