@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LBHFSSPortalAPI.V1.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -32,7 +33,7 @@ namespace LBHFSSPortalAPI
         public IConfiguration Configuration { get; }
         private static List<ApiVersionDescription> _apiVersions { get; set; }
         //TODO update the below to the name of your API
-        private const string ApiName = "Your API Name";
+        private const string ApiName = "LBH FSS Portal API";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public static void ConfigureServices(IServiceCollection services)
@@ -120,7 +121,12 @@ namespace LBHFSSPortalAPI
 
         private static void RegisterGateways(IServiceCollection services)
         {
-            //services.AddScoped<IExampleGateway, ExampleGateway>();
+            var connInfo = new ConnectionInfo
+            {
+                AccessKeyId = Environment.GetEnvironmentVariable("ACCESS_KEY_ID"),
+                SecretAccessKey = Environment.GetEnvironmentVariable("SECRET_ACCESS_KEY")
+            };
+            services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
         }
 
