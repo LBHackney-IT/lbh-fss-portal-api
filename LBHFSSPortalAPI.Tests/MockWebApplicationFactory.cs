@@ -27,11 +27,11 @@ namespace LBHFSSPortalAPI.Tests
             {
                 var dbBuilder = new DbContextOptionsBuilder();
                 dbBuilder.UseNpgsql(_connection);
-                var context = new UsersDatabaseContext(dbBuilder.Options);
+                var context = new DatabaseContext(dbBuilder.Options);
                 services.AddSingleton(context);
 
                 var serviceProvider = services.BuildServiceProvider();
-                var dbContext = serviceProvider.GetRequiredService<UsersDatabaseContext>();
+                var dbContext = serviceProvider.GetRequiredService<DatabaseContext>();
 
                 dbContext.Database.EnsureCreated();
             });

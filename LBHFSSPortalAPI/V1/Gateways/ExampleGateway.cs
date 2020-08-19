@@ -8,9 +8,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
     //TODO: Rename to match the data source that is being accessed in the gateway eg. MosaicGateway
     public class ExampleGateway : IExampleGateway
     {
-        private readonly UsersDatabaseContext _databaseContext;
+        private readonly DatabaseContext _databaseContext;
 
-        public ExampleGateway(UsersDatabaseContext databaseContext)
+        public ExampleGateway(DatabaseContext databaseContext)
         {
             _databaseContext = databaseContext;
         }

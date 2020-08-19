@@ -9,14 +9,14 @@ namespace LBHFSSPortalAPI.Tests
     public class DatabaseTests
     {
         private IDbContextTransaction _transaction;
-        protected UsersDatabaseContext DatabaseContext { get; private set; }
+        protected DatabaseContext DatabaseContext { get; private set; }
 
         [SetUp]
         public void RunBeforeAnyTests()
         {
             var builder = new DbContextOptionsBuilder();
             builder.UseNpgsql(ConnectionString.TestDatabase());
-            DatabaseContext = new UsersDatabaseContext(builder.Options);
+            DatabaseContext = new DatabaseContext(builder.Options);
 
             DatabaseContext.Database.EnsureCreated();
             _transaction = DatabaseContext.Database.BeginTransaction();

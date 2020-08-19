@@ -114,7 +114,7 @@ namespace LBHFSSPortalAPI
         {
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
-            services.AddDbContext<UsersDatabaseContext>(
+            services.AddDbContext<DatabaseContext>(
                 opt => opt.UseNpgsql(connectionString));
         }
 
@@ -165,7 +165,7 @@ namespace LBHFSSPortalAPI
 
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<UsersDatabaseContext>();
+                var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
                 context.Database.EnsureCreated();
 
             }

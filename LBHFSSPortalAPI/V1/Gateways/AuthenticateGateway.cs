@@ -9,16 +9,16 @@ namespace LBHFSSPortalAPI.V1.Gateways
 {
     public class AuthenticateGateway : IAuthenticateGateway
     {
-        private const string ClientId = "3ogiujoo72poudged2amgiefss";
-        private const string PoolId = "7uam787ffful1egjdiqveaeaajvbnmssrud6v1lu16t0ma2i288";
-        //private const string ClientSecret = "7uam787ffful1egjdiqveaeaajvbnmssrud6v1lu16t0ma2i288";
+        private const string PoolId = "eu-west-2_PoWNSKbpd";
+        private const string AppClientId = "3ogiujoo72poudged2amgiefss";
+        private const string ClientSecret = "7uam787ffful1egjdiqveaeaajvbnmssrud6v1lu16t0ma2i288";
 
         public void CreateUser(LoginUserQueryParam loginUserQueryParam)
         {
 
             //CognitoAWSCredentials credentials = new CognitoAWSCredentials(
             //    accountId,        // Account number
-            //    identityPoolId,   // Identity pool ID
+            //    PoolId,           // Identity pool ID
             //    unAuthRoleArn,    // Role for unauthenticated users
             //    null,             // Role for authenticated users, not set
             //    region);
@@ -41,7 +41,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             using (var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials()))
             {
-                userPool = new CognitoUserPool(PoolId, ClientId, provider);
+                userPool = new CognitoUserPool(PoolId, AppClientId, provider);
 
                 CognitoUser user = new CognitoUser(loginUserQueryParam.EmailAddress, "clientID", userPool, provider);
                 InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest()
