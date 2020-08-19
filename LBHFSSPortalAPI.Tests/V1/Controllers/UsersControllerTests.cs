@@ -1,5 +1,4 @@
 using System;
-using Amazon.CognitoIdentity.Model;
 using AutoFixture;
 using FluentAssertions;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
@@ -23,7 +22,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         public void SetUp()
         {
             _fakeCreateUserRequestUseCase = new Mock<ICreateUserRequestUseCase>();
-            _fakeGetAllUsersUseCase =  new Mock<IGetAllUsersUseCase>();
+            _fakeGetAllUsersUseCase = new Mock<IGetAllUsersUseCase>();
             _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object, _fakeCreateUserRequestUseCase.Object);
         }
 
@@ -32,7 +31,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         {
             var request = new Fixture().Build<UserCreateRequest>().Create();
             _fakeCreateUserRequestUseCase.Setup(x => x.Execute(request))
-                .Returns(new UserResponse{Email = request.Email, Name = request.Name, Status = "unverified"});
+                .Returns(new UserResponse { Email = request.Email, Name = request.Name, Status = "unverified" });
             var response = _classUnderTest.CreateUser(request) as CreatedResult;
             response.StatusCode.Should().Be(201);
         }
