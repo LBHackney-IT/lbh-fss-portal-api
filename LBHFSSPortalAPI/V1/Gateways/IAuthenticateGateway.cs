@@ -5,7 +5,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 {
     public interface IAuthenticateGateway
     {
-        void CreateUser(LoginUserQueryParam loginUserQueryParam);
+        string CreateUser(UserCreateRequest createRequest);
         LoginDomain LoginUser(LoginUserQueryParam loginUserQueryParam);
     }
 }
