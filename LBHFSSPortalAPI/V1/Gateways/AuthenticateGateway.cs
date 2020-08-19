@@ -26,6 +26,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, Region);
             SignUpRequest signUpRequest = new SignUpRequest
             {
+                ClientId = _connectionInfo.ClientId,
                 Username = createRequest.Email,
                 Password = createRequest.Password
             };

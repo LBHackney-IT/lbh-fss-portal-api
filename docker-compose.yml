@@ -1,8 +1,8 @@
 version: "3.2"
 
 services:
-  fss-portal-api:
-    image: fss-portal-api
+  lbh-fss-portal-api:
+    image: lbh-fss-portal-api
     build:
       context: LBHFSSPortalAPI/
       dockerfile: ./Dockerfile
@@ -19,8 +19,8 @@ services:
     volumes:
       - ./database:/docker-entrypoint-initdb.d
 
-  fss-portal-api-test:
-    image: fss-portal-api-test
+  lbh-fss-portal-api-test:
+    image: lbh-fss-portal-api-test
     build:
       context: .
       dockerfile: LBHFSSPortalAPI.Tests/Dockerfile
