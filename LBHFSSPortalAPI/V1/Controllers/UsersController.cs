@@ -1,6 +1,7 @@
 using System;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using LBHFSSPortalAPI.V1.Validations;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
-    [Route("api/v1/users")]
     [ApiController]
     [ApiVersion("1.0")]
     public class UsersController : BaseController
@@ -22,6 +22,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _createUserRequestUseCase = createUserRequestUseCase;
         }
 
+        [Route("api/v1/users")]
         [HttpGet]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
         public IActionResult ListUsers([FromQuery] UserQueryParam userQueryParam)
@@ -29,6 +30,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Ok(_getAllUseCase.Execute(userQueryParam));
         }
 
+        [Route("api/v1/registration")]
         [HttpPost]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
         public IActionResult CreateUser([FromBody] UserCreateRequest userCreateRequest)
@@ -42,8 +44,41 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (Exception e)
             {
+
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Attempts to confirm the users registration (validate verification code)
+        /// </summary>
+        /// <param name="confirmUserQueryParam"></param>
+        /// <returns>200 OK</returns>
+        [Route("api/v1/registration/confirmation")]
+        [HttpPost]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        public IActionResult ConfirmUserRegistration([FromQuery] ConfirmUserQueryParam confirmUserQueryParam)
+        {
+            ConfirmUserResponse response = null;
+
+            try
+            {
+                response = _createUserRequestUseCase.ExecuteConfirmUser(confirmUserQueryParam);
+            }
+            catch (UseCaseException e)
+            {
+                // Show a more detailed error message with call stack if running in development mode
+
+                // TODO (MJC): Inject the environment variable below (DI)
+                //if (_env.IsDev)
+                //      return BadRequest(e.DeveloperErrorMessage);
+
+                return BadRequest(e.ApiErrorMessage);
+            }
+
+            // Return the access token as a cookie, along with user metadata as JSON content
+            Response.Cookies.Append(ConfirmUserResponse.AccessTokenName, response.AccessTokenValue);
+            return Accepted(response.UserResponse);
         }
     }
 }
