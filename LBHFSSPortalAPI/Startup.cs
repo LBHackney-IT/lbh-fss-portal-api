@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.CookiePolicy;
 
 namespace LBHFSSPortalAPI
 {
@@ -140,6 +141,16 @@ namespace LBHFSSPortalAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Set up the cookie requirements
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                // use http only cookies to mitigate XSS attacks
+                HttpOnly = HttpOnlyPolicy.Always,
+
+                // always encrypt cookies with TLS/SSL
+                Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
