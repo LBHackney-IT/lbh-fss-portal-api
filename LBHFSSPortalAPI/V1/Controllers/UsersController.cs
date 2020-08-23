@@ -15,11 +15,15 @@ namespace LBHFSSPortalAPI.V1.Controllers
     {
         private IGetAllUsersUseCase _getAllUseCase;
         private ICreateUserRequestUseCase _createUserRequestUseCase;
+        private IConfirmUserRegUseCase _confirmUserRegUseCase;
 
-        public UsersController(IGetAllUsersUseCase getAllUseCase, ICreateUserRequestUseCase createUserRequestUseCase)
+        public UsersController(IGetAllUsersUseCase getAllUseCase,
+                               ICreateUserRequestUseCase createUserRequestUseCase,
+                               IConfirmUserRegUseCase confirmUserRegUseCase)
         {
             _getAllUseCase = getAllUseCase;
             _createUserRequestUseCase = createUserRequestUseCase;
+            _confirmUserRegUseCase = confirmUserRegUseCase;
         }
 
         [Route("api/v1/users")]
@@ -32,7 +36,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
         [Route("api/v1/registration")]
         [HttpPost]
-        [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public IActionResult CreateUser([FromBody] UserCreateRequest userCreateRequest)
         {
             if (!userCreateRequest.IsValid())
@@ -44,7 +48,6 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (Exception e)
             {
-
                 throw;
             }
         }
@@ -52,18 +55,17 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <summary>
         /// Attempts to confirm the users registration (validate verification code)
         /// </summary>
-        /// <param name="confirmUserQueryParam"></param>
-        /// <returns>200 OK</returns>
         [Route("api/v1/registration/confirmation")]
         [HttpPost]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public IActionResult ConfirmUserRegistration([FromQuery] ConfirmUserQueryParam confirmUserQueryParam)
         {
-            ConfirmUserResponse response = null;
+            ConfirmUserResponse response;
 
             try
             {
-                response = _createUserRequestUseCase.ExecuteConfirmUser(confirmUserQueryParam);
+                confirmUserQueryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+                response = _confirmUserRegUseCase.Execute(confirmUserQueryParam);
             }
             catch (UseCaseException e)
             {
@@ -78,7 +80,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
             // Return the access token as a cookie, along with user metadata as JSON content
             Response.Cookies.Append(ConfirmUserResponse.AccessTokenName, response.AccessTokenValue);
-            return Accepted(response.UserResponse);
+            return Accepted(response);
         }
     }
 }

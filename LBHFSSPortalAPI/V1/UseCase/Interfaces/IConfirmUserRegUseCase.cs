@@ -3,9 +3,9 @@ using LBHFSSPortalAPI.V1.Boundary.Response;
 
 namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
-    public interface ICreateUserRequestUseCase
+    public interface IConfirmUserRegUseCase
     {
-        UserResponse Execute(UserCreateRequest createRequestData);
+        ConfirmUserResponse Execute(ConfirmUserQueryParam queryParam);
     }
 
 }

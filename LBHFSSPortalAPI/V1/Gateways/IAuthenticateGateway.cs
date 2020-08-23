@@ -7,5 +7,10 @@ namespace LBHFSSPortalAPI.V1.Gateways
     {
         string CreateUser(UserCreateRequest createRequest);
         LoginDomain LoginUser(LoginUserQueryParam loginUserQueryParam);
+
+        /// <summary>
+        /// Confirms the verification code of the user on the authentication gateway
+        /// </summary>
+        bool ConfirmUser(string emailAddress, string status);
     }
 }

@@ -32,6 +32,19 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
+        public static Users ToEntity(this UserDomain userDomain)
+        {
+            return new Users
+            {
+                Id = userDomain.Id,
+                Email = userDomain.Email,
+                Name = userDomain.Name,
+                Status = userDomain.Status,
+                CreatedAt = userDomain.CreatedAt,
+                SubId = userDomain.SubId
+            };
+        }
+
         public static List<UserDomain> ToDomain(this IEnumerable<Users> users)
         {
             return users.Select(p => p.ToDomain()).ToList();

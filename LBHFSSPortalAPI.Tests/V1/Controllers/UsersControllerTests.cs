@@ -17,13 +17,17 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         private UsersController _classUnderTest;
         private Mock<ICreateUserRequestUseCase> _fakeCreateUserRequestUseCase;
         private Mock<IGetAllUsersUseCase> _fakeGetAllUsersUseCase;
+        private Mock<IConfirmUserRegUseCase> _fakeConfirmUserRegUseCase;
+
 
         [SetUp]
         public void SetUp()
         {
             _fakeCreateUserRequestUseCase = new Mock<ICreateUserRequestUseCase>();
             _fakeGetAllUsersUseCase = new Mock<IGetAllUsersUseCase>();
-            _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object, _fakeCreateUserRequestUseCase.Object);
+            _fakeConfirmUserRegUseCase = new Mock<IConfirmUserRegUseCase>();
+            _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object,
+                    _fakeCreateUserRequestUseCase.Object, _fakeConfirmUserRegUseCase.Object);
         }
 
         [Test]
@@ -31,7 +35,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         {
             var request = new Fixture().Build<UserCreateRequest>().Create();
             _fakeCreateUserRequestUseCase.Setup(x => x.Execute(request))
-                .Returns(new UserResponse { Email = request.Email, Name = request.Name, Status = "unverified" });
+                .Returns(new UserResponse { Email = request.EmailAddress, Name = request.Name, Status = "unverified" });
             var response = _classUnderTest.CreateUser(request) as CreatedResult;
             response.StatusCode.Should().Be(201);
         }
@@ -40,7 +44,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         public void CreateUserWithInvalidParamReturnsBadRequestResponse()
         {
             var request = new Fixture().Build<UserCreateRequest>().Create();
-            request.Email = null;
+            request.EmailAddress = null;
             _fakeCreateUserRequestUseCase.Setup(x => x.Execute(request))
                 .Throws(new InvalidOperationException());
             var response = _classUnderTest.CreateUser(request) as BadRequestObjectResult;
