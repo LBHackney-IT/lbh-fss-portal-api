@@ -1,17 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
     public class UserQueryParam
     {
-        [FromQuery(Name = "category")]
+        [FromQuery(Name = "firstname")]
         public string FirstName { get; set; }
 
-        [FromQuery(Name = "sort")]
+        [FromQuery(Name = "lastname")]
         public string LastName { get; set; }
 
         // TODO: add remaining (MJC)

@@ -1,10 +1,14 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
     public class ConfirmUserQueryParam
-    { 
-        public string Name { get; set; }
-
+    {
+        [FromQuery(Name = "verificationcode")]
         public string VerificationCode { get; set; }
+
+        [FromQuery(Name = "emailaddress")]
         public string EmailAddress { get; set; }
+        public string IpAddress { get; set; }
     }
 }

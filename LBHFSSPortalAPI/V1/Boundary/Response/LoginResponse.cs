@@ -1,6 +1,7 @@
-namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
+
+namespace LBHFSSPortalAPI.V1.Boundary.Response
 {
-    public class LoginResponse
+    public class LoginUserResponse
     {
         public string Username { get; set; }
 

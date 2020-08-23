@@ -17,6 +17,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             _connectionInfo = connectionInfo;
         }
+
         public string CreateUser(UserCreateRequest createRequest)
         {
             AmazonCognitoIdentityProviderClient provider =
@@ -24,7 +25,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             SignUpRequest signUpRequest = new SignUpRequest
             {
                 ClientId = _connectionInfo.ClientId,
-                Username = createRequest.Email,
+                Username = createRequest.EmailAddress,
                 Password = createRequest.Password
             };
             try
@@ -38,6 +39,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 LambdaLogger.Log(e.StackTrace);
                 throw;
             }
+        }
+
+        public bool ConfirmUser(string emailAddress, string status)
+        {
+            return true;
         }
 
         public LoginDomain LoginUser(LoginUserQueryParam loginUserQueryParam)

@@ -3,6 +3,8 @@ using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.Factories;
 using System.Collections.Generic;
 using System.Linq;
+using Amazon.Lambda.Core;
+using System;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -22,7 +24,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return users;
         }
 
-        public UserDomain GetUser(string emailAddress)
+        public UserDomain GetUser(string emailAddress, string invited)
         {
             UserDomain userDomain = null;
 
@@ -53,6 +55,21 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
 
             return userDomain;
+        }
+
+        public void SaveUser(UserDomain user)
+        {
+            try
+            {
+                var userEntity = user.ToEntity();
+                _databaseContext.Users.Attach(userEntity);
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
         }
     }
 }
