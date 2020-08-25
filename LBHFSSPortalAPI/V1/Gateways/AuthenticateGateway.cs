@@ -41,12 +41,18 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public bool ConfirmUser(string emailAddress, string status)
+        public bool ConfirmUser(string emailAddress, string userStatus)
         {
             return true;
         }
 
-        public LoginDomain LoginUser(LoginUserQueryParam loginUserQueryParam)
+        /// <summary>
+        /// Atempt to login to the authentication gateway
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns>the access token identifier (aka subscription ID)</returns>
+        public string LoginUser(string userName, string password)
         {
             // TODO (MJC) Use the query params 'username' and 'password' to log into AWS Cognito
             // and store 'user pool token' (sub_id) in the portal api Users database
@@ -68,7 +74,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             //     accessToken = authResponse.AuthenticationResult.AccessToken;
             // }
 
-            return new LoginDomain();
+            return "e7b6f54f-1e2f-4a38-8d9c-69f78432c6c6";
         }
     }
 }

@@ -8,5 +8,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         UserDomain GetUser(string emailAddress, string status);
         List<UserDomain> GetAllUsers();
         void SaveUser(UserDomain user);
+        UserDomain GetUserBySubId(string subId);
     }
 }

@@ -5,53 +5,63 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.Lambda.Core;
 using System;
+using System.Data.Entity;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
     public class UsersGateway : IUsersGateway
     {
-        private readonly DatabaseContext _databaseContext;
+        private readonly DatabaseContext _context;
 
-        public UsersGateway(DatabaseContext usersDatabaseContext)
+        public UsersGateway(DatabaseContext databaseContext)
         {
-            _databaseContext = usersDatabaseContext;
+            _context = databaseContext;
         }
 
         public List<UserDomain> GetAllUsers()
         {
-            var users = _databaseContext.Users.ToDomain();
+            var users = _context.Users.ToDomain();
 
             return users;
         }
 
-        public UserDomain GetUser(string emailAddress, string invited)
+        public UserDomain GetUser(string emailAddress, string userStatus)
         {
             UserDomain userDomain = null;
 
             if (!string.IsNullOrWhiteSpace(emailAddress))
             {
-                if (_databaseContext != null)
-                {
-                    try
-                    {
-                        // Perform case sensitive search for user based on unique email address (used as username)
-                        var user = _databaseContext.Users.Single(u => u.Email == emailAddress);
-                        userDomain = user.ToDomain();
-                    }
-                    catch (System.Exception e)
-                    {
-                        // TODO catch specific EF exceptions as well as catch all
-                        throw;
-                    }
-                }
-                else
-                {
-                    // throw database connection error exception
-                }
+                // Perform search for user based on email address and status
+                var user = _context.Users.SingleOrDefault(u =>
+                    u.Email == emailAddress &&
+                    u.Status == userStatus );
+
+                if (user != null)
+                    userDomain = user.ToDomain();
             }
             else
             {
-                // throw invalid email exception
+                // throw 'invalid email' gateway exception
+            }
+
+            return userDomain;
+        }
+
+        public UserDomain GetUserBySubId(string subId)
+        {
+            UserDomain userDomain = null;
+
+            if (!string.IsNullOrWhiteSpace(subId))
+            {
+                // Perform search for user based on subscription ID
+                var user = _context.Users.SingleOrDefault(u => u.SubId == subId);
+
+                if (user != null)
+                    userDomain = user.ToDomain();
+            }
+            else
+            {
+                // throw 'invalid email' gateway exception
             }
 
             return userDomain;
@@ -61,8 +71,21 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                var userEntity = user.ToEntity();
-                _databaseContext.Users.Attach(userEntity);
+                Console.WriteLine("(MJC1) " + GetHashCode());
+                var userEntity = _context.Users.SingleOrDefault(u => u.Id == user.Id);
+
+                if (user != null)
+                {
+                    userEntity.SubId = user.SubId;
+                    userEntity.Email = user.Email;
+                    userEntity.Name = user.Name;
+                    userEntity.Status = user.Status;
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    // log error
+                }
             }
             catch (Exception e)
             {

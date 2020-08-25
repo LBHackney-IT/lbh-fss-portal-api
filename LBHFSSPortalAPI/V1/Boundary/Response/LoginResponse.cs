@@ -3,8 +3,11 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
 {
     public class LoginUserResponse
     {
-        public string Username { get; set; }
+        /// <summary>
+        /// The access_token cookie name to use in the response
+        /// </summary>
+        public const string AccessTokenName = "access_token";
 
-        public string Password { get; set; }
+        public string AccessToken { get; set; }
     }
 }

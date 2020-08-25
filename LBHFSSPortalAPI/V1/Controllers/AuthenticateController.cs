@@ -1,4 +1,5 @@
 using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -25,9 +26,22 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult LoginUser([FromQuery] LoginUserQueryParam loginUserQueryParam)
         {
-            return Ok(_authenticateUseCase.ExecuteLoginUser(loginUserQueryParam));
-        }
+            loginUserQueryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
 
+            LoginUserResponse response;
+
+            try
+            {
+                response = _authenticateUseCase.ExecuteLoginUser(loginUserQueryParam);
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e.ApiErrorMessage);
+            }
+
+            Response.Cookies.Append(LoginUserResponse.AccessTokenName, response.AccessToken);
+            return Ok();
+        }
 
         /// <summary>
         /// Logs the user out of the API removing session information
@@ -35,11 +49,11 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("api/v1/logout")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult LogoutUser([FromQuery] LogoutUserQueryParam logoutUserQueryParam)
+        public IActionResult LogoutUser([FromQuery] LogoutUserQueryParam queryParams)
         {
             try
             {
-                _authenticateUseCase.ExecuteLogoutUser(logoutUserQueryParam);
+                _authenticateUseCase.ExecuteLogoutUser(queryParams);
             }
             catch (UseCaseException e)
             {
