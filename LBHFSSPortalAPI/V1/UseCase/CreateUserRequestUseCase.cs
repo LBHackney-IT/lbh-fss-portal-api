@@ -23,7 +23,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             string createdUserId = null;
             try
             {
-               createdUserId = _authGateway.CreateUser(createRequestData);
+                createdUserId = _authGateway.CreateUser(createRequestData);
             }
             catch (AmazonCognitoIdentityProviderException e)
             {
@@ -36,7 +36,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
             {
                 var user = new Users
                 {
-                    SubId = createdUserId, Name = createRequestData.Name, Email = createRequestData.Email
+                    SubId = createdUserId,
+                    Name = createRequestData.Name,
+                    Email = createRequestData.Email
                 };
             }
 
