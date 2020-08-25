@@ -39,5 +39,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
             return response;
         }
+
+        public void Resend(ConfirmationResendRequest confirmationResendRequest)
+        {
+            _authGateway.ResendConfirmation(confirmationResendRequest);
+        }
     }
 }

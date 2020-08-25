@@ -46,13 +46,32 @@ namespace LBHFSSPortalAPI.V1.Gateways
             ConfirmSignUpRequest signUpRequest = new ConfirmSignUpRequest
             {
                 ClientId = _connectionInfo.ClientId,
-                Username = confirmRequest.UserName,
-                ConfirmationCode = confirmRequest.VerificationCode
+                Username = confirmRequest.Email,
+                ConfirmationCode = confirmRequest.Code
             };
             try
             {
                 ConfirmSignUpResponse response = _provider.ConfirmSignUpAsync(signUpRequest).Result;
                 return response.HttpStatusCode == HttpStatusCode.OK;
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
+        }
+
+        public void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest)
+        {
+            ResendConfirmationCodeRequest resendConfirmationCodeRequest = new ResendConfirmationCodeRequest()
+            {
+                ClientId = _connectionInfo.ClientId,
+                Username = confirmationResendRequest.Email
+            };
+            try
+            {
+                ResendConfirmationCodeResponse response = _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest).Result;
             }
             catch (Exception e)
             {
