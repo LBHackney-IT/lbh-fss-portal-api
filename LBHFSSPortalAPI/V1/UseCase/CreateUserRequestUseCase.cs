@@ -1,21 +1,46 @@
+using Amazon.CognitoIdentityProvider;
+using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
     public class CreateUserRequestUseCase : ICreateUserRequestUseCase
     {
-        private IAuthenticateGateway _gateway;
+        private IAuthenticateGateway _authGateway;
+        private IUsersGateway _usersGateway;
 
-        public CreateUserRequestUseCase(IAuthenticateGateway gateway)
+        public CreateUserRequestUseCase(IAuthenticateGateway authGateway, IUsersGateway usersGateway)
         {
-            _gateway = gateway;
+            _authGateway = authGateway;
+            _usersGateway = usersGateway;
         }
         public UserResponse Execute(UserCreateRequest createRequestData)
         {
-            var createdUserId = _gateway.CreateUser(createRequestData);
+            string createdUserId = null;
+            try
+            {
+               createdUserId = _authGateway.CreateUser(createRequestData);
+            }
+            catch (AmazonCognitoIdentityProviderException e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                return null;
+            }
+
+            if (createdUserId != null)
+            {
+                var user = new Users
+                {
+                    SubId = createdUserId, Name = createRequestData.Name, Email = createRequestData.Email
+                };
+            }
+
+
             var userCreateResponse = new UserResponse
             {
                 Email = createRequestData.Email,
