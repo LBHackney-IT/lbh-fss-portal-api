@@ -1,5 +1,7 @@
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.Infrastructure;
+using Microsoft.EntityFrameworkCore.Internal;
+using System.Linq;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -17,5 +19,22 @@ namespace LBHFSSPortalAPI.V1.UseCase
             int rows = _databaseContext.SaveChanges(); //log number of rows saved?
             return savedSession.Entity;
         }
+
+        public void RemoveSession(string accessToken)
+        {
+            var user = _databaseContext.Users.FirstOrDefault(u => u.SubId == accessToken);
+
+            if (user != null)
+            {
+                var sessions = _databaseContext.Sessions.Where(s => s.UserId == user.Id);
+
+                if (sessions.Any())
+                {
+                    _databaseContext.Sessions.RemoveRange(sessions);
+                    _databaseContext.SaveChanges();
+                }
+            }
+        }
     }
 }
+

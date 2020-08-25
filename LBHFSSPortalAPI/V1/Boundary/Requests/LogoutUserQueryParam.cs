@@ -5,7 +5,7 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
     public class LogoutUserQueryParam
     {
-        [FromQuery(Name = "httponlycookie")]
-        public string HttpOnlyCookie { get; set; }
+        [FromQuery(Name = "access_token")]
+        public string AccessToken { get; set; }
     }
 }
