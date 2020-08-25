@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
 using Amazon.CognitoIdentityProvider;
@@ -12,15 +13,15 @@ namespace LBHFSSPortalAPI.V1.Gateways
     {
         private static Amazon.RegionEndpoint Region = Amazon.RegionEndpoint.EUWest2;
         private ConnectionInfo _connectionInfo;
-
+        private AmazonCognitoIdentityProviderClient _provider;
         public AuthenticateGateway(ConnectionInfo connectionInfo)
         {
             _connectionInfo = connectionInfo;
+            _provider =
+                new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, Region);
         }
         public string CreateUser(UserCreateRequest createRequest)
         {
-            AmazonCognitoIdentityProviderClient provider =
-                new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, Region);
             SignUpRequest signUpRequest = new SignUpRequest
             {
                 ClientId = _connectionInfo.ClientId,
@@ -29,8 +30,29 @@ namespace LBHFSSPortalAPI.V1.Gateways
             };
             try
             {
-                SignUpResponse response = provider.SignUpAsync(signUpRequest).Result;
+                SignUpResponse response = _provider.SignUpAsync(signUpRequest).Result;
                 return response.UserSub;
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
+        }
+
+        public bool ConfirmSignup(UserConfirmRequest confirmRequest)
+        {
+            ConfirmSignUpRequest signUpRequest = new ConfirmSignUpRequest
+            {
+                ClientId = _connectionInfo.ClientId,
+                Username = confirmRequest.UserName,
+                ConfirmationCode = confirmRequest.VerificationCode
+            };
+            try
+            {
+                ConfirmSignUpResponse response = _provider.ConfirmSignUpAsync(signUpRequest).Result;
+                return response.HttpStatusCode == HttpStatusCode.OK;
             }
             catch (Exception e)
             {
