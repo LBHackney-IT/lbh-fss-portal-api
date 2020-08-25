@@ -23,7 +23,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var userConfirmed = false;
             try
             {
-               userConfirmed = _authGateway.ConfirmSignup(confirmRequestData);
+                userConfirmed = _authGateway.ConfirmSignup(confirmRequestData);
             }
             catch (AmazonCognitoIdentityProviderException e)
             {

@@ -25,7 +25,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
             _fakeCreateUserRequestUseCase = new Mock<ICreateUserRequestUseCase>();
             _fakeConfirmUserUseCase = new Mock<IConfirmUserUseCase>();
             _fakeAuthenticateUseCase = new Mock<IAuthenticateUseCase>();
-            _classUnderTest = new AuthenticateController(_fakeAuthenticateUseCase.Object, _fakeCreateUserRequestUseCase.Object, _fakeConfirmUserUseCase.Object );
+            _classUnderTest = new AuthenticateController(_fakeAuthenticateUseCase.Object, _fakeCreateUserRequestUseCase.Object, _fakeConfirmUserUseCase.Object);
         }
 
         [Test]
