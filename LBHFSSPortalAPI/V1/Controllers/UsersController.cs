@@ -8,18 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
-    [Route("api/v1/users")]
+    [Route("api/v1/")]
     [ApiController]
     [ApiVersion("1.0")]
     public class UsersController : BaseController
     {
         private IGetAllUsersUseCase _getAllUseCase;
-        private ICreateUserRequestUseCase _createUserRequestUseCase;
 
-        public UsersController(IGetAllUsersUseCase getAllUseCase, ICreateUserRequestUseCase createUserRequestUseCase)
+        public UsersController(IGetAllUsersUseCase getAllUseCase)
         {
             _getAllUseCase = getAllUseCase;
-            _createUserRequestUseCase = createUserRequestUseCase;
         }
 
         [HttpGet]
@@ -27,23 +25,6 @@ namespace LBHFSSPortalAPI.V1.Controllers
         public IActionResult ListUsers([FromQuery] UserQueryParam userQueryParam)
         {
             return Ok(_getAllUseCase.Execute(userQueryParam));
-        }
-
-        [HttpPost]
-        [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
-        public IActionResult CreateUser([FromBody] UserCreateRequest userCreateRequest)
-        {
-            if (!userCreateRequest.IsValid())
-                return BadRequest("Invalid details provided");
-            try
-            {
-                var response = _createUserRequestUseCase.Execute(userCreateRequest);
-                return Created("Created", response);
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
         }
     }
 }
