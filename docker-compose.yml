@@ -10,6 +10,9 @@ services:
       - 3000:3000
     environment:
       - CONNECTION_STRING=Host=dev-database;Port=5432;Database=entitycorex;Username=postgres;Password=mypassword
+      - CLIENT_ID=$CLIENT_ID
+      - COGNITO_USER=$COGNITO_USER
+      - COGNITO_KEY=$COGNITO_KEY
     links:
       - dev-database
   dev-database:
