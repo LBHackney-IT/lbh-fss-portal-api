@@ -66,6 +66,24 @@ namespace LBHFSSPortalAPI.V1.Controllers
         }
 
         [HttpPost]
+        [Route("registration/confirmation/resend")]
+        [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
+        public IActionResult ResendConfirmationCode([FromBody] ConfirmationResendRequest confirmationResendRequest)
+        {
+            if (!confirmationResendRequest.IsValid())
+                return BadRequest("Invalid details provided");
+            try
+            {
+                _confirmUserUseCase.Resend(confirmationResendRequest);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
         [Route("session")]
         [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
         public IActionResult LoginUser([FromQuery] LoginUserQueryParam loginUserQueryParam)

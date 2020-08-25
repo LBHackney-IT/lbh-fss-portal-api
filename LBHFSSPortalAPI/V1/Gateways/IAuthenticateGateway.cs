@@ -8,5 +8,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         string CreateUser(UserCreateRequest createRequest);
         bool ConfirmSignup(UserConfirmRequest confirmRequest);
         LoginDomain LoginUser(LoginUserQueryParam loginUserQueryParam);
+        void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest);
     }
 }
