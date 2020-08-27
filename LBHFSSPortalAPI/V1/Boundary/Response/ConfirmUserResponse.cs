@@ -10,7 +10,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
 
         public string AccessTokenValue { get; set; }
 
-        public string Email { get; set; }
-        public string Name { get; set; }
+        public UserResponse UserResponse { get; set; }
     }
 }

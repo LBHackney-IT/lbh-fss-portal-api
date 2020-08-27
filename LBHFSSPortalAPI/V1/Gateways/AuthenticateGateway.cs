@@ -42,13 +42,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public bool ConfirmSignup(UserConfirmRequest confirmRequest)
+        public bool ConfirmSignup(string emailAddress, string verificationCode)
         {
             ConfirmSignUpRequest signUpRequest = new ConfirmSignUpRequest
             {
                 ClientId = _connectionInfo.ClientId,
-                Username = confirmRequest.Email,
-                ConfirmationCode = confirmRequest.Code
+                Username = emailAddress,
+                ConfirmationCode = verificationCode
             };
             try
             {
@@ -80,11 +80,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 LambdaLogger.Log(e.StackTrace);
                 throw;
             }
-        }
-
-        public bool ConfirmUser(string emailAddress, string userStatus)
-        {
-            return true;
         }
 
         /// <summary>

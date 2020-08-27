@@ -32,23 +32,13 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 return null;
             }
 
-            if (createdUserId != null)
-            {
-                var user = new Users
-                {
-                    SubId = createdUserId,
-                    Name = createRequestData.Name,
-                    Email = createRequestData.Email
-                };
-            }
-
-
             var userCreateResponse = new UserResponse
             {
                 Email = createRequestData.EmailAddress,
                 Name = createRequestData.Name,
                 SubId = createdUserId
             };
+
             return userCreateResponse;
         }
     }

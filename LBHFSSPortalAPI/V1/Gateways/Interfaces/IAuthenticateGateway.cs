@@ -18,6 +18,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
         /// <summary>
         /// Confirms the verification code of the user on the authentication gateway
         /// </summary>
-        bool ConfirmUser(string emailAddress, string userStatus);
+        bool ConfirmSignup(string emailAddress, string verificationCode);
+
+        void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest);
+
     }
 }
