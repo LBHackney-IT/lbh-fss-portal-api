@@ -138,7 +138,6 @@ namespace LBHFSSPortalAPI
             services.AddScoped<ICreateUserRequestUseCase, CreateUserRequestUseCase>();
             services.AddScoped<IConfirmUserUseCase, ConfirmUserUseCase>();
             services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
-            services.AddScoped<IConfirmUserRegUseCase, ConfirmUserRegUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

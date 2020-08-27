@@ -7,14 +7,14 @@ namespace LBHFSSPortalAPI.V1.Validations
     {
         public static bool IsValid(this UserCreateRequest createRequest)
         {
-            return !string.IsNullOrWhiteSpace(createRequest.Email);
+            return !string.IsNullOrWhiteSpace(createRequest.EmailAddress);
         }
 
-        public static bool IsValid(this UserConfirmRequest confirmRequest)
-        {
-            return (!string.IsNullOrWhiteSpace(confirmRequest.Email)) &&
-                   (!string.IsNullOrWhiteSpace(confirmRequest.Code));
-        }
+        //public static bool IsValid(this UserConfirmRequest confirmRequest)
+        //{
+        //    return (!string.IsNullOrWhiteSpace(confirmRequest.Email)) &&
+        //           (!string.IsNullOrWhiteSpace(confirmRequest.Code));
+        //}
 
         public static bool IsValid(this ConfirmationResendRequest confirmRequest)
         {

@@ -33,7 +33,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         {
             var request = new Fixture().Build<UserCreateRequest>().Create();
             _fakeCreateUserRequestUseCase.Setup(x => x.Execute(request))
-                .Returns(new UserResponse { Email = request.Email, Name = request.Name, Status = "unverified" });
+                .Returns(new UserResponse { Email = request.EmailAddress, Name = request.Name, Status = "unverified" });
             var response = _classUnderTest.CreateUser(request) as CreatedResult;
             response.StatusCode.Should().Be(201);
         }
@@ -42,7 +42,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         public void CreateUserWithInvalidParamReturnsBadRequestResponse()
         {
             var request = new Fixture().Build<UserCreateRequest>().Create();
-            request.Email = null;
+            request.EmailAddress = null;
             _fakeCreateUserRequestUseCase.Setup(x => x.Execute(request))
                 .Throws(new InvalidOperationException());
             var response = _classUnderTest.CreateUser(request) as BadRequestObjectResult;
