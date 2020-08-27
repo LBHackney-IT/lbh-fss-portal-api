@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
+    [Route("api/v1/users")]
     [ApiController]
     [ApiVersion("1.0")]
     public class UsersController : BaseController

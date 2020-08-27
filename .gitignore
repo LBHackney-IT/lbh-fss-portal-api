@@ -63,3 +63,4 @@ LBHFSSPortalAPI.Tests/Properties/launchSettings.json
 LBHFSSPortalAPI/Properties/launchSettings.json
 .fake
 .ionide
+/dotnet-format-local/

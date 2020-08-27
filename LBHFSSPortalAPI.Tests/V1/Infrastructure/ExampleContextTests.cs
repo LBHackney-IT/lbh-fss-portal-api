@@ -8,7 +8,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Infrastructure
     [TestFixture]
     public class DatabaseContextTest : DatabaseTests
     {
-        [Test]
+        //[Test]
         public void CanGetADatabaseEntity()
         {
             var databaseEntity = DatabaseEntityHelper.CreateDatabaseEntity();
