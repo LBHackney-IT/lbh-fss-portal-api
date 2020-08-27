@@ -12,13 +12,15 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
     public class CreateUserRequestUseCaseTests
     {
         private Mock<IAuthenticateGateway> _mockAuthenticateGateway;
+        private Mock<IUsersGateway> _mockUsersGateway;
         private CreateUserRequestUseCase _classUnderTest;
 
         [SetUp]
         public void SetUp()
         {
             _mockAuthenticateGateway = new Mock<IAuthenticateGateway>();
-            _classUnderTest = new CreateUserRequestUseCase(_mockAuthenticateGateway.Object);
+            _mockUsersGateway = new Mock<IUsersGateway>();
+            _classUnderTest = new CreateUserRequestUseCase(_mockAuthenticateGateway.Object, _mockUsersGateway.Object);
         }
 
         [Test]

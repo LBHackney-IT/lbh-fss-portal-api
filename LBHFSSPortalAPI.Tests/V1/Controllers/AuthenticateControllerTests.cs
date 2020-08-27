@@ -12,22 +12,20 @@ using NUnit.Framework;
 namespace LBHFSSPortalAPI.Tests.V1.Controllers
 {
     [TestFixture]
-    public class UsersControllerTests
+    public class AuthenticateControllerTests
     {
-        private UsersController _classUnderTest;
+        private AuthenticateController _classUnderTest;
         private Mock<ICreateUserRequestUseCase> _fakeCreateUserRequestUseCase;
-        private Mock<IGetAllUsersUseCase> _fakeGetAllUsersUseCase;
-        private Mock<IConfirmUserRegUseCase> _fakeConfirmUserRegUseCase;
-
+        private Mock<IConfirmUserUseCase> _fakeConfirmUserUseCase;
+        private Mock<IAuthenticateUseCase> _fakeAuthenticateUseCase;
 
         [SetUp]
         public void SetUp()
         {
             _fakeCreateUserRequestUseCase = new Mock<ICreateUserRequestUseCase>();
-            _fakeGetAllUsersUseCase = new Mock<IGetAllUsersUseCase>();
-            _fakeConfirmUserRegUseCase = new Mock<IConfirmUserRegUseCase>();
-            _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object,
-                    _fakeCreateUserRequestUseCase.Object, _fakeConfirmUserRegUseCase.Object);
+            _fakeConfirmUserUseCase = new Mock<IConfirmUserUseCase>();
+            _fakeAuthenticateUseCase = new Mock<IAuthenticateUseCase>();
+            _classUnderTest = new AuthenticateController(_fakeAuthenticateUseCase.Object, _fakeCreateUserRequestUseCase.Object, _fakeConfirmUserUseCase.Object);
         }
 
         [Test]
@@ -35,7 +33,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         {
             var request = new Fixture().Build<UserCreateRequest>().Create();
             _fakeCreateUserRequestUseCase.Setup(x => x.Execute(request))
-                .Returns(new UserResponse { Email = request.EmailAddress, Name = request.Name, Status = "unverified" });
+                .Returns(new UserResponse { Email = request.Email, Name = request.Name, Status = "unverified" });
             var response = _classUnderTest.CreateUser(request) as CreatedResult;
             response.StatusCode.Should().Be(201);
         }
@@ -44,12 +42,19 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         public void CreateUserWithInvalidParamReturnsBadRequestResponse()
         {
             var request = new Fixture().Build<UserCreateRequest>().Create();
-            request.EmailAddress = null;
+            request.Email = null;
             _fakeCreateUserRequestUseCase.Setup(x => x.Execute(request))
                 .Throws(new InvalidOperationException());
             var response = _classUnderTest.CreateUser(request) as BadRequestObjectResult;
             response.StatusCode.Should().Be(400);
         }
 
+        [Test]
+        public void CreateUserWithValidParamsCallsUseCaseExecute()
+        {
+            var request = new Fixture().Build<UserCreateRequest>().Create();
+            _classUnderTest.CreateUser(request);
+            _fakeCreateUserRequestUseCase.Verify(x => x.Execute(It.IsAny<UserCreateRequest>()), Times.Once);
+        }
     }
 }

@@ -136,6 +136,7 @@ namespace LBHFSSPortalAPI
         {
             services.AddScoped<IGetAllUsersUseCase, GetAllUsersUseCase>();
             services.AddScoped<ICreateUserRequestUseCase, CreateUserRequestUseCase>();
+            services.AddScoped<IConfirmUserUseCase, ConfirmUserUseCase>();
             services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
             services.AddScoped<IConfirmUserRegUseCase, ConfirmUserRegUseCase>();
         }
