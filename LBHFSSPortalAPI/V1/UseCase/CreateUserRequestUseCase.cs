@@ -2,9 +2,10 @@ using Amazon.CognitoIdentityProvider;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Gateways;
-using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
+using System;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -18,6 +19,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _authGateway = authGateway;
             _usersGateway = usersGateway;
         }
+
         public UserResponse Execute(UserCreateRequest createRequestData)
         {
             string createdUserId = null;
@@ -32,6 +34,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 return null;
             }
 
+            SaveNewUser(createRequestData, createdUserId);
+
             var userCreateResponse = new UserResponse
             {
                 Email = createRequestData.EmailAddress,
@@ -40,6 +44,27 @@ namespace LBHFSSPortalAPI.V1.UseCase
             };
 
             return userCreateResponse;
+        }
+
+        private void SaveNewUser(UserCreateRequest createRequestData, string createdUserId)
+        {
+            var user = _usersGateway.GetUser(createRequestData.EmailAddress, UserStatus.Invited);
+
+            if (user == null)
+            {
+                var createdAt = DateTime.UtcNow;
+
+                user = new UserDomain()
+                {
+                    CreatedAt = createdAt,
+                    Email = createRequestData.EmailAddress,
+                    Name = createRequestData.Name,
+                    Status = UserStatus.Unverified,
+                    SubId = createdUserId
+                };
+
+                _usersGateway.SaveUser(user);
+            }
         }
     }
 }

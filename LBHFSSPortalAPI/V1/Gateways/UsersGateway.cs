@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Amazon.Lambda.Core;
 using System;
-using System.Data.Entity;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -71,21 +70,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                Console.WriteLine("(MJC1) " + GetHashCode());
                 var userEntity = _context.Users.SingleOrDefault(u => u.Id == user.Id);
 
-                if (user != null)
-                {
-                    userEntity.SubId = user.SubId;
-                    userEntity.Email = user.Email;
-                    userEntity.Name = user.Name;
-                    userEntity.Status = user.Status;
-                    _context.SaveChanges();
-                }
-                else
-                {
-                    // log error
-                }
+                if (userEntity == null)
+                    userEntity = new Users();
+
+                userEntity.SubId = user.SubId;
+                userEntity.Email = user.Email;
+                userEntity.Name = user.Name;
+                userEntity.Status = user.Status;
+
+                _context.SaveChanges();
             }
             catch (Exception e)
             {
