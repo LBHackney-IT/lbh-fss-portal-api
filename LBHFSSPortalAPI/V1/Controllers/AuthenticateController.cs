@@ -48,12 +48,12 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [HttpPost]
         [Route("registration/confirmation")]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult ConfirmUser([FromQuery] ConfirmUserQueryParam userConfirmRequest)
+        public IActionResult ConfirmUser([FromQuery] UserConfirmRequest userConfirmRequest)
         {
             ConfirmUserResponse response;
 
-            //if (!userConfirmRequest.IsValid())
-            //    return BadRequest("Invalid details provided");
+            if (!userConfirmRequest.IsValid())
+                return BadRequest("Invalid details provided");
 
             try
             {

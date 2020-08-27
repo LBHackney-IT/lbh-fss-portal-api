@@ -25,7 +25,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _authenticateGateway = authenticateGateway;
         }
 
-        public ConfirmUserResponse Execute(ConfirmUserQueryParam queryParam)
+        public ConfirmUserResponse Execute(UserConfirmRequest queryParam)
         {
             var response = new ConfirmUserResponse();
 
@@ -76,7 +76,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return success;
         }
 
-        ConfirmUserResponse CreateSession(ConfirmUserQueryParam queryParam, UserDomain user)
+        ConfirmUserResponse CreateSession(UserConfirmRequest queryParam, UserDomain user)
         {
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
