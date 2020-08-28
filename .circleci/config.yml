@@ -85,10 +85,10 @@ jobs:
       - setup_remote_docker
       - run:
           name: build
-          command: docker-compose build fss-portal-api-test
+          command: docker-compose build lbh-fss-portal-api-test
       - run:
           name: Run tests
-          command: docker-compose run fss-portal-api-test
+          command: docker-compose run lbh-fss-portal-api-test
   assume-role-development:
     executor: docker-python
     steps:
