@@ -33,7 +33,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 // Perform search for user based on email address and status
                 var user = _context.Users.SingleOrDefault(u =>
                     u.Email == emailAddress &&
-                    u.Status == userStatus );
+                    u.Status == userStatus);
 
                 if (user != null)
                     userDomain = user.ToDomain();

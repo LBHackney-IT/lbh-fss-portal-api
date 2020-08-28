@@ -26,6 +26,6 @@ namespace LBHFSSPortalAPI.V1.Exceptions
         /// <summary>
         /// Low level error detail including call stack if necessary (for API diagnostics)
         /// </summary>
-        public string DeveloperErrorMessage { get; set; }        
+        public string DeveloperErrorMessage { get; set; }
     }
 }

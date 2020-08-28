@@ -38,7 +38,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     user = _usersGateway.GetUser(queryParam.EmailAddress, UserStatus.Unverified);
 
                     if (user == null)
-                    { 
+                    {
                         // could not find user in either of the required states to confirm registration (invited/unverified)
                         throw new UseCaseException()
                         {
@@ -53,8 +53,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
             else
             {
-                throw new UseCaseException(){
-                    ApiErrorMessage = "Could not validate user registration on the authentication gateway" };
+                throw new UseCaseException()
+                {
+                    ApiErrorMessage = "Could not validate user registration on the authentication gateway"
+                };
             }
 
             return response;
@@ -104,7 +106,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     Name = user.Name,
                     CreatedAt = user.CreatedAt,
                     Status = user.Status,
-                    SubId = user.SubId                    
+                    SubId = user.SubId
                 }
             };
 
