@@ -59,7 +59,8 @@ bin/
 .idea/
 tmp/
 .vs/
-/base-api.Tests/Properties/launchSettings.json
-
+LBHFSSPortalAPI.Tests/Properties/launchSettings.json
+LBHFSSPortalAPI/Properties/launchSettings.json
 .fake
 .ionide
+/dotnet-format-local/
