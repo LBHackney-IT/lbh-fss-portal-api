@@ -12,10 +12,12 @@ namespace LBHFSSPortalAPI.V1.Controllers
     public class UsersController : BaseController
     {
         private IGetAllUsersUseCase _getAllUseCase;
+        private ICreateUserRequestUseCase _createUserRequestUseCase;
 
-        public UsersController(IGetAllUsersUseCase getAllUseCase)
+        public UsersController(IGetAllUsersUseCase getAllUseCase, ICreateUserRequestUseCase createUserRequestUseCase)
         {
             _getAllUseCase = getAllUseCase;
+            _createUserRequestUseCase = createUserRequestUseCase;
         }
 
         [Route("api/v1/users")]
@@ -24,6 +26,14 @@ namespace LBHFSSPortalAPI.V1.Controllers
         public IActionResult ListUsers([FromQuery] UserQueryParam userQueryParam)
         {
             return Ok(_getAllUseCase.Execute(userQueryParam));
+        }
+
+        [Route("api/v1/users")]
+        [HttpPost]
+        public IActionResult Create([FromBody] UserCreateRequest userCreateRequest)
+        {
+            _createUserRequestUseCase.AdminExecute(userCreateRequest);
+            return Ok();
         }
     }
 }
