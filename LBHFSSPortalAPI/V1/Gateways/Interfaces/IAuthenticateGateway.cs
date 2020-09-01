@@ -6,21 +6,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
     public interface IAuthenticateGateway
     {
         string CreateUser(UserCreateRequest createRequest);
-
-        /// <summary>
-        /// Atempt to login to the authentication gateway
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns>the access token identifier (aka subscription ID)</returns>
-        string LoginUser(string userName, string password);
-
-        /// <summary>
-        /// Confirms the verification code of the user on the authentication gateway
-        /// </summary>
-        bool ConfirmSignup(string emailAddress, string verificationCode);
-
+        string AdminCreateUser(UserCreateRequest createRequest);
+        bool ConfirmSignup(UserConfirmRequest confirmRequest);
+        AuthenticationResult LoginUser(LoginUserQueryParam loginUserQueryParam);
         void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest);
-
     }
 }

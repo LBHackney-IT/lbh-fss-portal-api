@@ -1,5 +1,3 @@
-using Amazon.CognitoIdentityProvider;
-using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
@@ -25,17 +23,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _authenticateGateway = authenticateGateway;
         }
 
-        public ConfirmUserResponse Execute(UserConfirmRequest queryParam)
+        public UserResponse Execute(UserConfirmRequest confirmRequest)
         {
-            var response = new ConfirmUserResponse();
+            var response = new UserResponse();
 
-            if (_authenticateGateway.ConfirmSignup(queryParam.EmailAddress, queryParam.VerificationCode))
+            if (_authenticateGateway.ConfirmSignup(confirmRequest))
             {
-                var user = _usersGateway.GetUser(queryParam.EmailAddress, UserStatus.Invited);
+                var user = _usersGateway.GetUser(confirmRequest.Email, UserStatus.Invited);
 
                 if (user == null)
                 {
-                    user = _usersGateway.GetUser(queryParam.EmailAddress, UserStatus.Unverified);
+                    user = _usersGateway.GetUser(confirmRequest.Email, UserStatus.Unverified);
 
                     if (user == null)
                     {
@@ -49,7 +47,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
                 user.Status = UserStatus.Active;
                 _usersGateway.SaveUser(user);
-                response = CreateSession(queryParam, user);
+                response = CreateSession(confirmRequest, user);
             }
             else
             {
@@ -62,23 +60,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return response;
         }
 
-        public bool ConfirmUser(string emailAddress, string verificationCode)
-        {
-            bool success = false;
-            try
-            {
-                success = _authenticateGateway.ConfirmSignup(emailAddress, verificationCode);
-            }
-            catch (AmazonCognitoIdentityProviderException e)
-            {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
-            }
-
-            return success;
-        }
-
-        ConfirmUserResponse CreateSession(UserConfirmRequest queryParam, UserDomain user)
+        UserResponse CreateSession(UserConfirmRequest queryParam, UserDomain user)
         {
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
@@ -89,25 +71,20 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 CreatedAt = timestamp,
                 LastAccessAt = timestamp,
                 UserId = user.Id,
-                SessionId = sessionId
                 //Payload = (?)
                 //UserAgent = (?)
             };
 
             var savedSession = _sessionsGateway.AddSession(session);
 
-            var res = new ConfirmUserResponse
+            var res = new UserResponse
             {
-                AccessTokenValue = savedSession.SessionId,
-                UserResponse = new UserResponse()
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Name = user.Name,
-                    CreatedAt = user.CreatedAt,
-                    Status = user.Status,
-                    SubId = user.SubId
-                }
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                CreatedAt = user.CreatedAt,
+                Status = user.Status,
+                SubId = user.SubId
             };
 
             return res;

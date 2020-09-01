@@ -6,6 +6,7 @@ using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System;
+using LBHFSSPortalAPI.V1.Infrastructure;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -38,7 +39,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             var userCreateResponse = new UserResponse
             {
-                Email = createRequestData.EmailAddress,
+                Email = createRequestData.Email,
                 Name = createRequestData.Name,
                 SubId = createdUserId
             };
@@ -46,9 +47,42 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return userCreateResponse;
         }
 
+        public UserResponse AdminExecute(UserCreateRequest createRequestData)
+        {
+            string createdUserId = null;
+            try
+            {
+                createdUserId = _authGateway.AdminCreateUser(createRequestData);
+            }
+            catch (AmazonCognitoIdentityProviderException e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                return null;
+            }
+
+            if (createdUserId != null)
+            {
+                var user = new Users
+                {
+                    SubId = createdUserId,
+                    Name = createRequestData.Name,
+                    Email = createRequestData.Email
+                };
+            }
+
+            var userCreateResponse = new UserResponse
+            {
+                Email = createRequestData.Email,
+                Name = createRequestData.Name,
+                SubId = createdUserId
+            };
+            return userCreateResponse;
+        }
+
         private void SaveNewUser(UserCreateRequest createRequestData, string createdUserId)
         {
-            var user = _usersGateway.GetUser(createRequestData.EmailAddress, UserStatus.Invited);
+            var user = _usersGateway.GetUser(createRequestData.Email, UserStatus.Invited);
 
             if (user == null)
             {
@@ -57,7 +91,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 user = new UserDomain()
                 {
                     CreatedAt = createdAt,
-                    Email = createRequestData.EmailAddress,
+                    Email = createRequestData.Email,
                     Name = createRequestData.Name,
                     Status = UserStatus.Unverified,
                     SubId = createdUserId
