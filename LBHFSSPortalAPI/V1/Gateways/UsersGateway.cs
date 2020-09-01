@@ -77,7 +77,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 userDomain = userEntity.ToDomain();
                 return userDomain;
             }
-            catch(DbUpdateException dbe)
+            catch (DbUpdateException dbe)
             {
                 HandleDbUpdateException(dbe);
             }
