@@ -27,6 +27,7 @@ functions:
       COGNITO_USER: ${ssm:/fss-portal-api/${self:provider.stage}/cognito-user}
       COGNITO_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/cognito-key}
       CLIENT_ID: ${ssm:/fss-portal-api/${self:provider.stage}/cognito-client-id}
+      POOL_ID: ${ssm:/fss-portal-api/${self:provider.stage}/cognito-pool-id}
     events:
       - http:
           path: /{proxy+}
