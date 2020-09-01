@@ -6,6 +6,7 @@ using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System;
+using LBHFSSPortalAPI.V1.Infrastructure;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -43,6 +44,39 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 SubId = createdUserId
             };
 
+            return userCreateResponse;
+        }
+
+        public UserResponse AdminExecute(UserCreateRequest createRequestData)
+        {
+            string createdUserId = null;
+            try
+            {
+                createdUserId = _authGateway.AdminCreateUser(createRequestData);
+            }
+            catch (AmazonCognitoIdentityProviderException e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                return null;
+            }
+
+            if (createdUserId != null)
+            {
+                var user = new Users
+                {
+                    SubId = createdUserId,
+                    Name = createRequestData.Name,
+                    Email = createRequestData.Email
+                };
+            }
+
+            var userCreateResponse = new UserResponse
+            {
+                Email = createRequestData.Email,
+                Name = createRequestData.Name,
+                SubId = createdUserId
+            };
             return userCreateResponse;
         }
 
