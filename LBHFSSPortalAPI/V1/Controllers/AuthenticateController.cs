@@ -102,10 +102,6 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(typeof(LoginUserResponse), StatusCodes.Status200OK)]
         public IActionResult LoginUser([FromBody] LoginUserQueryParam queryParam)
         {
-            // fss-portal-api-user-pool
-
-            // App client name: fss-portal-api
-
             try
             {
                 queryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
