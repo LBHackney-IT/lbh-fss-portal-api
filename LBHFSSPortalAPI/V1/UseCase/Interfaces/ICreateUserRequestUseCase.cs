@@ -6,6 +6,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     public interface ICreateUserRequestUseCase
     {
         UserResponse Execute(UserCreateRequest createRequestData);
+        UserResponse AdminExecute(UserCreateRequest userCreateRequest);
     }
 
 }
