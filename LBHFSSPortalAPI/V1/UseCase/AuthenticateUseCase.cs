@@ -29,14 +29,14 @@ namespace LBHFSSPortalAPI.V1.UseCase
         /// </summary>
         public LoginUserResponse ExecuteLoginUser(LoginUserQueryParam loginParams)
         {
-            if (string.IsNullOrWhiteSpace(loginParams.Username))
-                throw new UseCaseException() { ApiErrorMessage = "Could not login as the username was invalid" };
+            if (string.IsNullOrWhiteSpace(loginParams.Email))
+                throw new UseCaseException() { ApiErrorMessage = "Could not login as the email address was invalid" };
 
             if (string.IsNullOrWhiteSpace(loginParams.Password))
                 throw new UseCaseException() { ApiErrorMessage = "Could not login as the password was invalid" };
 
-            var subId = _authenticateGateway.LoginUser(loginParams.Username, loginParams.EmailAddress);
-            var user = _usersGateway.GetUserBySubId(subId);
+            var loginResult = _authenticateGateway.LoginUser(loginParams);
+            var user = _usersGateway.GetUserBySubId(loginResult.IdToken);
 
             var loginResponse = CreateLoginSession(loginParams, user);
             return loginResponse;
@@ -53,7 +53,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 CreatedAt = timestamp,
                 LastAccessAt = timestamp,
                 UserId = user.Id,
-                SessionId = sessionId
                 //Payload = (?)
                 //UserAgent = (?)
             };
@@ -62,7 +61,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             var res = new LoginUserResponse
             {
-                AccessToken = savedSession.SessionId,
+                AccessToken = user.SubId,
             };
 
             return res;

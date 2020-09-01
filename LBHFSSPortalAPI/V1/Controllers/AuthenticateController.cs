@@ -30,7 +30,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [HttpPost]
         [Route("registration")]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult CreateUser([FromQuery] UserCreateRequest userCreateRequest)
+        public IActionResult CreateUser([FromBody] UserCreateRequest userCreateRequest)
         {
             if (!userCreateRequest.IsValid())
                 return BadRequest("Invalid details provided");
@@ -48,7 +48,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [HttpPost]
         [Route("registration/confirmation")]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult ConfirmUser([FromQuery] UserConfirmRequest userConfirmRequest)
+        public IActionResult ConfirmUser([FromBody] UserConfirmRequest userConfirmRequest)
         {
             ConfirmUserResponse response;
 
@@ -79,7 +79,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [HttpPost]
         [Route("registration/confirmation/resend")]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
-        public IActionResult ResendConfirmationCode([FromQuery] ConfirmationResendRequest confirmationResendRequest)
+        public IActionResult ResendConfirmationCode([FromBody] ConfirmationResendRequest confirmationResendRequest)
         {
             if (!confirmationResendRequest.IsValid())
                 return BadRequest("Invalid details provided");
@@ -97,35 +97,35 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <summary>
         /// Logs the user into API creating a new session
         /// </summary>
-        [Route("api/v1/session")]
+        [Route("session")]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult LoginUser([FromQuery] LoginUserQueryParam loginUserQueryParam)
+        [ProducesResponseType(typeof(LoginUserResponse), StatusCodes.Status200OK)]
+        public IActionResult LoginUser([FromBody] LoginUserQueryParam queryParam)
         {
-            loginUserQueryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            // fss-portal-api-user-pool
 
-            LoginUserResponse response;
+            // App client name: fss-portal-api
 
             try
             {
-                response = _authenticateUseCase.ExecuteLoginUser(loginUserQueryParam);
+                queryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+                var response = _authenticateUseCase.ExecuteLoginUser(queryParam);
+                Response.Cookies.Append(LoginUserResponse.AccessTokenName, response.AccessToken);
+                return Ok();
             }
             catch (UseCaseException e)
             {
                 return BadRequest(e.ApiErrorMessage);
             }
-
-            Response.Cookies.Append(LoginUserResponse.AccessTokenName, response.AccessToken);
-            return Ok();
         }
 
         /// <summary>
         /// Logs the user out of the API removing session information
         /// </summary>
-        [Route("api/v1/logout")]
+        [Route("logout")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult LogoutUser([FromQuery] LogoutUserQueryParam queryParams)
+        public IActionResult LogoutUser([FromBody] LogoutUserQueryParam queryParams)
         {
             try
             {

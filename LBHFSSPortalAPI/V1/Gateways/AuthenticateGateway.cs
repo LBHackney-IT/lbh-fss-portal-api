@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
@@ -6,6 +7,7 @@ using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Infrastructure;
+using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -21,12 +23,32 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, Region);
         }
 
+        public string AdminCreateUser(UserCreateRequest createRequest)
+        {
+            AdminCreateUserRequest adminCreateUserRequest = new AdminCreateUserRequest
+            {
+                UserPoolId = _connectionInfo.UserPoolId,
+                Username = createRequest.Email,
+                DesiredDeliveryMediums = new List<string> { "EMAIL" }
+            };
+            try
+            {
+                var response = _provider.AdminCreateUserAsync(adminCreateUserRequest).Result;
+                return response.User.UserStatus;
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
+        }
         public string CreateUser(UserCreateRequest createRequest)
         {
             SignUpRequest signUpRequest = new SignUpRequest
             {
                 ClientId = _connectionInfo.ClientId,
-                Username = createRequest.EmailAddress,
+                Username = createRequest.Email,
                 Password = createRequest.Password
             };
             try
@@ -42,13 +64,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public bool ConfirmSignup(string emailAddress, string verificationCode)
+        public bool ConfirmSignup(UserConfirmRequest confirmRequest)
         {
             ConfirmSignUpRequest signUpRequest = new ConfirmSignUpRequest
             {
                 ClientId = _connectionInfo.ClientId,
-                Username = emailAddress,
-                ConfirmationCode = verificationCode
+                Username = confirmRequest.Email,
+                ConfirmationCode = confirmRequest.Code
             };
             try
             {
@@ -72,7 +94,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             };
             try
             {
-                ResendConfirmationCodeResponse response = _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest).Result;
+                _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest);
             }
             catch (Exception e)
             {
@@ -82,35 +104,43 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        /// <summary>
-        /// Atempt to login to the authentication gateway
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns>the access token identifier (aka subscription ID)</returns>
-        public string LoginUser(string userName, string password)
+        public AuthenticationResult LoginUser(LoginUserQueryParam loginUserQueryParam)
         {
-            // TODO (MJC) Use the query params 'username' and 'password' to log into AWS Cognito
-            // and store 'user pool token' (sub_id) in the portal api Users database
-            //
-            // CognitoUserPool userPool = null;
-            // string accessToken = string.Empty;
-            //
-            // using (var provider = new AmazonCognitoIdentityProviderClient(new AnonymousAWSCredentials()))
-            // {
-            //     userPool = new CognitoUserPool(PoolId, AppClientId, provider);
-            //
-            //     CognitoUser user = new CognitoUser(loginUserQueryParam.EmailAddress, "clientID", userPool, provider);
-            //     InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest()
-            //     {
-            //         Password = loginUserQueryParam.Password
-            //     };
-            //
-            //     AuthFlowResponse authResponse = user.StartWithSrpAuthAsync(authRequest).Result;
-            //     accessToken = authResponse.AuthenticationResult.AccessToken;
-            // }
-
-            return "e7b6f54f-1e2f-4a38-8d9c-69f78432c6c6";
+            InitiateAuthRequest iaRequest = new InitiateAuthRequest
+            {
+                ClientId = _connectionInfo.ClientId,
+                AuthFlow = AuthFlowType.USER_PASSWORD_AUTH
+            };
+            iaRequest.AuthParameters.Add("USERNAME", loginUserQueryParam.Email);
+            iaRequest.AuthParameters.Add("PASSWORD", loginUserQueryParam.Password);
+            InitiateAuthResponse authResp = new InitiateAuthResponse();
+            var authResult = new AuthenticationResult();
+            try
+            {
+                authResp = _provider.InitiateAuthAsync(iaRequest).Result;
+                Console.WriteLine($"**********************************{authResp.ChallengeName}*******************************");
+                Console.WriteLine($"**********************************{authResp.Session}*******************************");
+                authResult.AccessToken = authResp.AuthenticationResult.AccessToken;
+                authResult.IdToken = authResp.AuthenticationResult.IdToken;
+                authResult.RefreshToken = authResp.AuthenticationResult.RefreshToken;
+                authResult.TokenType = authResp.AuthenticationResult.TokenType;
+                authResult.ExpiresIn = authResp.AuthenticationResult.ExpiresIn;
+                authResult.Success = true;
+            }
+            catch (AggregateException e)
+            {
+                e.Handle((x) =>
+                {
+                    if (x is NotAuthorizedException)  // This we know how to handle.
+                    {
+                        Console.WriteLine("Invalid credentials provided.");
+                        authResult.Success = false;
+                        return true;
+                    }
+                    return false; // Let anything else stop the application.
+                });
+            }
+            return authResult;
         }
     }
 }

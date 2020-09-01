@@ -25,17 +25,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _authenticateGateway = authenticateGateway;
         }
 
-        public ConfirmUserResponse Execute(UserConfirmRequest queryParam)
+        public ConfirmUserResponse Execute(UserConfirmRequest confirmRequest)
         {
             var response = new ConfirmUserResponse();
 
-            if (_authenticateGateway.ConfirmSignup(queryParam.EmailAddress, queryParam.VerificationCode))
+            if (_authenticateGateway.ConfirmSignup(confirmRequest))
             {
-                var user = _usersGateway.GetUser(queryParam.EmailAddress, UserStatus.Invited);
+                var user = _usersGateway.GetUser(confirmRequest.Email, UserStatus.Invited);
 
                 if (user == null)
                 {
-                    user = _usersGateway.GetUser(queryParam.EmailAddress, UserStatus.Unverified);
+                    user = _usersGateway.GetUser(confirmRequest.Email, UserStatus.Unverified);
 
                     if (user == null)
                     {
@@ -49,7 +49,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
                 user.Status = UserStatus.Active;
                 _usersGateway.SaveUser(user);
-                response = CreateSession(queryParam, user);
+                response = CreateSession(confirmRequest, user);
             }
             else
             {
@@ -60,22 +60,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
 
             return response;
-        }
-
-        public bool ConfirmUser(string emailAddress, string verificationCode)
-        {
-            bool success = false;
-            try
-            {
-                success = _authenticateGateway.ConfirmSignup(emailAddress, verificationCode);
-            }
-            catch (AmazonCognitoIdentityProviderException e)
-            {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
-            }
-
-            return success;
         }
 
         ConfirmUserResponse CreateSession(UserConfirmRequest queryParam, UserDomain user)
@@ -89,7 +73,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 CreatedAt = timestamp,
                 LastAccessAt = timestamp,
                 UserId = user.Id,
-                SessionId = sessionId
                 //Payload = (?)
                 //UserAgent = (?)
             };
@@ -98,7 +81,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             var res = new ConfirmUserResponse
             {
-                AccessTokenValue = savedSession.SessionId,
+                AccessTokenValue = user.SubId,
                 UserResponse = new UserResponse()
                 {
                     Id = user.Id,
