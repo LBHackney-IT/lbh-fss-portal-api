@@ -118,8 +118,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 authResp = _provider.InitiateAuthAsync(iaRequest).Result;
-                Console.WriteLine($"**********************************{authResp.ChallengeName}*******************************");
-                Console.WriteLine($"**********************************{authResp.Session}*******************************");
                 authResult.AccessToken = authResp.AuthenticationResult.AccessToken;
                 authResult.IdToken = authResp.AuthenticationResult.IdToken;
                 authResult.RefreshToken = authResp.AuthenticationResult.RefreshToken;
