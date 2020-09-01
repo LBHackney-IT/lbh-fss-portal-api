@@ -38,7 +38,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             var userCreateResponse = new UserResponse
             {
-                Email = createRequestData.EmailAddress,
+                Email = createRequestData.Email,
                 Name = createRequestData.Name,
                 SubId = createdUserId
             };
@@ -48,7 +48,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         private void SaveNewUser(UserCreateRequest createRequestData, string createdUserId)
         {
-            var user = _usersGateway.GetUser(createRequestData.EmailAddress, UserStatus.Invited);
+            var user = _usersGateway.GetUser(createRequestData.Email, UserStatus.Invited);
 
             if (user == null)
             {
@@ -57,7 +57,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 user = new UserDomain()
                 {
                     CreatedAt = createdAt,
-                    Email = createRequestData.EmailAddress,
+                    Email = createRequestData.Email,
                     Name = createRequestData.Name,
                     Status = UserStatus.Unverified,
                     SubId = createdUserId
