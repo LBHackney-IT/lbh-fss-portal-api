@@ -29,7 +29,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
         [HttpPost]
         [Route("registration")]
-        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
         public IActionResult CreateUser([FromBody] UserCreateRequest userCreateRequest)
         {
             if (!userCreateRequest.IsValid())
@@ -37,7 +37,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             try
             {
                 var response = _createUserRequestUseCase.Execute(userCreateRequest);
-                return Ok(response);
+                // TODO: Return user URI instead of 'Created'
+                return Created("Created", response);
             }
             catch (Exception e)
             {
