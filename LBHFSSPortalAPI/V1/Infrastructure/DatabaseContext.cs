@@ -244,10 +244,6 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
-                entity.Property(e => e.SessionId)
-                    .HasColumnName("session_id")
-                    .HasColumnType("character varying");
-
                 entity.Property(e => e.IpAddress)
                     .HasColumnName("ip_address")
                     .HasColumnType("character varying");

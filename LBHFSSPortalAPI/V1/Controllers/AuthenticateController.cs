@@ -29,14 +29,15 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
         [HttpPost]
         [Route("registration")]
-        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult CreateUser([FromQuery] UserCreateRequest userCreateRequest)
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
+        public IActionResult CreateUser([FromBody] UserCreateRequest userCreateRequest)
         {
             if (!userCreateRequest.IsValid())
                 return BadRequest("Invalid details provided");
             try
             {
                 var response = _createUserRequestUseCase.Execute(userCreateRequest);
+                // TODO: Return user URI instead of 'Created'
                 return Created("Created", response);
             }
             catch (Exception e)
@@ -48,9 +49,9 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [HttpPost]
         [Route("registration/confirmation")]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult ConfirmUser([FromQuery] UserConfirmRequest userConfirmRequest)
+        public IActionResult ConfirmUser([FromBody] UserConfirmRequest userConfirmRequest)
         {
-            ConfirmUserResponse response;
+            UserResponse response;
 
             if (!userConfirmRequest.IsValid())
                 return BadRequest("Invalid details provided");
@@ -71,15 +72,13 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 return BadRequest(e.ApiErrorMessage);
             }
 
-            // Return the access token as a cookie, along with user metadata as JSON content
-            Response.Cookies.Append(ConfirmUserResponse.AccessTokenName, response.AccessTokenValue);
-            return Accepted(response.UserResponse);
+            return Accepted(response);
         }
 
         [HttpPost]
         [Route("registration/confirmation/resend")]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
-        public IActionResult ResendConfirmationCode([FromQuery] ConfirmationResendRequest confirmationResendRequest)
+        public IActionResult ResendConfirmationCode([FromBody] ConfirmationResendRequest confirmationResendRequest)
         {
             if (!confirmationResendRequest.IsValid())
                 return BadRequest("Invalid details provided");
@@ -97,35 +96,31 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <summary>
         /// Logs the user into API creating a new session
         /// </summary>
-        [Route("api/v1/session")]
+        [Route("session")]
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult LoginUser([FromQuery] LoginUserQueryParam loginUserQueryParam)
+        [ProducesResponseType(typeof(LoginUserResponse), StatusCodes.Status200OK)]
+        public IActionResult LoginUser([FromBody] LoginUserQueryParam queryParam)
         {
-            loginUserQueryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-
-            LoginUserResponse response;
-
             try
             {
-                response = _authenticateUseCase.ExecuteLoginUser(loginUserQueryParam);
+                queryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+                var response = _authenticateUseCase.ExecuteLoginUser(queryParam);
+                Response.Cookies.Append(LoginUserResponse.AccessTokenName, response.AccessToken);
+                return Ok();
             }
             catch (UseCaseException e)
             {
                 return BadRequest(e.ApiErrorMessage);
             }
-
-            Response.Cookies.Append(LoginUserResponse.AccessTokenName, response.AccessToken);
-            return Ok();
         }
 
         /// <summary>
         /// Logs the user out of the API removing session information
         /// </summary>
-        [Route("api/v1/logout")]
+        [Route("logout")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult LogoutUser([FromQuery] LogoutUserQueryParam queryParams)
+        public IActionResult LogoutUser([FromBody] LogoutUserQueryParam queryParams)
         {
             try
             {
