@@ -46,7 +46,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 }
 
                 user.Status = UserStatus.Active;
-                _usersGateway.SaveUser(user);
+                _usersGateway.UpdateUser(user);
                 response = CreateSession(confirmRequest, user);
             }
             else
