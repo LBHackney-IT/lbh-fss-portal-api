@@ -35,13 +35,16 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 return null;
             }
 
-            SaveNewUser(createRequestData, createdUserId);
+            var userDomain = SaveNewUser(createRequestData, createdUserId);
 
             var userCreateResponse = new UserResponse
             {
+                Id = userDomain.Id,
+                CreatedAt = userDomain.CreatedAt,
                 Email = createRequestData.Email,
                 Name = createRequestData.Name,
-                SubId = createdUserId
+                SubId = createdUserId,
+                Status = userDomain.Status
             };
 
             return userCreateResponse;
@@ -80,7 +83,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return userCreateResponse;
         }
 
-        private void SaveNewUser(UserCreateRequest createRequestData, string createdUserId)
+        private UserDomain SaveNewUser(UserCreateRequest createRequestData, string createdUserId)
         {
             var user = _usersGateway.GetUser(createRequestData.Email, UserStatus.Invited);
 
@@ -97,8 +100,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     SubId = createdUserId
                 };
 
-                _usersGateway.SaveUser(user);
+                return _usersGateway.AddUser(user);
             }
+
+            return null;
         }
     }
 }
