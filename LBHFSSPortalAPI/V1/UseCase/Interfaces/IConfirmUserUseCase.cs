@@ -1,4 +1,3 @@
-using Amazon.CognitoIdentityProvider.Model;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 

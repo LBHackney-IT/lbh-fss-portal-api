@@ -37,7 +37,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             try
             {
                 var response = _createUserRequestUseCase.Execute(userCreateRequest);
-                return Created("Created", response);
+                return Ok("Created", response);
             }
             catch (Exception e)
             {
