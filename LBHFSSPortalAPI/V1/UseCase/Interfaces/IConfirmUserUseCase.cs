@@ -6,7 +6,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
     public interface IConfirmUserUseCase
     {
-        ConfirmUserResponse Execute(UserConfirmRequest queryParam);
+        UserResponse Execute(UserConfirmRequest queryParam);
         void Resend(ConfirmationResendRequest confirmationResendRequest);
     }
 }
