@@ -25,9 +25,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _authenticateGateway = authenticateGateway;
         }
 
-        public ConfirmUserResponse Execute(UserConfirmRequest confirmRequest)
+        public UserResponse Execute(UserConfirmRequest confirmRequest)
         {
-            var response = new ConfirmUserResponse();
+            var response = new UserResponse();
 
             if (_authenticateGateway.ConfirmSignup(confirmRequest))
             {
@@ -62,7 +62,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return response;
         }
 
-        ConfirmUserResponse CreateSession(UserConfirmRequest queryParam, UserDomain user)
+        UserResponse CreateSession(UserConfirmRequest queryParam, UserDomain user)
         {
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
@@ -79,18 +79,14 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             var savedSession = _sessionsGateway.AddSession(session);
 
-            var res = new ConfirmUserResponse
+            var res = new UserResponse
             {
-                AccessTokenValue = user.SubId,
-                UserResponse = new UserResponse()
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Name = user.Name,
-                    CreatedAt = user.CreatedAt,
-                    Status = user.Status,
-                    SubId = user.SubId
-                }
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                CreatedAt = user.CreatedAt,
+                Status = user.Status,
+                SubId = user.SubId
             };
 
             return res;

@@ -50,7 +50,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public IActionResult ConfirmUser([FromBody] UserConfirmRequest userConfirmRequest)
         {
-            ConfirmUserResponse response;
+            UserResponse response;
 
             if (!userConfirmRequest.IsValid())
                 return BadRequest("Invalid details provided");
@@ -71,9 +71,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 return BadRequest(e.ApiErrorMessage);
             }
 
-            // Return the access token as a cookie, along with user metadata as JSON content
-            Response.Cookies.Append(ConfirmUserResponse.AccessTokenName, response.AccessTokenValue);
-            return Accepted(response.UserResponse);
+            return Accepted(response);
         }
 
         [HttpPost]
