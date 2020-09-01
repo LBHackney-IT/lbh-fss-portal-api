@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase;
 using Moq;
@@ -26,11 +27,11 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         [Test]
         public void ExecuteSavesRequestToDatabase()
         {
-            var strResponse = "test";
-            _mockAuthenticateGateway.Setup(s => s.CreateUser(It.IsAny<UserCreateRequest>())).Returns(strResponse);
             var dataToSave = new Fixture().Build<UserCreateRequest>().Create();
+            var recData = new UserDomain { Email = dataToSave.Email, Name = dataToSave.Name, Status = "Pending", Id = 1 };
+            _mockUsersGateway.Setup(u => u.AddUser(It.IsAny<UserDomain>())).Returns(recData);
             var response = _classUnderTest.Execute(dataToSave);
-            response.SubId.Should().BeSameAs(strResponse);
+            response.Should().BeEquivalentTo(recData);
         }
     }
 }
