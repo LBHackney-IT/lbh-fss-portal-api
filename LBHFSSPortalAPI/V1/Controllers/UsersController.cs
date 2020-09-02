@@ -70,35 +70,48 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public IActionResult UpdateUser([FromQuery] int currentUserId, [FromBody] UserUpdateRequest userUpdateRequest)
         {
-            _updateUserRequestUseCase.Execute(currentUserId, userUpdateRequest);
-            return Ok();
+            UserResponse response;
 
-            //UserResponse response;
+            try
+            {
+                response = _updateUserRequestUseCase.Execute(currentUserId, userUpdateRequest);
+            }
+            catch (UseCaseException e)
+            {
+                // Show a more detailed error message with call stack if running in development mode
 
-            //try
-            //{
-            //    response = _updateUserRequestUseCase.Execute(currentUserId, userUpdateRequest);
-            //}
-            //catch (UseCaseException e)
-            //{
-            //    // Show a more detailed error message with call stack if running in development mode
+                // TODO (MJC): Inject the environment variable below (DI)
+                //if (_env.IsDev)
+                //      return BadRequest(e.DeveloperErrorMessage);
 
-            //    // TODO (MJC): Inject the environment variable below (DI)
-            //    //if (_env.IsDev)
-            //    //      return BadRequest(e.DeveloperErrorMessage);
+                return BadRequest(e.UserErrorMessage);
+            }
 
-            //    return BadRequest(e.UserErrorMessage);
-            //}
-
-            //return Ok("Created", response);
+            return Ok(response);
         }
 
         [Route("users")]
         [HttpDelete]
-        public IActionResult DeleteUser([FromBody] UserDeleteRequest userDeleteRequest)
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        public IActionResult DeleteUser([FromQuery] int userId)
         {
-            _deleteUserRequestUseCase.Execute(userDeleteRequest);
-            return Ok();
+            try
+            {
+                if (_deleteUserRequestUseCase.Execute(userId))
+                    return Ok();
+            }
+            catch (UseCaseException e)
+            {
+                // Show a more detailed error message with call stack if running in development mode
+
+                // TODO (MJC): Inject the environment variable below (DI)
+                //if (_env.IsDev)
+                //      return BadRequest(e.DeveloperErrorMessage);
+
+                return BadRequest(e.UserErrorMessage);
+            }
+
+            return BadRequest("Could not delete the user");
         }
     }
 }
