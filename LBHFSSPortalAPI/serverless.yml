@@ -16,7 +16,6 @@ provider:
 
 package:
   artifact: ./bin/release/netcoreapp3.1/fss-portal-api.zip
-
 functions:
   LBHFSSPortalAPI:
     name: ${self:service}-${self:provider.stage}
