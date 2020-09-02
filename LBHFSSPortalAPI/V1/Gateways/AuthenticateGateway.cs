@@ -141,7 +141,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return authResult;
         }
 
-                public void ResetPassword(ResetPasswordQueryParams resetPasswordQueryParams)
+        public void ResetPassword(ResetPasswordQueryParams resetPasswordQueryParams)
         {
             ForgotPasswordRequest fpRequest = new ForgotPasswordRequest
             {
