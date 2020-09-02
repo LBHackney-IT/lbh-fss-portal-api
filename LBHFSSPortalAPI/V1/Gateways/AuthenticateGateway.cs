@@ -7,7 +7,7 @@ using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Infrastructure;
-using LBHFSSPortalAPI.V1.UseCase.Interfaces;
+using AdminCreateUserRequest = Amazon.CognitoIdentityProvider.Model.AdminCreateUserRequest;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -23,7 +23,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, Region);
         }
 
-        public string AdminCreateUser(UserCreateRequest createRequest)
+        public string AdminCreateUser(Boundary.Requests.AdminCreateUserRequest createRequest)
         {
             AdminCreateUserRequest adminCreateUserRequest = new AdminCreateUserRequest
             {
