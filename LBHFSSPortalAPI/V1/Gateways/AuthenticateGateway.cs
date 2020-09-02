@@ -140,5 +140,71 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             return authResult;
         }
+
+                public void ResetPassword(ResetPasswordQueryParams resetPasswordQueryParams)
+        {
+            ForgotPasswordRequest fpRequest = new ForgotPasswordRequest
+            {
+                ClientId = _connectionInfo.ClientId,
+                Username = resetPasswordQueryParams.Email
+            };
+            _provider.ForgotPasswordAsync(fpRequest);
+        }
+
+        public void ConfirmResetPassword(ResetPasswordQueryParams resetPasswordQueryParams)
+        {
+            ConfirmForgotPasswordRequest cfpRequest = new ConfirmForgotPasswordRequest
+            {
+                ClientId = _connectionInfo.ClientId,
+                Username = resetPasswordQueryParams.Email,
+                Password = resetPasswordQueryParams.Password,
+                ConfirmationCode = resetPasswordQueryParams.Code
+            };
+            _provider.ConfirmForgotPasswordAsync(cfpRequest);
+        }
+
+        public void ChangePassword(ResetPasswordQueryParams resetPasswordQueryParams)
+        {
+            AdminSetUserPasswordRequest adminSetUserPasswordRequest = new AdminSetUserPasswordRequest
+            {
+                Password = resetPasswordQueryParams.Password,
+                Username = resetPasswordQueryParams.Email,
+                UserPoolId = _connectionInfo.UserPoolId,
+                Permanent = true
+            };
+            var response = _provider.AdminSetUserPasswordAsync(adminSetUserPasswordRequest);
+        }
+
+        public AuthenticationResult ChallengePassword(ResetPasswordQueryParams resetPasswordQueryParams)
+        {
+            RespondToAuthChallengeRequest authChallengeRequest = new RespondToAuthChallengeRequest
+            {
+                ChallengeName = ChallengeNameType.NEW_PASSWORD_REQUIRED,
+                ChallengeResponses = new Dictionary<string, string>
+                {
+                    {"NEW_PASSWORD", resetPasswordQueryParams.Password},
+                    {"USERNAME", resetPasswordQueryParams.Email}
+                },
+                ClientId = _connectionInfo.ClientId,
+                Session = resetPasswordQueryParams.Session
+            };
+            var authResult = new AuthenticationResult();
+            try
+            {
+                var authResp = _provider.RespondToAuthChallengeAsync(authChallengeRequest).Result;
+                authResult.AccessToken = authResp.AuthenticationResult.AccessToken;
+                authResult.IdToken = authResp.AuthenticationResult.IdToken;
+                authResult.RefreshToken = authResp.AuthenticationResult.RefreshToken;
+                authResult.TokenType = authResp.AuthenticationResult.TokenType;
+                authResult.ExpiresIn = authResp.AuthenticationResult.ExpiresIn;
+                authResult.Success = true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            return authResult;
+        }
     }
 }
