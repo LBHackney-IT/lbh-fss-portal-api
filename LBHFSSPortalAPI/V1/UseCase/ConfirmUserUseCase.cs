@@ -40,7 +40,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                         // could not find user in either of the required states to confirm registration (invited/unverified)
                         throw new UseCaseException()
                         {
-                            ApiErrorMessage = "User with the supplied email address not found in the required state of invited or unverified"
+                            UserErrorMessage = "User with the supplied email address not found in the required state of invited or unverified"
                         };
                     }
                 }
@@ -53,7 +53,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             {
                 throw new UseCaseException()
                 {
-                    ApiErrorMessage = "Could not validate user registration on the authentication gateway"
+                    UserErrorMessage = "Could not validate user registration on the authentication gateway"
                 };
             }
 

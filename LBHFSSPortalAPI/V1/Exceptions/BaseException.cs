@@ -21,11 +21,11 @@ namespace LBHFSSPortalAPI.V1.Exceptions
         /// <summary>
         /// Detailed information on the cause of the API error
         /// </summary>
-        public string ApiErrorMessage { get; set; }
+        public string UserErrorMessage { get; set; }
 
         /// <summary>
         /// Low level error detail including call stack if necessary (for API diagnostics)
         /// </summary>
-        public string DeveloperErrorMessage { get; set; }
+        public string DevErrorMessage { get; set; }
     }
 }
