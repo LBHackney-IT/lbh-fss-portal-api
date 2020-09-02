@@ -1,4 +1,3 @@
-using Amazon.CognitoIdentityProvider.Model;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 
 namespace LBHFSSPortalAPI.V1.Validations
@@ -21,5 +20,10 @@ namespace LBHFSSPortalAPI.V1.Validations
             return (!string.IsNullOrWhiteSpace(confirmRequest.Email));
         }
 
+        public static bool IsValid(this AdminCreateUserRequest userCreateRequest)
+        {
+            return (!string.IsNullOrWhiteSpace(userCreateRequest.Email)) &&
+                   (!string.IsNullOrWhiteSpace(userCreateRequest.Name));
+        }
     }
 }

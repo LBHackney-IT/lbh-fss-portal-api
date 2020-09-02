@@ -6,6 +6,7 @@ using System.Linq;
 using Amazon.Lambda.Core;
 using System;
 using Microsoft.EntityFrameworkCore;
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -121,6 +122,39 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 LambdaLogger.Log(e.StackTrace);
                 throw;
             }
+        }
+
+        public UserDomain AddUser(AdminCreateUserRequest requestData)
+        {
+            var userEntity = new Users()
+            {
+                Id = requestData.Id,
+                CreatedAt = requestData.CreatedAt,
+                Email = requestData.Email,
+                Name = requestData.Name,
+                Status = requestData.Status,
+                SubId = requestData.Status,
+            };
+
+            try
+            {
+                _context.Users.Add(userEntity);
+                _context.SaveChanges();
+                var userDomain = userEntity.ToDomain();
+                return userDomain;
+            }
+            catch (DbUpdateException dbe)
+            {
+                HandleDbUpdateException(dbe);
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
+
+            return null;
         }
     }
 }

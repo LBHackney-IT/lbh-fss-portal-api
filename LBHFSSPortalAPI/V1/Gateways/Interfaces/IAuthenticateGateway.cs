@@ -6,7 +6,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
     public interface IAuthenticateGateway
     {
         string CreateUser(UserCreateRequest createRequest);
-        string AdminCreateUser(UserCreateRequest createRequest);
+        string AdminCreateUser(AdminCreateUserRequest createRequest);
         bool ConfirmSignup(UserConfirmRequest confirmRequest);
         AuthenticationResult LoginUser(LoginUserQueryParam loginUserQueryParam);
         void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest);
