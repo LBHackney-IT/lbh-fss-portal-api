@@ -20,7 +20,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _createUserRequestUseCase = createUserRequestUseCase;
         }
 
-        [Route("api/v1/users")]
+        [Route("users")]
         [HttpGet]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
         public IActionResult ListUsers([FromQuery] UserQueryParam userQueryParam)
@@ -28,7 +28,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Ok(_getAllUseCase.Execute(userQueryParam));
         }
 
-        [Route("api/v1/users")]
+        [Route("users")]
         [HttpPost]
         public IActionResult Create([FromBody] UserCreateRequest userCreateRequest)
         {
