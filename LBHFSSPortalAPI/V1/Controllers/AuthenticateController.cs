@@ -69,7 +69,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 //if (_env.IsDev)
                 //      return BadRequest(e.DeveloperErrorMessage);
 
-                return BadRequest(e.ApiErrorMessage);
+                return BadRequest(e.UserErrorMessage);
             }
 
             return Accepted(response);
@@ -110,7 +110,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                return BadRequest(e.ApiErrorMessage);
+                return BadRequest(e.UserErrorMessage);
             }
         }
 
@@ -134,7 +134,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 //if (_env.IsDev)
                 //      return BadRequest(e.DeveloperErrorMessage);
 
-                return BadRequest(e.ApiErrorMessage);
+                return BadRequest(e.UserErrorMessage);
             }
 
             return Ok();

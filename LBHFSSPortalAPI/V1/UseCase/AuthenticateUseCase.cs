@@ -30,15 +30,15 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public LoginUserResponse ExecuteLoginUser(LoginUserQueryParam loginParams)
         {
             if (string.IsNullOrWhiteSpace(loginParams.Email))
-                throw new UseCaseException() { ApiErrorMessage = "Could not login as the email address was invalid" };
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the email address was invalid" };
 
             if (string.IsNullOrWhiteSpace(loginParams.Password))
-                throw new UseCaseException() { ApiErrorMessage = "Could not login as the password was invalid" };
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the password was invalid" };
 
             var loginResult = _authenticateGateway.LoginUser(loginParams);
-            var user = _usersGateway.GetUserBySubId(loginResult.IdToken);
-
+            var user = _usersGateway.GetUser(loginParams.Email, UserStatus.Active);
             var loginResponse = CreateLoginSession(loginParams, user);
+
             return loginResponse;
         }
 
@@ -73,7 +73,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public void ExecuteLogoutUser(LogoutUserQueryParam queryParam)
         {
             if (string.IsNullOrWhiteSpace(queryParam.AccessToken))
-                throw new UseCaseException() { ApiErrorMessage = "the access_token parameter was empty or not supplied" };
+                throw new UseCaseException() { UserErrorMessage = "the access_token parameter was empty or not supplied" };
 
             //idempotent!
             _sessionsGateway.RemoveSession(queryParam.AccessToken);
