@@ -1,12 +1,13 @@
+using Amazon.Lambda.Core;
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
-using LBHFSSPortalAPI.V1.Infrastructure;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
+using LBHFSSPortalAPI.V1.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amazon.Lambda.Core;
-using System;
-using Microsoft.EntityFrameworkCore;
-using LBHFSSPortalAPI.V1.Boundary.Requests;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -167,6 +168,84 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 userDomain = user.ToDomain();
 
             return userDomain;
+        }
+
+        public IEnumerable<OrganizationsDomain> GetAssociatedOrganisations(int userId)
+        {
+            var orgDomains = new List<OrganizationsDomain>();
+
+            try
+            {
+                var userOrgs = _context.UserOrganizations.Where(u => u.Id == userId);
+
+                if (userOrgs.Any())
+                {
+                    var orgIds = userOrgs.Select(o => o.OrganizationId);
+                    var orgs = _context.Organizations
+                        .Where(o => orgIds.Contains(o.Id))
+                        .ToList();
+
+                    orgDomains = orgs.ToDomain();
+                }
+            }
+            catch (ArgumentNullException)
+            {
+                // catch?
+                throw;
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
+
+            return orgDomains;
+        }
+
+        public void AssociateUserWithOrganisation(int userId, int organisationId)
+        {
+            try
+            {
+                // check organisation actually exists before creating association in database
+                if (!_context.UserOrganizations.Any(o => o.Id == organisationId))
+                {
+                    throw new UseCaseException()
+                    {
+                        UserErrorMessage = $"The supplied organisation ID '{organisationId}' was not found",
+                        DevErrorMessage = $"The [UserOrganizations] table does not contain an organisation with ID = {organisationId}"
+                    };
+                }
+
+                // check if the association already exists and ignore the request if it does
+                var userOrg = _context.UserOrganizations.FirstOrDefault(
+                    u => u.Id == userId &&
+                    u.OrganizationId == organisationId);
+
+                if (userOrg == null)
+                {
+                    // create new organisation <-> user association
+                    userOrg = new UserOrganizations()
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        Id = userId,
+                        OrganizationId = organisationId
+                    };
+
+                    _context.UserOrganizations.Add(userOrg);
+                    _context.SaveChanges();
+                }
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e);
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
         }
     }
 }

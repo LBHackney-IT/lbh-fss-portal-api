@@ -13,5 +13,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         void UpdateUser(UserDomain user);
         UserDomain GetUserBySubId(string subId);
         UserDomain GetUser(int userId);
+        IEnumerable<OrganizationsDomain> GetAssociatedOrganisations(int userId);
+        void AssociateUserWithOrganisation(int userId, int organisationId);
     }
 }
