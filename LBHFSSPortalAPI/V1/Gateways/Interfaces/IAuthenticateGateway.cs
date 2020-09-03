@@ -14,5 +14,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         void ConfirmResetPassword(ResetPasswordQueryParams resetPasswordQueryParams);
         void ChangePassword(ResetPasswordQueryParams resetPasswordQueryParams);
         AuthenticationResult ChallengePassword(ResetPasswordQueryParams resetPasswordQueryParams);
+        bool DeleteUser(string subId);
     }
 }

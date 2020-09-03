@@ -206,5 +206,10 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             return authResult;
         }
+
+        public bool DeleteUser(string subId)
+        {
+            return true;
+        }
     }
 }

@@ -156,5 +156,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             return null;
         }
+
+        public UserDomain GetUser(int userId)
+        {
+            UserDomain userDomain = null;
+
+            var user = _context.Users.SingleOrDefault(u => u.Id == userId);
+
+            if (user != null)
+                userDomain = user.ToDomain();
+
+            return userDomain;
+        }
     }
 }
