@@ -32,7 +32,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
             _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object,
                                                   _fakeCreateUserRequestUseCase.Object,
                                                   _fakeUpdateUserRequestUseCase.Object,
-                                                  _fakeDeleteUserRequestUseCase.Object );
+                                                  _fakeDeleteUserRequestUseCase.Object);
         }
 
         // TODO: Add tests
