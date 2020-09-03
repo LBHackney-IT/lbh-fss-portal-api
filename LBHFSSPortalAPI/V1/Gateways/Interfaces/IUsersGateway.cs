@@ -12,6 +12,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         UserDomain AddUser(AdminCreateUserRequest createRequestData);
         void UpdateUser(UserDomain user);
         UserDomain GetUserBySubId(string subId);
-
+        UserDomain GetUser(int userId);
     }
 }

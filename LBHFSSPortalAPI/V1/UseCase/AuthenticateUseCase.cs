@@ -76,7 +76,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 throw new UseCaseException() { UserErrorMessage = "the access_token parameter was empty or not supplied" };
 
             //idempotent!
-            _sessionsGateway.RemoveSession(queryParam.AccessToken);
+            _sessionsGateway.RemoveSessions(queryParam.AccessToken);
         }
     }
 }
