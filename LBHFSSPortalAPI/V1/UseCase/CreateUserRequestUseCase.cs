@@ -4,9 +4,9 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System;
-using LBHFSSPortalAPI.V1.Infrastructure;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -50,9 +50,11 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return userCreateResponse;
         }
 
-        public UserResponse AdminExecute(UserCreateRequest createRequestData)
+        public UserResponse AdminExecute(AdminCreateUserRequest createRequestData)
         {
-            string createdUserId = null;
+            UserResponse response = null;
+            string createdUserId;
+
             try
             {
                 createdUserId = _authGateway.AdminCreateUser(createRequestData);
@@ -66,21 +68,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             if (createdUserId != null)
             {
-                var user = new Users
+                _usersGateway.AddUser(createRequestData);
+
+                response = new UserResponse
                 {
-                    SubId = createdUserId,
+                    Email = createRequestData.Email,
                     Name = createRequestData.Name,
-                    Email = createRequestData.Email
+                    SubId = createdUserId
                 };
             }
 
-            var userCreateResponse = new UserResponse
-            {
-                Email = createRequestData.Email,
-                Name = createRequestData.Name,
-                SubId = createdUserId
-            };
-            return userCreateResponse;
+            return response;
         }
 
         private UserDomain SaveNewUser(UserCreateRequest createRequestData, string createdUserId)

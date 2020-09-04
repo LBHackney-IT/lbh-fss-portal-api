@@ -20,19 +20,28 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return savedSession.Entity;
         }
 
-        public void RemoveSession(string accessToken)
+        public void RemoveSessions(string accessToken)
         {
             var user = _databaseContext.Users.FirstOrDefault(u => u.SubId == accessToken);
 
             if (user != null)
             {
-                var sessions = _databaseContext.Sessions.Where(s => s.UserId == user.Id);
+                RemoveSessions(user.Id);
+            }
+        }
 
-                if (sessions.Any())
-                {
-                    _databaseContext.Sessions.RemoveRange(sessions);
-                    _databaseContext.SaveChanges();
-                }
+        public void RemoveSessions(int userId)
+        {
+            var sessions = _databaseContext.Sessions.Where(s => s.UserId == userId);
+            RemoveAllSessions(sessions);
+        }
+
+        private void RemoveAllSessions(IQueryable<Sessions> sessions)
+        {
+            if (sessions.Any())
+            {
+                _databaseContext.Sessions.RemoveRange(sessions);
+                _databaseContext.SaveChanges();
             }
         }
     }
