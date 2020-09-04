@@ -5,7 +5,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
     public class UserUpdateRequest
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Status { get; set; }

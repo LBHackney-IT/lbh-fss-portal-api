@@ -1,5 +1,6 @@
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System.Linq;
@@ -21,39 +22,48 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _authenticateGateway = authenticateGateway;
         }
 
-        public UserResponse Execute(int currentUserId, UserUpdateRequest updateRequest)
+        public UserResponse Execute(int userId, UserUpdateRequest updateRequest)
         {
-            var userDomain = _usersGateway.GetUser(currentUserId);
+            var userDomain = _usersGateway.GetUser(userId);
 
             userDomain.CreatedAt = updateRequest.CreatedAt;
             userDomain.Email = updateRequest.Email;
-            userDomain.Id = updateRequest.Id;
             userDomain.Name = updateRequest.Name;
             userDomain.Status = updateRequest.Status;
 
             _usersGateway.UpdateUser(userDomain);
 
-            var orgs = _usersGateway.GetAssociatedOrganisations(updateRequest.Id);
-            var matchingOrg = orgs.SingleOrDefault(o => o.Id == updateRequest.OrganisationId);
+            var orgs = _usersGateway.GetAssociatedOrganisations(userId);
+            var associatedOrg = orgs.SingleOrDefault(o => o.Id == updateRequest.OrganisationId);
 
-            if (matchingOrg == null)
+            if (associatedOrg == null)
             {
                 // add a link to this organisation Id
-                _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId);
+                associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId);
+
+                if (associatedOrg == null)
+                {
+                    throw new UseCaseException()
+                    {
+                        // TODO (MJC) - better error message below
+                        UserErrorMessage = "Could not create an association from the user to the specified organisation"
+                    };
+                }
             }
 
             var response = new UserResponse()
             {
+                Organisation = new OrganisationResponse()
+                {
+                    Id = associatedOrg.Id,
+                    Name = associatedOrg.Name
+                },
                 CreatedAt = userDomain.CreatedAt,
                 Email = userDomain.Email,
                 Id = userDomain.Id,
                 Name = userDomain.Name,
-                Organisation = new OrganisationResponse()
-                {
-                    Id = matchingOrg.Id,
-                    Name = matchingOrg.Name
-                },
-                Status = userDomain.Status
+                Status = userDomain.Status,
+                SubId = userDomain.SubId
             };
 
             return response;

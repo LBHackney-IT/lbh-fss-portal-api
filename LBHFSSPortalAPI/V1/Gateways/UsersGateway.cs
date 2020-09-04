@@ -176,7 +176,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             try
             {
-                var userOrgs = _context.UserOrganizations.Where(u => u.Id == userId);
+                var userOrgs = _context.UserOrganizations.Where(u => u.UserId == userId);
 
                 if (userOrgs.Any())
                 {
@@ -203,12 +203,16 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return orgDomains;
         }
 
-        public void AssociateUserWithOrganisation(int userId, int organisationId)
+        public OrganizationsDomain AssociateUserWithOrganisation(int userId, int organisationId)
         {
+            OrganizationsDomain response = null;
+
             try
             {
                 // check organisation actually exists before creating association in database
-                if (!_context.UserOrganizations.Any(o => o.Id == organisationId))
+                var orgEntity = _context.Organizations.FirstOrDefault(o => o.Id == organisationId);
+                
+                if (orgEntity == null)
                 {
                     throw new UseCaseException()
                     {
@@ -218,8 +222,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 }
 
                 // check if the association already exists and ignore the request if it does
-                var userOrg = _context.UserOrganizations.FirstOrDefault(
-                    u => u.Id == userId &&
+                var userOrg = _context.UserOrganizations.FirstOrDefault(u =>
+                    u.UserId == userId &&
                     u.OrganizationId == organisationId);
 
                 if (userOrg == null)
@@ -228,12 +232,14 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     userOrg = new UserOrganizations()
                     {
                         CreatedAt = DateTime.UtcNow,
-                        Id = userId,
+                        UserId = userId,
                         OrganizationId = organisationId
                     };
 
                     _context.UserOrganizations.Add(userOrg);
                     _context.SaveChanges();
+
+                    response = orgEntity.ToDomain();
                 }
             }
             catch (DbUpdateException e)
@@ -246,6 +252,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 LambdaLogger.Log(e.StackTrace);
                 throw;
             }
+
+            return response;
         }
     }
 }
