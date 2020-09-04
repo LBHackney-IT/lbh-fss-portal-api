@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    "id" int4 PRIMARY KEY,
+    "id" serial PRIMARY KEY,
     "sub_id" varchar,
     "email" varchar,
     "name" varchar,
