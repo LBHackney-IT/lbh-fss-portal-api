@@ -17,13 +17,22 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         private UsersController _classUnderTest;
         private Mock<IGetAllUsersUseCase> _fakeGetAllUsersUseCase;
         private Mock<ICreateUserRequestUseCase> _fakeCreateUserRequestUseCase;
+        private Mock<IUpdateUserRequestUseCase> _fakeUpdateUserRequestUseCase;
+        private Mock<IDeleteUserRequestUseCase> _fakeDeleteUserRequestUseCase;
+
 
         [SetUp]
         public void SetUp()
         {
             _fakeGetAllUsersUseCase = new Mock<IGetAllUsersUseCase>();
             _fakeCreateUserRequestUseCase = new Mock<ICreateUserRequestUseCase>();
-            _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object, _fakeCreateUserRequestUseCase.Object);
+            _fakeUpdateUserRequestUseCase = new Mock<IUpdateUserRequestUseCase>();
+            _fakeDeleteUserRequestUseCase = new Mock<IDeleteUserRequestUseCase>();
+
+            _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object,
+                                                  _fakeCreateUserRequestUseCase.Object,
+                                                  _fakeUpdateUserRequestUseCase.Object,
+                                                  _fakeDeleteUserRequestUseCase.Object);
         }
 
         // TODO: Add tests
