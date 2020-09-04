@@ -24,14 +24,13 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             var user = _usersGateway.GetUser(userId);
 
-            if (_authenticateGateway.DeleteUser(user.SubId))
+            if (_authenticateGateway.DeleteUser(user.Email))
             {
                 user.Status = UserStatus.Deleted;
                 _sessionsGateway.RemoveSessions(user.Id);
                 _usersGateway.UpdateUser(user);
                 success = true;
             }
-
             return success;
         }
     }
