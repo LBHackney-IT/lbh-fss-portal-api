@@ -65,16 +65,16 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Created("Created", response);
         }
 
-        [Route("users")]
+        [Route("users/{userId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult UpdateUser([FromQuery] int currentUserId, [FromBody] UserUpdateRequest userUpdateRequest)
+        public IActionResult UpdateUser([FromRoute] int userId, [FromBody] UserUpdateRequest userUpdateRequest)
         {
             UserResponse response;
 
             try
             {
-                response = _updateUserRequestUseCase.Execute(currentUserId, userUpdateRequest);
+                response = _updateUserRequestUseCase.Execute(userId, userUpdateRequest);
             }
             catch (UseCaseException e)
             {
@@ -90,10 +90,10 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Ok(response);
         }
 
-        [Route("users")]
+        [Route("users/{userId}")]
         [HttpDelete]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult DeleteUser([FromQuery] int userId)
+        public IActionResult DeleteUser([FromRoute] int userId)
         {
             try
             {
