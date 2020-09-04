@@ -68,13 +68,13 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("users")]
         [HttpPatch]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult UpdateUser([FromQuery] int currentUserId, [FromBody] UserUpdateRequest userUpdateRequest)
+        public IActionResult UpdateUser([FromQuery] int userId, [FromBody] UserUpdateRequest userUpdateRequest)
         {
             UserResponse response;
 
             try
             {
-                response = _updateUserRequestUseCase.Execute(currentUserId, userUpdateRequest);
+                response = _updateUserRequestUseCase.Execute(userId, userUpdateRequest);
             }
             catch (UseCaseException e)
             {
