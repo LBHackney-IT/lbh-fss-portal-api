@@ -65,10 +65,10 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Created("Created", response);
         }
 
-        [Route("users")]
+        [Route("users/{userId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult UpdateUser([FromQuery] int userId, [FromBody] UserUpdateRequest userUpdateRequest)
+        public IActionResult UpdateUser([FromRoute] int userId, [FromBody] UserUpdateRequest userUpdateRequest)
         {
             UserResponse response;
 

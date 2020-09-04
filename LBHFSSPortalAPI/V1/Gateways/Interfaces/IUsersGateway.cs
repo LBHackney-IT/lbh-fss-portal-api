@@ -14,6 +14,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         UserDomain GetUserBySubId(string subId);
         UserDomain GetUser(int userId);
         IEnumerable<OrganizationsDomain> GetAssociatedOrganisations(int userId);
-        void AssociateUserWithOrganisation(int userId, int organisationId);
+        OrganizationsDomain AssociateUserWithOrganisation(int userId, int organisationId);
     }
 }
