@@ -90,10 +90,10 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Ok(response);
         }
 
-        [Route("users")]
+        [Route("users/{userId}")]
         [HttpDelete]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public IActionResult DeleteUser([FromQuery] int userId)
+        public IActionResult DeleteUser([FromRoute] int userId)
         {
             try
             {
