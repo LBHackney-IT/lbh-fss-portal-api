@@ -207,9 +207,30 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return authResult;
         }
 
-        public bool DeleteUser(string subId)
+        public bool DeleteUser(string email)
         {
-            return true;
+            AdminDeleteUserRequest adminDeleteUserRequest = new AdminDeleteUserRequest
+            {
+                Username = email,
+                UserPoolId = _connectionInfo.UserPoolId
+            };
+            try
+            {
+                var response = _provider.AdminDeleteUserAsync(adminDeleteUserRequest).Result;
+                if (response.HttpStatusCode == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }
