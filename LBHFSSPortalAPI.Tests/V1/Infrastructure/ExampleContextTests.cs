@@ -9,16 +9,16 @@ namespace LBHFSSPortalAPI.Tests.V1.Infrastructure
     public class DatabaseContextTest : DatabaseTests
     {
         //[Test]
-        public void CanGetADatabaseEntity()
-        {
-            var databaseEntity = DatabaseEntityHelper.CreateDatabaseEntity();
+        //public void CanGetADatabaseEntity()
+        //{
+        //    var databaseEntity = DatabaseEntityHelper.CreateDatabaseEntity();
 
-            DatabaseContext.Add(databaseEntity);
-            DatabaseContext.SaveChanges();
+        //    DatabaseContext.Add(databaseEntity);
+        //    DatabaseContext.SaveChanges();
 
-            var result = DatabaseContext.DatabaseEntities.ToList().FirstOrDefault();
+        //    var result = DatabaseContext.DatabaseEntities.ToList().FirstOrDefault();
 
-            Assert.AreEqual(result, databaseEntity);
-        }
+        //    Assert.AreEqual(result, databaseEntity);
+        //}
     }
 }

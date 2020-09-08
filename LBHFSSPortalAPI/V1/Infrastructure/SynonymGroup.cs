@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace LBHFSSPortalAPI.V1.Infrastructure
 {
-    public partial class SynonymGroups
+    public partial class SynonymGroup
     {
-        public SynonymGroups()
+        public SynonymGroup()
         {
-            SynonymWords = new HashSet<SynonymWords>();
+            SynonymWords = new HashSet<SynonymWord>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual ICollection<SynonymWords> SynonymWords { get; set; }
+        public virtual ICollection<SynonymWord> SynonymWords { get; set; }
     }
 }

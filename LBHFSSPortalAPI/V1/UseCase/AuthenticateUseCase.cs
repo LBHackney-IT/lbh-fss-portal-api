@@ -47,7 +47,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
 
-            Sessions session = new Sessions()
+            Session session = new Session()
             {
                 IpAddress = loginParams.IpAddress,
                 CreatedAt = timestamp,
