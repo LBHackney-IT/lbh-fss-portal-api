@@ -211,7 +211,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 // check organisation actually exists before creating association in database
                 var orgEntity = _context.Organizations.FirstOrDefault(o => o.Id == organisationId);
-                
+
                 if (orgEntity == null)
                 {
                     throw new UseCaseException()
