@@ -24,10 +24,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public UserResponse Execute(int userId, UserUpdateRequest updateRequest)
         {
-            var userDomain = _usersGateway.GetUser(userId);
+            _authenticateGateway.UpdateUser(updateRequest);
 
+            var userDomain = _usersGateway.GetUser(userId);
             userDomain.CreatedAt = updateRequest.CreatedAt;
-            userDomain.Email = updateRequest.Email;
             userDomain.Name = updateRequest.Name;
             userDomain.Status = updateRequest.Status;
 
