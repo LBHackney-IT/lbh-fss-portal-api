@@ -8,6 +8,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public Organizations()
         {
             Services = new HashSet<Services>();
+            UserOrganizations = new HashSet<UserOrganizations>();
         }
 
         public int Id { get; set; }
@@ -15,5 +16,6 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public DateTime? CreatedAt { get; set; }
 
         public virtual ICollection<Services> Services { get; set; }
+        public virtual ICollection<UserOrganizations> UserOrganizations { get; set; }
     }
 }

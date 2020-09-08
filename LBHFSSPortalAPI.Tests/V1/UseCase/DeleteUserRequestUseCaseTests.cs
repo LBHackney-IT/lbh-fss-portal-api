@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace LBHFSSPortalAPI.Tests.V1.UseCase
 {
     [TestFixture]
-    public class CreateUserRequestUseCaseTests
+    public class DeleteUserRequestUseCaseTests
     {
         private Mock<IAuthenticateGateway> _mockAuthenticateGateway;
         private Mock<IUsersGateway> _mockUsersGateway;
@@ -21,14 +21,14 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             _mockAuthenticateGateway = new Mock<IAuthenticateGateway>();
             _mockUsersGateway = new Mock<IUsersGateway>();
-            _classUnderTest = new CreateUserRequestUseCase(_mockAuthenticateGateway.Object, _mockUsersGateway.Object);
+            _classUnderTest = new CreateUserRequestUseCase(_mockAuthenticateGateway.Object,
+                                                           _mockUsersGateway.Object);
         }
 
         [Test]
-        public void ExecuteSavesRequestToDatabase()
+        public void ExecuteUpdatesUserAndRemovesSessionsInDatabase()
         {
             //var dataToSave = new Fixture().Build<UserCreateRequest>().Create();
-            //int userId = new Fixture()..Build<UserCreateRequest>().Create();
             //var recData = new UserDomain { Email = dataToSave.Email, Name = dataToSave.Name, Status = "Pending", Id = 1 };
             //_mockUsersGateway.Setup(u => u.AddUser(It.IsAny<UserDomain>())).Returns(recData);
             //var response = _classUnderTest.Execute(dataToSave);
