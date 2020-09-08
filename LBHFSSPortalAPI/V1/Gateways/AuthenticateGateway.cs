@@ -8,6 +8,7 @@ using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using AdminCreateUserRequest = Amazon.CognitoIdentityProvider.Model.AdminCreateUserRequest;
+using LBHFSSPortalAPI.V1.Exceptions;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -231,6 +232,15 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public void UpdateUser(UserUpdateRequest updateRequest)
+        {
+            throw new UseCaseException()
+            {
+                UserErrorMessage = "This feature is not yet available",
+                DevErrorMessage = "Cognito integration for updating user info is pending"
+            };
         }
     }
 }
