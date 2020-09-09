@@ -2,7 +2,7 @@ using System;
 
 namespace LBHFSSPortalAPI.V1.Infrastructure
 {
-    public partial class ServiceLocations
+    public partial class ServiceLocation
     {
         public int Id { get; set; }
         public int? RevisionId { get; set; }
@@ -16,6 +16,6 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public string Country { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual ServiceRevisions Revision { get; set; }
+        public virtual ServiceRevision Revision { get; set; }
     }
 }

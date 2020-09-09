@@ -13,7 +13,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             _databaseContext = databaseContext;
         }
-        public Sessions AddSession(Sessions session)
+        public Session AddSession(Session session)
         {
             var savedSession = _databaseContext.Sessions.Add(session);
             int rows = _databaseContext.SaveChanges(); //log number of rows saved?
@@ -36,7 +36,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             RemoveAllSessions(sessions);
         }
 
-        private void RemoveAllSessions(IQueryable<Sessions> sessions)
+        private void RemoveAllSessions(IQueryable<Session> sessions)
         {
             if (sessions.Any())
             {

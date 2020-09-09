@@ -127,7 +127,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public UserDomain AddUser(AdminCreateUserRequest requestData)
         {
-            var userEntity = new Users()
+            var userEntity = new User()
             {
                 Id = requestData.Id,
                 CreatedAt = requestData.CreatedAt,

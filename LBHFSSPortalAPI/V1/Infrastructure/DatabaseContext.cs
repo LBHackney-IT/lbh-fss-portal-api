@@ -13,21 +13,19 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         {
         }
 
-        public DbSet<DatabaseEntity> DatabaseEntities { get; set; }
-
-        public virtual DbSet<Organizations> Organizations { get; set; }
-        public virtual DbSet<Roles> Roles { get; set; }
-        public virtual DbSet<ServiceLocations> ServiceLocations { get; set; }
-        public virtual DbSet<ServiceRevisions> ServiceRevisions { get; set; }
-        public virtual DbSet<ServiceTaxonomies> ServiceTaxonomies { get; set; }
-        public virtual DbSet<Services> Services { get; set; }
-        public virtual DbSet<Sessions> Sessions { get; set; }
-        public virtual DbSet<SynonymGroups> SynonymGroups { get; set; }
-        public virtual DbSet<SynonymWords> SynonymWords { get; set; }
-        public virtual DbSet<Taxonomies> Taxonomies { get; set; }
-        public virtual DbSet<UserOrganizations> UserOrganizations { get; set; }
-        public virtual DbSet<UserRoles> UserRoles { get; set; }
-        public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<Organization> Organizations { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<ServiceLocation> ServiceLocations { get; set; }
+        public virtual DbSet<ServiceRevision> ServiceRevisions { get; set; }
+        public virtual DbSet<ServiceTaxonomy> ServiceTaxonomies { get; set; }
+        public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<Session> Sessions { get; set; }
+        public virtual DbSet<SynonymGroup> SynonymGroups { get; set; }
+        public virtual DbSet<SynonymWord> SynonymWords { get; set; }
+        public virtual DbSet<Taxonomy> Taxonomies { get; set; }
+        public virtual DbSet<UserOrganization> UserOrganizations { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -41,7 +39,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Organizations>(entity =>
+            modelBuilder.Entity<Organization>(entity =>
             {
                 entity.ToTable("organizations");
 
@@ -54,7 +52,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnType("character varying");
             });
 
-            modelBuilder.Entity<Roles>(entity =>
+            modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("roles");
 
@@ -67,7 +65,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnType("character varying");
             });
 
-            modelBuilder.Entity<ServiceLocations>(entity =>
+            modelBuilder.Entity<ServiceLocation>(entity =>
             {
                 entity.ToTable("service_locations");
 
@@ -115,7 +113,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasConstraintName("service_locations_revision_id_fkey");
             });
 
-            modelBuilder.Entity<ServiceRevisions>(entity =>
+            modelBuilder.Entity<ServiceRevision>(entity =>
             {
                 entity.ToTable("service_revisions");
 
@@ -193,7 +191,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasConstraintName("service_revisions_service_id_fkey");
             });
 
-            modelBuilder.Entity<ServiceTaxonomies>(entity =>
+            modelBuilder.Entity<ServiceTaxonomy>(entity =>
             {
                 entity.HasNoKey();
 
@@ -220,7 +218,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasConstraintName("service_taxonomies_taxonomy_id_fkey");
             });
 
-            modelBuilder.Entity<Services>(entity =>
+            modelBuilder.Entity<Service>(entity =>
             {
                 entity.ToTable("services");
 
@@ -242,15 +240,9 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.OrganizationId)
                     .HasConstraintName("services_organization_id_fkey");
-
-                entity.HasOne(d => d.Revision)
-                    .WithOne(p => p.Services)
-                    .HasForeignKey<Services>(d => d.RevisionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("services_revision_id_fkey");
             });
 
-            modelBuilder.Entity<Sessions>(entity =>
+            modelBuilder.Entity<Session>(entity =>
             {
                 entity.ToTable("sessions");
 
@@ -282,7 +274,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasConstraintName("sessions_user_id_fkey");
             });
 
-            modelBuilder.Entity<SynonymGroups>(entity =>
+            modelBuilder.Entity<SynonymGroup>(entity =>
             {
                 entity.ToTable("synonym_groups");
 
@@ -295,7 +287,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnType("character varying");
             });
 
-            modelBuilder.Entity<SynonymWords>(entity =>
+            modelBuilder.Entity<SynonymWord>(entity =>
             {
                 entity.ToTable("synonym_words");
 
@@ -317,7 +309,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasConstraintName("synonym_words_group_id_fkey");
             });
 
-            modelBuilder.Entity<Taxonomies>(entity =>
+            modelBuilder.Entity<Taxonomy>(entity =>
             {
                 entity.ToTable("taxonomies");
 
@@ -334,9 +326,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.Property(e => e.Vocabulary)
                     .HasColumnName("vocabulary")
                     .HasColumnType("character varying");
+                entity.Property(e => e.Weight).HasColumnName("weight");
             });
 
-            modelBuilder.Entity<UserOrganizations>(entity =>
+            modelBuilder.Entity<UserOrganization>(entity =>
             {
                 entity.ToTable("user_organizations");
 
@@ -344,8 +337,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.HasIndex(e => e.OrganizationId);
 
-                entity.HasIndex(e => e.UserId)
-                    .HasName("fki_user_organizations_user_id_fkey");
+                entity.HasIndex(e => e.UserId);
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .ValueGeneratedNever();
@@ -369,10 +362,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasConstraintName("user_organizations_user_id_fkey");
             });
 
-            modelBuilder.Entity<UserRoles>(entity =>
+            modelBuilder.Entity<UserRole>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("user_roles");
 
                 entity.HasIndex(e => e.RoleId);
@@ -397,7 +388,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasConstraintName("user_roles_role_id_fkey");
             });
 
-            modelBuilder.Entity<Users>(entity =>
+            modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("users");
 
@@ -424,13 +415,12 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
             SetupSeedData(modelBuilder);
         }
-
         private static void SetupSeedData(ModelBuilder modelBuilder)
         {
             var cultureInfo = new CultureInfo("en-GB");
 
-            modelBuilder.Entity<Users>().HasData(
-                new Users
+            modelBuilder.Entity<User>().HasData(
+                new User
                 {
                     Id = 1,
                     Name = "Jane Doe",
@@ -440,8 +430,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     Status = "active"
                 });
 
-            modelBuilder.Entity<Users>().HasData(
-                new Users
+            modelBuilder.Entity<User>().HasData(
+                new User
                 {
                     Id = 2,
                     Name = "Mark Williams",
@@ -451,8 +441,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     Status = "active"
                 });
 
-            modelBuilder.Entity<Users>().HasData(
-                new Users
+            modelBuilder.Entity<User>().HasData(
+                new User
                 {
                     Id = 3,
                     Name = "Janet Graham",
@@ -462,8 +452,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     Status = "unverified"
                 });
 
-            modelBuilder.Entity<Users>().HasData(
-                new Users
+            modelBuilder.Entity<User>().HasData(
+                new User
                 {
                     Id = 4,
                     Name = "Ronnie O'Sullivan",
@@ -473,8 +463,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     Status = "verified"
                 });
 
-            modelBuilder.Entity<Users>().HasData(
-                new Users
+            modelBuilder.Entity<User>().HasData(
+                new User
                 {
                     Id = 5,
                     Name = "Betty Davis",

@@ -3,19 +3,18 @@ using System.Collections.Generic;
 
 namespace LBHFSSPortalAPI.V1.Infrastructure
 {
-    public partial class Organizations
+    public partial class SynonymGroup
     {
-        public Organizations()
+        public SynonymGroup()
         {
-            Services = new HashSet<Services>();
-            UserOrganizations = new HashSet<UserOrganizations>();
+            SynonymWords = new HashSet<SynonymWord>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual ICollection<Services> Services { get; set; }
+        public virtual ICollection<SynonymWord> SynonymWords { get; set; }
         public virtual ICollection<UserOrganizations> UserOrganizations { get; set; }
     }
 }

@@ -7,19 +7,7 @@ namespace LBHFSSPortalAPI.V1.Factories
 {
     public static class EntityFactory
     {
-        public static Entity ToDomain(this DatabaseEntity databaseEntity)
-        {
-            //TODO: Map the rest of the fields in the domain object.
-            // More information on this can be found here https://github.com/LBHackney-IT/lbh-base-api/wiki/Factory-object-mappings
-
-            return new Entity
-            {
-                Id = databaseEntity.Id,
-                CreatedAt = databaseEntity.CreatedAt,
-            };
-        }
-
-        public static UserDomain ToDomain(this Users usersEntity)
+        public static UserDomain ToDomain(this User usersEntity)
         {
             return new UserDomain
             {
@@ -32,9 +20,9 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
-        public static Users ToEntity(this UserDomain userDomain)
+        public static User ToEntity(this UserDomain userDomain)
         {
-            return new Users
+            return new User
             {
                 Id = userDomain.Id,
                 Email = userDomain.Email,
@@ -45,7 +33,7 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
-        public static List<UserDomain> ToDomain(this IEnumerable<Users> users)
+        public static List<UserDomain> ToDomain(this IEnumerable<User> users)
         {
             return users.Select(p => p.ToDomain()).ToList();
         }
