@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace LBHFSSPortalAPI.V1.Infrastructure
 {
-    public partial class ServiceRevisions
+    public partial class ServiceRevision
     {
-        public ServiceRevisions()
+        public ServiceRevision()
         {
-            ServiceLocations = new HashSet<ServiceLocations>();
+            ServiceLocations = new HashSet<ServiceLocation>();
         }
 
         public int Id { get; set; }
@@ -28,10 +28,9 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public string ReviewerMessage { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Users Author { get; set; }
-        public virtual Users ReviewerU { get; set; }
-        public virtual Services Service { get; set; }
-        public virtual Services Services { get; set; }
-        public virtual ICollection<ServiceLocations> ServiceLocations { get; set; }
+        public virtual User Author { get; set; }
+        public virtual User ReviewerU { get; set; }
+        public virtual Service Service { get; set; }
+        public virtual ICollection<ServiceLocation> ServiceLocations { get; set; }
     }
 }

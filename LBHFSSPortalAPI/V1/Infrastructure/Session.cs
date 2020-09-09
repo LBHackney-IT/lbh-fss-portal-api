@@ -2,7 +2,7 @@ using System;
 
 namespace LBHFSSPortalAPI.V1.Infrastructure
 {
-    public partial class Sessions
+    public partial class Session
     {
         public int Id { get; set; }
         public int? UserId { get; set; }
@@ -12,6 +12,6 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public DateTime? LastAccessAt { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Users User { get; set; }
+        public virtual User User { get; set; }
     }
 }
