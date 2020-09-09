@@ -16,7 +16,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 Name = usersEntity.Name,
                 Status = usersEntity.Status,
                 CreatedAt = usersEntity.CreatedAt,
-                SubId = usersEntity.SubId
+                SubId = usersEntity.SubId,
             };
         }
 
