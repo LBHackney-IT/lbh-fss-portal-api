@@ -229,7 +229,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 if (userOrg == null)
                 {
                     // create new organisation <-> user association
-                    userOrg = new UserOrganizations()
+                    userOrg = new UserOrganization()
                     {
                         CreatedAt = DateTime.UtcNow,
                         UserId = userId,
