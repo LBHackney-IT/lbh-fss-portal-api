@@ -38,7 +38,7 @@ namespace LBHFSSPortalAPI.V1.Factories
             return users.Select(p => p.ToDomain()).ToList();
         }
 
-        public static OrganizationsDomain ToDomain(this Organizations orgEntity)
+        public static OrganizationsDomain ToDomain(this Organization orgEntity)
         {
             return new OrganizationsDomain
             {
@@ -48,7 +48,7 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
-        public static List<OrganizationsDomain> ToDomain(this IEnumerable<Organizations> orgs)
+        public static List<OrganizationsDomain> ToDomain(this IEnumerable<Organization> orgs)
         {
             return orgs.Select(o => o.ToDomain()).ToList();
         }
