@@ -1,8 +1,8 @@
 using System;
 
-namespace LBHFSSPortalAPI.V1.Infrastructure
+namespace LBHFSSPortalAPI.V1.Domain
 {
-    public partial class Roles
+    public class OrganizationsDomain
     {
         public int Id { get; set; }
         public string Name { get; set; }
