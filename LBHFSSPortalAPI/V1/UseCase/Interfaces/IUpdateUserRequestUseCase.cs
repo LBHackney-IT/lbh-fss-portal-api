@@ -5,6 +5,6 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
     public interface IUpdateUserRequestUseCase
     {
-        UserResponse Execute(int currentUserId, UserUpdateRequest userUpdateRequest);
+        UserResponse Execute(int currentUserId, UserUpdateRequest updateRequest);
     }
 }

@@ -47,7 +47,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
 
-            Sessions session = new Sessions()
+            Session session = new Session()
             {
                 IpAddress = loginParams.IpAddress,
                 CreatedAt = timestamp,
@@ -75,7 +75,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
             if (string.IsNullOrWhiteSpace(queryParam.AccessToken))
                 throw new UseCaseException() { UserErrorMessage = "the access_token parameter was empty or not supplied" };
 
-            //idempotent!
             _sessionsGateway.RemoveSessions(queryParam.AccessToken);
         }
     }
