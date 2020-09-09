@@ -75,7 +75,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
             if (string.IsNullOrWhiteSpace(queryParam.AccessToken))
                 throw new UseCaseException() { UserErrorMessage = "the access_token parameter was empty or not supplied" };
 
-            //idempotent!
             _sessionsGateway.RemoveSessions(queryParam.AccessToken);
         }
     }

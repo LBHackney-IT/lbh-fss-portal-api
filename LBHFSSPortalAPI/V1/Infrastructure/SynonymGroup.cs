@@ -15,5 +15,6 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public DateTime? CreatedAt { get; set; }
 
         public virtual ICollection<SynonymWord> SynonymWords { get; set; }
+        public virtual ICollection<UserOrganizations> UserOrganizations { get; set; }
     }
 }
