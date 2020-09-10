@@ -11,5 +11,6 @@ namespace LBHFSSPortalAPI.V1.Domain
         public string Status { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string SubId { get; set; }
+        public int OrganisationId { get; internal set; }
     }
 }
