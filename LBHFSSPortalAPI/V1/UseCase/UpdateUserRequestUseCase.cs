@@ -25,23 +25,20 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public UserResponse Execute(int userId, UserUpdateRequest updateRequest)
         {
             ValidateRequestParams(updateRequest);
-
-
             var userDomain = _usersGateway.GetUser(userId);
-            _authenticateGateway.UpdateUser(updateRequest);
 
-            // +++
-            // TODO (MJC): Do I need to call ChangePassword separately as below or will the above
-            // _authenticateGateway.UpdateUser() do this once implemented?
-
-            //if (!string.IsNullOrEmpty(updateRequest.Password))
-            //    _authenticateGateway.ChangePassword(new ResetPasswordQueryParams()
-            //    {
-            //        Email = userDomain.Email,
-            //        Password = updateRequest.Password
-            //    });
-
-            // +++
+            // We do not store the password in the API database so cannot tell here
+            // if a different value was provided compared to the current value.
+            // Hence need to call the Update Password method on the authentication
+            // gateway every time
+            if (updateRequest.Password != null)
+            {
+                _authenticateGateway.ChangePassword(new ResetPasswordQueryParams()
+                {
+                    Email = userDomain.Email,
+                    Password = updateRequest.Password
+                });
+            }
 
             // if the user has passed a null value for any of the below we assume
             // they do not want that field to be updated (keep the current value)
