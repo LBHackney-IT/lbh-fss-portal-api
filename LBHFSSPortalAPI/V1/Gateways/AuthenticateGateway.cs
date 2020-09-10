@@ -233,14 +233,5 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
         }
-
-        public void UpdateUser(UserUpdateRequest updateRequest)
-        {
-            throw new UseCaseException()
-            {
-                UserErrorMessage = "This feature is not yet available",
-                DevErrorMessage = "Cognito integration for updating user info is pending"
-            };
-        }
     }
 }
