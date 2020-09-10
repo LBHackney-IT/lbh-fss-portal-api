@@ -24,49 +24,107 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public UserResponse Execute(int userId, UserUpdateRequest updateRequest)
         {
-            _authenticateGateway.UpdateUser(updateRequest);
-
+            ValidateRequestParams(updateRequest);
             var userDomain = _usersGateway.GetUser(userId);
-            userDomain.CreatedAt = updateRequest.CreatedAt;
-            userDomain.Name = updateRequest.Name;
-            userDomain.Status = updateRequest.Status;
 
+            // We do not store the password in the API database so cannot tell here
+            // if a different value was provided compared to the current value.
+            // Hence need to call the Update Password method on the authentication
+            // gateway every time
+            if (updateRequest.Password != null)
+            {
+                _authenticateGateway.ChangePassword(new ResetPasswordQueryParams()
+                {
+                    Email = userDomain.Email,
+                    Password = updateRequest.Password
+                });
+            }
+
+            // if the user has passed a null value for any of the below we assume
+            // they do not want that field to be updated (keep the current value)
+            userDomain.CreatedAt = updateRequest.CreatedAt ?? userDomain.CreatedAt;
+            userDomain.Name = updateRequest.Name ?? userDomain.Name;
+            userDomain.Status = updateRequest.Status ?? userDomain.Status;
             _usersGateway.UpdateUser(userDomain);
 
-            var orgs = _usersGateway.GetAssociatedOrganisations(userId);
-            var associatedOrg = orgs.SingleOrDefault(o => o.Id == updateRequest.OrganisationId);
+            var response = new UserResponse();
 
-            if (associatedOrg == null)
+            // If the client has specified a non-zero organisation id value, add the organisation to
+            // the list of users associated organisations if not already present
+            if (updateRequest.OrganisationId != 0)
             {
-                // add a link to this organisation Id
-                associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId);
+                var orgs = _usersGateway.GetAssociatedOrganisations(userId);
+                var associatedOrg = orgs.SingleOrDefault(o => o.Id == updateRequest.OrganisationId);
 
                 if (associatedOrg == null)
                 {
-                    throw new UseCaseException()
-                    {
-                        // TODO (MJC) - better error message below
-                        UserErrorMessage = "Could not create an association from the user to the specified organisation"
-                    };
-                }
-            }
+                    // add a link to this organisation Id
+                    associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId);
 
-            var response = new UserResponse()
-            {
-                Organisation = new OrganisationResponse()
+                    if (associatedOrg == null)
+                    {
+                        throw new UseCaseException()
+                        {
+                            UserErrorMessage = "Could not create an association from the user to the specified organisation"
+                        };
+                    }
+                }
+
+                response.Organisation = new OrganisationResponse()
                 {
                     Id = associatedOrg.Id,
                     Name = associatedOrg.Name
-                },
-                CreatedAt = userDomain.CreatedAt,
-                Email = userDomain.Email,
-                Id = userDomain.Id,
-                Name = userDomain.Name,
-                Status = userDomain.Status,
-                SubId = userDomain.SubId
-            };
+                };
+            }
+
+            response.CreatedAt = userDomain.CreatedAt;
+            response.Email = userDomain.Email;
+            response.Id = userDomain.Id;
+            response.Name = userDomain.Name;
+            response.Status = userDomain.Status;
+            response.SubId = userDomain.SubId;
 
             return response;
+        }
+
+        private static void ValidateRequestParams(UserUpdateRequest updateRequest)
+        {
+            const string EmptyFieldMessage =
+                "Send a(null) value for this if no change is required on this field";
+
+            // The rather strange logic below is to account for the fact clients can send
+            // a (null) value for a field in the request intending it to be ignored (keep
+            // current value) but can also send a value if they wish it to be updated.
+            //
+            // TODO (MJC): (what if they want to empty one of the fields below such as roles?)
+
+            if (updateRequest.Name != null && string.IsNullOrWhiteSpace(updateRequest.Name))
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "The provided user name was empty",
+                    DevErrorMessage = EmptyFieldMessage
+                };
+
+            if (updateRequest.Password != null && string.IsNullOrWhiteSpace(updateRequest.Password))
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "The provided user password was empty",
+                    DevErrorMessage = EmptyFieldMessage
+                };
+
+            if (updateRequest.Status != null && string.IsNullOrWhiteSpace(updateRequest.Status))
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "The provided user status was empty",
+                    DevErrorMessage = EmptyFieldMessage
+                };
+
+            if (updateRequest.Roles != null && string.IsNullOrWhiteSpace(updateRequest.Roles))
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "The provided user roles list was empty",
+                    DevErrorMessage = EmptyFieldMessage
+                };
         }
     }
 }

@@ -95,7 +95,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             };
             try
             {
-                _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest);
+                _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest).Wait();
             }
             catch (Exception e)
             {
@@ -149,7 +149,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 ClientId = _connectionInfo.ClientId,
                 Username = resetPasswordQueryParams.Email
             };
-            _provider.ForgotPasswordAsync(fpRequest);
+            _provider.ForgotPasswordAsync(fpRequest).Wait();
         }
 
         public void ConfirmResetPassword(ResetPasswordQueryParams resetPasswordQueryParams)
@@ -161,7 +161,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 Password = resetPasswordQueryParams.Password,
                 ConfirmationCode = resetPasswordQueryParams.Code
             };
-            _provider.ConfirmForgotPasswordAsync(cfpRequest);
+            _provider.ConfirmForgotPasswordAsync(cfpRequest).Wait();
         }
 
         public void ChangePassword(ResetPasswordQueryParams resetPasswordQueryParams)
@@ -173,7 +173,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 UserPoolId = _connectionInfo.UserPoolId,
                 Permanent = true
             };
-            var response = _provider.AdminSetUserPasswordAsync(adminSetUserPasswordRequest);
+            var response = _provider.AdminSetUserPasswordAsync(adminSetUserPasswordRequest).Result;
         }
 
         public AuthenticationResult ChallengePassword(ResetPasswordQueryParams resetPasswordQueryParams)
@@ -232,15 +232,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 Console.WriteLine(e);
                 throw;
             }
-        }
-
-        public void UpdateUser(UserUpdateRequest updateRequest)
-        {
-            throw new UseCaseException()
-            {
-                UserErrorMessage = "This feature is not yet available",
-                DevErrorMessage = "Cognito integration for updating user info is pending"
-            };
         }
     }
 }
