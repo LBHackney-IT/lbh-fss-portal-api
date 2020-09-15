@@ -9,6 +9,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public int? ParentId { get; set; }
         public string Vocabulary { get; set; }
         public int Weight { get; set; }
+        public string Description { get; set; }
         public DateTime? CreatedAt { get; set; }
     }
 }
