@@ -5,7 +5,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
     public partial class ServiceLocation
     {
         public int Id { get; set; }
-        public int? RevisionId { get; set; }
+        public int? ServiceId { get; set; }
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
         public int? Uprn { get; set; }
@@ -16,6 +16,6 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public string Country { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual ServiceRevision Revision { get; set; }
+        public virtual Service Service { get; set; }
     }
 }
