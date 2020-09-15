@@ -5,6 +5,7 @@ using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using LBHFSSPortalAPI.V1.Validations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
@@ -32,9 +33,16 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("users")]
         [HttpGet]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
-        public IActionResult ListUsers([FromQuery] UserQueryParam userQueryParam)
+        public async Task<IActionResult> ListUsers([FromQuery] UserQueryParam userQueryParam)
         {
-            return Ok(_getAllUseCase.Execute(userQueryParam));
+            try
+            {
+                return Ok(await _getAllUseCase.Execute(userQueryParam).ConfigureAwait(false));
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [Route("users")]
@@ -42,27 +50,17 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
         public IActionResult Create([FromBody] AdminCreateUserRequest userCreateRequest)
         {
-            UserResponse response;
-
             if (!userCreateRequest.IsValid())
                 return BadRequest("Invalid details provided");
 
             try
             {
-                response = _createUserRequestUseCase.AdminExecute(userCreateRequest);
+                return Created("Created", _createUserRequestUseCase.AdminExecute(userCreateRequest));
             }
             catch (UseCaseException e)
             {
-                // Show a more detailed error message with call stack if running in development mode
-
-                // TODO (MJC): Inject the environment variable below (DI)
-                //if (_env.IsDev)
-                //      return BadRequest(e.DeveloperErrorMessage);
-
                 return BadRequest(e.UserErrorMessage);
             }
-
-            return Created("Created", response);
         }
 
         [Route("users/{userId}")]
@@ -70,24 +68,14 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public IActionResult UpdateUser([FromRoute] int userId, [FromBody] UserUpdateRequest userUpdateRequest)
         {
-            UserResponse response;
-
             try
             {
-                response = _updateUserRequestUseCase.Execute(userId, userUpdateRequest);
+                return Ok(_updateUserRequestUseCase.Execute(userId, userUpdateRequest));
             }
             catch (UseCaseException e)
             {
-                // Show a more detailed error message with call stack if running in development mode
-
-                // TODO (MJC): Inject the environment variable below (DI)
-                //if (_env.IsDev)
-                //      return BadRequest(e.DeveloperErrorMessage);
-
                 return BadRequest(e.UserErrorMessage);
             }
-
-            return Ok(response);
         }
 
         [Route("users/{userId}")]
@@ -102,12 +90,6 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                // Show a more detailed error message with call stack if running in development mode
-
-                // TODO (MJC): Inject the environment variable below (DI)
-                //if (_env.IsDev)
-                //      return BadRequest(e.DeveloperErrorMessage);
-
                 return BadRequest(e.UserErrorMessage);
             }
 

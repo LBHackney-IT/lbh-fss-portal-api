@@ -3,6 +3,7 @@ using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
+using System.Threading.Tasks;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -15,13 +16,13 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _usersGateway = usersGateway;
         }
 
-        public UsersResponseList Execute(UserQueryParam userQueryParam)
+        public async Task<UsersResponseList> Execute(UserQueryParam userQueryParam)
         {
-            var users = _usersGateway.GetAllUsers().ToResponse();
+            var users = await _usersGateway.GetAllUsers(userQueryParam).ConfigureAwait(false);
 
             var usersList = new UsersResponseList
             {
-                Users = users
+                Users = users.ToResponse()
             };
 
             return usersList;

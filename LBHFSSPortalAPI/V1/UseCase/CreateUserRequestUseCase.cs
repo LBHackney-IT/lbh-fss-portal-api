@@ -3,6 +3,7 @@ using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -54,6 +55,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             UserResponse response = null;
             string createdUserId;
+
+            // check for currently active user with the same email address (prevents 2 active
+            // users with the same email address in the database which can cause problems
+            // elsewhere, e.g. 'login user')
+            var user = _usersGateway.GetUser(createRequestData.Email, UserStatus.Active);
+
+            if (user != null)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "An active user with the supplied email address is already registered"
+                };
 
             try
             {
