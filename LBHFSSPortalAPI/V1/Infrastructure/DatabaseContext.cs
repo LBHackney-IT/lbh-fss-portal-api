@@ -326,6 +326,11 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.Property(e => e.Vocabulary)
                     .HasColumnName("vocabulary")
                     .HasColumnType("character varying");
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.Weight).HasColumnName("weight");
             });
 
@@ -415,6 +420,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
             SetupSeedData(modelBuilder);
         }
+
         private static void SetupSeedData(ModelBuilder modelBuilder)
         {
             var cultureInfo = new CultureInfo("en-GB");
