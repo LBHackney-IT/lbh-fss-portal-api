@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace LBHFSSPortalAPI.V1.Infrastructure
 {
-    public partial class Role
+    public class File
     {
-        public Role()
+        public File()
         {
-            UserRoles = new HashSet<UserRole>();
+            Services = new HashSet<Service>();
         }
 
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Url { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<Service> Services { get; set; }
     }
 }
