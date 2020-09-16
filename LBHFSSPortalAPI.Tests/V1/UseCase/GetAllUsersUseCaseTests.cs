@@ -33,12 +33,19 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
                 //.Without(contact => contact.Contacts)
                 .CreateMany();
 
-            _mockGateway.Setup(x => x.GetAllUsers())
-                .Returns(stubbedUsers.ToList());
+            var userQueryParam = new UserQueryParam()
+            {
+                Search = string.Empty,
+                Direction = "asc",
+                Sort = "name",
+                Limit = null, // (no limit)
+                Offset = null // (no offset)
+            };
 
-            var userQueryParam = new UserQueryParam();
+            _mockGateway.Setup(x => x.GetAllUsers(userQueryParam))
+                .ReturnsAsync(stubbedUsers.ToList());
 
-            var response = _getAllUsersUseCase.Execute(userQueryParam);
+            var response = _getAllUsersUseCase.Execute(userQueryParam).Result;
 
             response.Should().NotBeNull();
             response.Users.Should().BeEquivalentTo(stubbedUsers.ToResponse());
