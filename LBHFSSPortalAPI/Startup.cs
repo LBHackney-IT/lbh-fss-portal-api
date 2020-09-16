@@ -75,7 +75,7 @@ namespace LBHFSSPortalAPI
                 //Looks at the APIVersionAttribute [ApiVersion("x")] on controllers and decides whether or not
                 //to include it in that version of the swagger document
                 //Controllers must have this [ApiVersion("x")] to be included in swagger documentation!!
-                c.DocInclusionPredicate((docName, apiDesc) =>
+                c.DocInclusionPredicate((string docName, ApiDescription apiDesc) =>
                 {
                     apiDesc.TryGetMethodInfo(out var methodInfo);
 
@@ -103,7 +103,7 @@ namespace LBHFSSPortalAPI
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                if (File.Exists(xmlPath))
+                if (System.IO.File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
             });
             ConfigureDbContext(services);
