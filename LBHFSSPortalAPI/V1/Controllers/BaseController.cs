@@ -1,4 +1,6 @@
+using LBHFSSPortalAPI.V1.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -24,6 +26,14 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
                 return settings;
             };
+        }
+
+        public override BadRequestObjectResult BadRequest([ActionResultObjectValue] object error)
+        {
+            if (error is UseCaseException uce)
+                return base.BadRequest(new { uce.UserErrorMessage, uce.DevErrorMessage });
+
+            return base.BadRequest(error);
         }
     }
 }

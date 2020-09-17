@@ -13,10 +13,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         {
         }
 
+        public virtual DbSet<File> Files { get; set; }
         public virtual DbSet<Organization> Organizations { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<ServiceLocation> ServiceLocations { get; set; }
-        public virtual DbSet<ServiceRevision> ServiceRevisions { get; set; }
         public virtual DbSet<ServiceTaxonomy> ServiceTaxonomies { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Session> Sessions { get; set; }
@@ -39,17 +39,119 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<File>(entity =>
+            {
+                entity.ToTable("files");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+
+                entity.Property(e => e.Url)
+                    .HasColumnName("url")
+                    .HasColumnType("character varying");
+            });
+
             modelBuilder.Entity<Organization>(entity =>
             {
                 entity.ToTable("organizations");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.AdultSafeguardingLeadFirstName)
+                    .HasColumnName("adult_safeguarding_lead_first_name")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.AdultSafeguardingLeadLastName)
+                    .HasColumnName("adult_safeguarding_lead_last_name")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.AdultSafeguardingLeadTrainingMonth)
+                    .HasColumnName("adult_safeguarding_lead_training_month")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.AdultSafeguardingLeadTrainingYear)
+                    .HasColumnName("adult_safeguarding_lead_training_year")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.CharityNumber)
+                    .HasColumnName("charity_number")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.ChildSafeguardingLeadFirstName)
+                    .HasColumnName("child_safeguarding_lead_first_name")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.ChildSafeguardingLeadLastName)
+                    .HasColumnName("child_safeguarding_lead_last_name")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.ChildSafeguardingLeadTrainingMonth)
+                    .HasColumnName("child_safeguarding_lead_training_month")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.ChildSafeguardingLeadTrainingYear)
+                    .HasColumnName("child_safeguarding_lead_training_year")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+
+                entity.Property(e => e.FundingOther).HasColumnName("funding_other");
+
+                entity.Property(e => e.HasAdultSafeguardingLead).HasColumnName("has_adult_safeguarding_lead");
+
+                entity.Property(e => e.HasAdultSupport).HasColumnName("has_adult_support");
+
+                entity.Property(e => e.HasChildSafeguardingLead).HasColumnName("has_child_safeguarding_lead");
+
+                entity.Property(e => e.HasChildSupport).HasColumnName("has_child_support");
+
+                entity.Property(e => e.HasEnhancedSupport).HasColumnName("has_enhanced_support");
+
+                entity.Property(e => e.HasHcOrColGrant).HasColumnName("has_hc_or_col_grant");
+
+                entity.Property(e => e.HasHcvsOrHgOrAelGrant).HasColumnName("has_hcvs_or_hg_or_ael_grant");
+
+                entity.Property(e => e.IsHackneyBased).HasColumnName("is_hackney_based");
+
+                entity.Property(e => e.IsLocalOfferListed).HasColumnName("is_local_offer_listed");
+
+                entity.Property(e => e.IsLotteryFunded).HasColumnName("is_lottery_funded");
+
+                entity.Property(e => e.IsRegisteredCharity).HasColumnName("is_registered_charity");
+
+                entity.Property(e => e.IsTraRegistered).HasColumnName("is_tra_registered");
+
+                entity.Property(e => e.LotteryFundedProject)
+                    .HasColumnName("lottery_funded_project")
+                    .HasColumnType("character varying");
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
                     .HasColumnType("character varying");
+
+                entity.Property(e => e.ReviewedAt).HasColumnName("reviewed_at");
+
+                entity.Property(e => e.ReviewerMessage).HasColumnName("reviewer_message");
+
+                entity.Property(e => e.ReviewerUid).HasColumnName("reviewer_uid");
+
+                entity.Property(e => e.RslOrHaAssociation)
+                    .HasColumnName("rsl_or_ha_association")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.SubmittedAt).HasColumnName("submitted_at");
+
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
+                entity.HasOne(d => d.ReviewerU)
+                    .WithMany(p => p.Organizations)
+                    .HasForeignKey(d => d.ReviewerUid)
+                    .HasConstraintName("organizations_reviewer_uid_fkey");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -69,7 +171,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
             {
                 entity.ToTable("service_locations");
 
-                entity.HasIndex(e => e.RevisionId);
+                entity.HasIndex(e => e.ServiceId)
+                    .HasName("IX_service_locations_revision_id");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -99,7 +202,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("postal_code")
                     .HasColumnType("character varying");
 
-                entity.Property(e => e.RevisionId).HasColumnName("revision_id");
+                entity.Property(e => e.ServiceId).HasColumnName("service_id");
 
                 entity.Property(e => e.StateProvince)
                     .HasColumnName("state_province")
@@ -107,25 +210,40 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.Property(e => e.Uprn).HasColumnName("uprn");
 
-                entity.HasOne(d => d.Revision)
+                entity.HasOne(d => d.Service)
                     .WithMany(p => p.ServiceLocations)
-                    .HasForeignKey(d => d.RevisionId)
-                    .HasConstraintName("service_locations_revision_id_fkey");
+                    .HasForeignKey(d => d.ServiceId)
+                    .HasConstraintName("service_locations_service_id_fkey");
             });
 
-            modelBuilder.Entity<ServiceRevision>(entity =>
+            modelBuilder.Entity<ServiceTaxonomy>(entity =>
             {
-                entity.ToTable("service_revisions");
-
-                entity.HasIndex(e => e.AuthorId);
-
-                entity.HasIndex(e => e.ReviewerUid);
-
-                entity.HasIndex(e => e.ServiceId);
+                entity.ToTable("service_taxonomies");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.AuthorId).HasColumnName("author_id");
+                entity.Property(e => e.Description).HasColumnName("description");
+
+                entity.Property(e => e.ServiceId).HasColumnName("service_id");
+
+                entity.Property(e => e.TaxonomyId).HasColumnName("taxonomy_id");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.ServiceTaxonomies)
+                    .HasForeignKey(d => d.ServiceId)
+                    .HasConstraintName("service_taxonomies_service_id_fkey");
+
+                entity.HasOne(d => d.Taxonomy)
+                    .WithMany(p => p.ServiceTaxonomies)
+                    .HasForeignKey(d => d.TaxonomyId)
+                    .HasConstraintName("service_taxonomies_taxonomy_id_fkey");
+            });
+
+            modelBuilder.Entity<Service>(entity =>
+            {
+                entity.ToTable("services");
+
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
@@ -133,13 +251,21 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("description")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.Email)
+                    .HasColumnName("email")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.Facebook)
                     .HasColumnName("facebook")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.ImageId).HasColumnName("image_id");
+
                 entity.Property(e => e.Instagram)
                     .HasColumnName("instagram")
                     .HasColumnType("character varying");
+
+                entity.Property(e => e.Keywords).HasColumnName("keywords");
 
                 entity.Property(e => e.Linkedin)
                     .HasColumnName("linkedin")
@@ -149,19 +275,19 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("name")
                     .HasColumnType("character varying");
 
-                entity.Property(e => e.ReviewedAt).HasColumnName("reviewed_at");
+                entity.Property(e => e.OrganizationId).HasColumnName("organization_id");
 
-                entity.Property(e => e.ReviewerMessage).HasColumnName("reviewer_message");
+                entity.Property(e => e.ReferralEmail)
+                    .HasColumnName("referral_email")
+                    .HasColumnType("character varying");
 
-                entity.Property(e => e.ReviewerUid).HasColumnName("reviewer_uid");
-
-                entity.Property(e => e.ServiceId).HasColumnName("service_id");
+                entity.Property(e => e.ReferralLink)
+                    .HasColumnName("referral_link")
+                    .HasColumnType("character varying");
 
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasColumnType("character varying");
-
-                entity.Property(e => e.SubmittedAt).HasColumnName("submitted_at");
 
                 entity.Property(e => e.Telephone)
                     .HasColumnName("telephone")
@@ -171,75 +297,16 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("twitter")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
+
                 entity.Property(e => e.Website)
                     .HasColumnName("website")
                     .HasColumnType("character varying");
 
-                entity.HasOne(d => d.Author)
-                    .WithMany(p => p.ServiceRevisionsAuthor)
-                    .HasForeignKey(d => d.AuthorId)
-                    .HasConstraintName("service_revisions_author_id_fkey");
-
-                entity.HasOne(d => d.ReviewerU)
-                    .WithMany(p => p.ServiceRevisionsReviewerU)
-                    .HasForeignKey(d => d.ReviewerUid)
-                    .HasConstraintName("service_revisions_reviewer_uid_fkey");
-
-                entity.HasOne(d => d.Service)
-                    .WithMany(p => p.ServiceRevisions)
-                    .HasForeignKey(d => d.ServiceId)
-                    .HasConstraintName("service_revisions_service_id_fkey");
-            });
-
-            modelBuilder.Entity<ServiceTaxonomy>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("service_taxonomies");
-
-                entity.HasIndex(e => e.RevisionId);
-
-                entity.HasIndex(e => e.TaxonomyId);
-
-                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-
-                entity.Property(e => e.RevisionId).HasColumnName("revision_id");
-
-                entity.Property(e => e.TaxonomyId).HasColumnName("taxonomy_id");
-
-                entity.HasOne(d => d.Revision)
-                    .WithMany()
-                    .HasForeignKey(d => d.RevisionId)
-                    .HasConstraintName("service_taxonomies_revision_id_fkey");
-
-                entity.HasOne(d => d.Taxonomy)
-                    .WithMany()
-                    .HasForeignKey(d => d.TaxonomyId)
-                    .HasConstraintName("service_taxonomies_taxonomy_id_fkey");
-            });
-
-            modelBuilder.Entity<Service>(entity =>
-            {
-                entity.ToTable("services");
-
-                entity.HasIndex(e => e.OrganizationId);
-
-                entity.HasIndex(e => e.RevisionId)
-                    .HasName("services_revision_id_key")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-
-                entity.Property(e => e.OrganizationId).HasColumnName("organization_id");
-
-                entity.Property(e => e.RevisionId).HasColumnName("revision_id");
-
-                entity.HasOne(d => d.Organization)
+                entity.HasOne(d => d.Image)
                     .WithMany(p => p.Services)
-                    .HasForeignKey(d => d.OrganizationId)
-                    .HasConstraintName("services_organization_id_fkey");
+                    .HasForeignKey(d => d.ImageId)
+                    .HasConstraintName("services_image_id_fkey");
             });
 
             modelBuilder.Entity<Session>(entity =>
@@ -317,6 +384,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
                     .HasColumnType("character varying");
@@ -326,6 +397,11 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.Property(e => e.Vocabulary)
                     .HasColumnName("vocabulary")
                     .HasColumnType("character varying");
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.Weight).HasColumnName("weight");
             });
 
@@ -371,19 +447,21 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.HasIndex(e => new { e.Id, e.RoleId })
                     .HasName("user_roles_id_role_id_idx");
 
-                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedNever();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
                 entity.Property(e => e.RoleId).HasColumnName("role_id");
 
                 entity.HasOne(d => d.IdNavigation)
-                    .WithMany()
-                    .HasForeignKey(d => d.Id)
+                    .WithOne(p => p.UserRoles)
+                    .HasForeignKey<UserRole>(d => d.Id)
                     .HasConstraintName("user_roles_id_fkey");
 
                 entity.HasOne(d => d.Role)
-                    .WithMany()
+                    .WithMany(p => p.UserRoles)
                     .HasForeignKey(d => d.RoleId)
                     .HasConstraintName("user_roles_role_id_fkey");
             });
@@ -415,6 +493,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
             SetupSeedData(modelBuilder);
         }
+
         private static void SetupSeedData(ModelBuilder modelBuilder)
         {
             var cultureInfo = new CultureInfo("en-GB");

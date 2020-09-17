@@ -7,8 +7,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
     {
         public User()
         {
-            ServiceRevisionsAuthor = new HashSet<ServiceRevision>();
-            ServiceRevisionsReviewerU = new HashSet<ServiceRevision>();
+            Organizations = new HashSet<Organization>();
             Sessions = new HashSet<Session>();
             UserOrganizations = new HashSet<UserOrganization>();
         }
@@ -20,8 +19,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public DateTime? CreatedAt { get; set; }
         public string Status { get; set; }
 
-        public virtual ICollection<ServiceRevision> ServiceRevisionsAuthor { get; set; }
-        public virtual ICollection<ServiceRevision> ServiceRevisionsReviewerU { get; set; }
+        public virtual UserRole UserRoles { get; set; }
+        public virtual ICollection<Organization> Organizations { get; set; }
         public virtual ICollection<Session> Sessions { get; set; }
         public virtual ICollection<UserOrganization> UserOrganizations { get; set; }
     }
