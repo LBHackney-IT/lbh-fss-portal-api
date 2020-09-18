@@ -265,13 +265,20 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             var userEntity = new User()
             {
-                Id = requestData.Id,
                 CreatedAt = requestData.CreatedAt,
                 Email = requestData.Email,
                 Name = requestData.Name,
                 Status = requestData.Status,
                 SubId = requestData.Status,
             };
+
+            if (requestData.OrganisationId.HasValue && requestData.OrganisationId != 0)
+            {
+                // check if the organisation id exists and ignore if it doesn't
+                var org = _context.Organizations.SingleOrDefault(o => o.Id == requestData.OrganisationId);
+                if (org != null)
+                    userEntity.Organizations.Add(org);
+            }
 
             try
             {
@@ -306,37 +313,19 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return userDomain;
         }
 
-        public IEnumerable<OrganizationsDomain> GetAssociatedOrganisations(int userId)
+
+        public OrganizationsDomain GetAssociatedOrganisation(int userId)
         {
-            var orgDomains = new List<OrganizationsDomain>();
+            // Users and Organisations have a many to many relationship and use the UserOrganization
+            // link entity to resolve this. But for the MVP, callers will only ever associate
+            // one organisation with one user
 
-            try
-            {
-                var userOrgs = _context.UserOrganizations.Where(u => u.UserId == userId);
+            var userOrg = _context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
 
-                if (userOrgs.Any())
-                {
-                    var orgIds = userOrgs.Select(o => o.OrganizationId);
-                    var orgs = _context.Organizations
-                        .Where(o => orgIds.Contains(o.Id))
-                        .ToList();
+            if (userOrg != null && userOrg.Organization != null)
+                return userOrg.Organization.ToDomain();
 
-                    orgDomains = orgs.ToDomain();
-                }
-            }
-            catch (ArgumentNullException)
-            {
-                // catch?
-                throw;
-            }
-            catch (Exception e)
-            {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
-                throw;
-            }
-
-            return orgDomains;
+            return null;
         }
 
         public OrganizationsDomain AssociateUserWithOrganisation(int userId, int organisationId)
@@ -356,14 +345,18 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         DevErrorMessage = $"The [UserOrganizations] table does not contain an organisation with ID = {organisationId}"
                     };
                 }
+                
+                var userOrg = _context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
 
-                // check if the association already exists and ignore the request if it does
-                var userOrg = _context.UserOrganizations.FirstOrDefault(u =>
-                    u.UserId == userId &&
-                    u.OrganizationId == organisationId);
-
-                if (userOrg == null)
+                // check if an association already exists and modify this one if it does
+                if (userOrg != null)
                 {
+                    userOrg.OrganizationId = organisationId;
+                }
+                else
+                {
+                    // TODO (MJC): FOR NEW ASSOCIATIONS, TEST IF THIS CREATES THE LINK ON ALL 3 TABLES AS IT SHOULD
+
                     // create new organisation <-> user association
                     userOrg = new UserOrganization()
                     {
@@ -371,12 +364,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         UserId = userId,
                         OrganizationId = organisationId
                     };
-
-                    _context.UserOrganizations.Add(userOrg);
-                    _context.SaveChanges();
-
-                    response = orgEntity.ToDomain();
                 }
+
+                _context.UserOrganizations.Add(userOrg);
+                _context.SaveChanges();
+
+                response = orgEntity.ToDomain();
             }
             catch (DbUpdateException e)
             {
