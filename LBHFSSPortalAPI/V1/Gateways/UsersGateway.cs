@@ -46,7 +46,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             if (!string.IsNullOrWhiteSpace(userQueryParam.Search))
                 matchingUsers = matchingUsers.Where(u => EF.Functions.Like(u.Name, $"%{userQueryParam.Search}%"));
 
-            // handle Sort by column name and sort direction
+            // handle sort by column name and sort direction
             var entityPropName = GetEntityPropertyForColumnName(typeof(User), userQueryParam.Sort);
 
             if (entityPropName == null)
@@ -61,7 +61,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 matchingUsers.OrderByDescending(u => EF.Property<User>(u, entityPropName));
 
             // handle pagination options
-
             if (userQueryParam.Limit.HasValue)
                 matchingUsers = matchingUsers.Take(userQueryParam.Limit.Value);
 
@@ -70,8 +69,10 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             try
             {
-                // execute the query 
                 var userList = await matchingUsers
+                    .Include(u => u.UserOrganizations)
+                    .ThenInclude(uo => uo.Organization)
+                    .Include(uo => uo.Organizations)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -88,79 +89,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
 
             return response;
-        }
-
-        private string FindDbColumnName(Type type, string columnToFind)
-        {
-            var entityType = _context.Model.FindEntityType(type.FullName);
-
-            if (entityType != null)
-            {
-                columnToFind = columnToFind.Trim().ToLower(CultureInfo.CurrentCulture);
-
-                foreach (var prop in entityType.GetProperties())
-                {
-                    var columnName = prop.GetColumnName();
-
-                    if (string.Compare(columnToFind, columnName, true, CultureInfo.CurrentCulture) == 0)
-                    {
-                        return columnName;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-
-        /// <summary>
-        /// Searches for the given database column name (case-insensitive) and returns EF entity name
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="columnToFind"></param>
-        /// <returns></returns>
-        private string GetEntityPropertyForColumnName(Type type, string columnToFind)
-        {
-            var entityType = _context.Model.FindEntityType(type.FullName);
-
-            if (entityType != null)
-            {
-                columnToFind = columnToFind.Trim().ToLower(CultureInfo.CurrentCulture);
-
-                foreach (var prop in entityType.GetProperties())
-                {
-                    var columnName = prop.GetColumnName();
-
-                    if (string.Compare(columnToFind, columnName, true, CultureInfo.CurrentCulture) == 0)
-                    {
-                        return prop.Name;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private string MatchToEntityName(Type type, string entityNameToFind)
-        {
-            var entityType = _context.Model.FindEntityType(type.FullName);
-
-            if (entityType != null)
-            {
-                entityNameToFind = entityNameToFind.Trim().ToLower(CultureInfo.CurrentCulture);
-
-                foreach (var prop in entityType.GetProperties())
-                {
-                    var entityName = prop.Name;
-
-                    if (string.Compare(entityNameToFind, entityName, true, CultureInfo.CurrentCulture) == 0)
-                    {
-                        return entityName;
-                    }
-                }
-            }
-
-            return null;
         }
 
         public UserDomain GetUser(string emailAddress, string userStatus)
@@ -313,14 +241,15 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return userDomain;
         }
 
-
         public OrganizationsDomain GetAssociatedOrganisation(int userId)
         {
             // Users and Organisations have a many to many relationship and use the UserOrganization
             // link entity to resolve this. But for the MVP, callers will only ever associate
             // one organisation with one user
 
-            var userOrg = _context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
+            var userOrg = _context.UserOrganizations
+                .Include(uo => uo.Organization)
+                .FirstOrDefault(uo => uo.UserId == userId);
 
             if (userOrg != null && userOrg.Organization != null)
                 return userOrg.Organization.ToDomain();
@@ -342,21 +271,20 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     throw new UseCaseException()
                     {
                         UserErrorMessage = $"The supplied organisation ID '{organisationId}' was not found",
-                        DevErrorMessage = $"The [UserOrganizations] table does not contain an organisation with ID = {organisationId}"
+                        DevErrorMessage = $"The [Organizations] table does not contain an organisation with ID = {organisationId}"
                     };
                 }
-                
+
                 var userOrg = _context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
 
                 // check if an association already exists and modify this one if it does
                 if (userOrg != null)
                 {
                     userOrg.OrganizationId = organisationId;
+                    _context.UserOrganizations.Update(userOrg);
                 }
                 else
                 {
-                    // TODO (MJC): FOR NEW ASSOCIATIONS, TEST IF THIS CREATES THE LINK ON ALL 3 TABLES AS IT SHOULD
-
                     // create new organisation <-> user association
                     userOrg = new UserOrganization()
                     {
@@ -364,9 +292,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         UserId = userId,
                         OrganizationId = organisationId
                     };
+                    _context.UserOrganizations.Add(userOrg);
                 }
 
-                _context.UserOrganizations.Add(userOrg);
                 _context.SaveChanges();
 
                 response = orgEntity.ToDomain();
@@ -383,6 +311,45 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
 
             return response;
+        }
+
+        public void RemoveUserOrganisationAssociation(int userId)
+        {
+            var userOrg = _context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
+
+            if (userOrg != null)
+            {
+                _context.Remove(userOrg);
+                _context.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// Searches for the given database column name (case-insensitive) and returns EF entity name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="columnToFind"></param>
+        /// <returns></returns>
+        private string GetEntityPropertyForColumnName(Type type, string columnToFind)
+        {
+            var entityType = _context.Model.FindEntityType(type.FullName);
+
+            if (entityType != null)
+            {
+                columnToFind = columnToFind.Trim().ToLower(CultureInfo.CurrentCulture);
+
+                foreach (var prop in entityType.GetProperties())
+                {
+                    var columnName = prop.GetColumnName();
+
+                    if (string.Compare(columnToFind, columnName, true, CultureInfo.CurrentCulture) == 0)
+                    {
+                        return prop.Name;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private static SortDirection ConvertToEnum(string directionString)

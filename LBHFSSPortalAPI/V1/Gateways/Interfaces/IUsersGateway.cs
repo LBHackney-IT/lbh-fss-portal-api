@@ -16,5 +16,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         UserDomain GetUser(int userId);
         OrganizationsDomain GetAssociatedOrganisation(int userId);
         OrganizationsDomain AssociateUserWithOrganisation(int userId, int organisationId);
+        void RemoveUserOrganisationAssociation(int userId);
     }
 }

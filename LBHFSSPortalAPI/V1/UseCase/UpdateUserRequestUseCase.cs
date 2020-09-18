@@ -3,7 +3,6 @@ using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
-using System.Linq;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -47,18 +46,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
             userDomain.Status = updateRequest.Status ?? userDomain.Status;
             _usersGateway.UpdateUser(userDomain);
 
-            var response = new UserResponse();
             var associatedOrg = _usersGateway.GetAssociatedOrganisation(userId);
 
-            // If the client has specified a non-null non-zero organisation id, create or update the association
-            // (note: db schema and EF code allows many-to-many associations between users and organisations but
-            // the MVP version of the front end does not allow or expect this behaviour at the moment)
-            if (updateRequest.OrganisationId.HasValue && updateRequest.OrganisationId != 0)
+            // If the client has specified a non-null organisation id, create or update the association
+            // (note: db schema and EF code allows many-to-many associations between users and organisations
+            // but the MVP version of the front end does not allow or expect this behaviour at the moment)
+            if (updateRequest.OrganisationId.HasValue)
             {
                 if (associatedOrg == null)
                 {
                     // create a new association
-                    associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId.Value);
+                    associatedOrg = _usersGateway.AssociateUserWithOrganisation(userId, updateRequest.OrganisationId.Value);
 
                     if (associatedOrg == null)
                     {
@@ -73,13 +71,25 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId.Value);
                 }
             }
+            else
+            {
+                // null value indicates the caller would like to clear the users' organisation association 
+                if (associatedOrg != null)
+                {
+                    _usersGateway.RemoveUserOrganisationAssociation(userId);
+                    associatedOrg = null;
+                }
+            }
 
-            response.CreatedAt = userDomain.CreatedAt;
-            response.Email = userDomain.Email;
-            response.Id = userDomain.Id;
-            response.Name = userDomain.Name;
-            response.Status = userDomain.Status;
-            response.SubId = userDomain.SubId;
+            var response = new UserResponse()
+            {
+                CreatedAt = userDomain.CreatedAt,
+                Email = userDomain.Email,
+                Id = userDomain.Id,
+                Name = userDomain.Name,
+                Status = userDomain.Status,
+                SubId = userDomain.SubId
+            };
 
             if (associatedOrg != null)
             {
