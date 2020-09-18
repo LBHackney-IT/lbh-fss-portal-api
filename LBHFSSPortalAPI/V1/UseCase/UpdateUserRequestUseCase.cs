@@ -48,18 +48,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _usersGateway.UpdateUser(userDomain);
 
             var response = new UserResponse();
+            var associatedOrg = _usersGateway.GetAssociatedOrganisation(userId);
 
-            // If the client has specified a non-zero organisation id value, add the organisation to
-            // the list of users associated organisations if not already present
-            if (updateRequest.OrganisationId != 0)
+            // If the client has specified a non-null non-zero organisation id, create or update the association
+            // (note: db schema and EF code allows many-to-many associations between users and organisations but
+            // the MVP version of the front end does not allow or expect this behaviour at the moment)
+            if (updateRequest.OrganisationId.HasValue && updateRequest.OrganisationId != 0)
             {
-                var orgs = _usersGateway.GetAssociatedOrganisations(userId);
-                var associatedOrg = orgs.SingleOrDefault(o => o.Id == updateRequest.OrganisationId);
-
                 if (associatedOrg == null)
                 {
-                    // add a link to this organisation Id
-                    associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId);
+                    // create a new association
+                    associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId.Value);
 
                     if (associatedOrg == null)
                     {
@@ -69,12 +68,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
                         };
                     }
                 }
-
-                response.Organisation = new OrganisationResponse()
+                else
                 {
-                    Id = associatedOrg.Id,
-                    Name = associatedOrg.Name
-                };
+                    associatedOrg = _usersGateway.AssociateUserWithOrganisation(userDomain.Id, updateRequest.OrganisationId.Value);
+                }
             }
 
             response.CreatedAt = userDomain.CreatedAt;
@@ -83,6 +80,16 @@ namespace LBHFSSPortalAPI.V1.UseCase
             response.Name = userDomain.Name;
             response.Status = userDomain.Status;
             response.SubId = userDomain.SubId;
+
+            if (associatedOrg != null)
+            {
+                // add organisation details to the response
+                response.Organisation = new OrganisationResponse()
+                {
+                    Id = associatedOrg.Id,
+                    Name = associatedOrg.Name
+                };
+            }
 
             return response;
         }

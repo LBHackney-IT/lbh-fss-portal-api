@@ -14,6 +14,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         public DateTime? CreatedAt { get; set; }
 
         [JsonPropertyName("organisation_id")]
-        public int OrganisationId { get; set; }
+        public int? OrganisationId { get; set; }
     }
 }
