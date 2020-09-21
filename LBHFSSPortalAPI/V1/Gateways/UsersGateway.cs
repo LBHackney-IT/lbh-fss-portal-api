@@ -5,7 +5,6 @@ using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -189,31 +188,24 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public UserDomain AddUser(AdminCreateUserRequest requestData)
+        public UserDomain AddUser(AdminCreateUserRequest requestData, string subId)
         {
+            UserDomain userDomain = null;
+
             var userEntity = new User()
             {
                 CreatedAt = requestData.CreatedAt,
                 Email = requestData.Email,
                 Name = requestData.Name,
                 Status = requestData.Status,
-                SubId = requestData.Status,
+                SubId = subId
             };
-
-            if (requestData.OrganisationId.HasValue && requestData.OrganisationId != 0)
-            {
-                // check if the organisation id exists and ignore if it doesn't
-                var org = _context.Organizations.SingleOrDefault(o => o.Id == requestData.OrganisationId);
-                if (org != null)
-                    userEntity.Organizations.Add(org);
-            }
 
             try
             {
                 _context.Users.Add(userEntity);
                 _context.SaveChanges();
-                var userDomain = userEntity.ToDomain();
-                return userDomain;
+                userDomain = userEntity.ToDomain();
             }
             catch (DbUpdateException dbe)
             {
@@ -226,7 +218,14 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
 
-            return null;
+            if (requestData.OrganisationId.HasValue)
+            {
+                // Perform the association and refresh the user entity organisation details
+                AssociateUserWithOrganisation(userEntity.Id, requestData.OrganisationId.Value);
+                userDomain = GetUser(userEntity.Id);
+            }
+
+            return userDomain;
         }
 
         public UserDomain GetUser(int userId)
@@ -239,6 +238,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 userDomain = user.ToDomain();
 
             return userDomain;
+        }
+
+
+        public async Task<UserDomain> GetUserAsync(int userId)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
+
+            if (user != null)
+                return user.ToDomain();
+
+            return null;
         }
 
         public OrganizationsDomain GetAssociatedOrganisation(int userId)
@@ -296,7 +306,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 }
 
                 _context.SaveChanges();
-
                 response = orgEntity.ToDomain();
             }
             catch (DbUpdateException e)
