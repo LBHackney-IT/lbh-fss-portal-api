@@ -136,6 +136,7 @@ namespace LBHFSSPortalAPI
         private static void RegisterUseCases(IServiceCollection services)
         {
             services.AddScoped<IGetAllUsersUseCase, GetAllUsersUseCase>();
+            services.AddScoped<IGetUserUseCase, GetUserUseCase>();
             services.AddScoped<ICreateUserRequestUseCase, CreateUserRequestUseCase>();
             services.AddScoped<IConfirmUserUseCase, ConfirmUserUseCase>();
             services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
