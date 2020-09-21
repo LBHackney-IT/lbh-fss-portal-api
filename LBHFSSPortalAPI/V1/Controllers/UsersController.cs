@@ -14,17 +14,20 @@ namespace LBHFSSPortalAPI.V1.Controllers
     [ApiVersion("1.0")]
     public class UsersController : BaseController
     {
-        private IGetAllUsersUseCase _getAllUseCase;
-        private ICreateUserRequestUseCase _createUserRequestUseCase;
-        private IUpdateUserRequestUseCase _updateUserRequestUseCase;
-        private IDeleteUserRequestUseCase _deleteUserRequestUseCase;
+        private readonly IGetAllUsersUseCase _getAllUseCase;
+        private readonly IGetUserUseCase _getUserRequestUseCase;
+        private readonly ICreateUserRequestUseCase _createUserRequestUseCase;
+        private readonly IUpdateUserRequestUseCase _updateUserRequestUseCase;
+        private readonly IDeleteUserRequestUseCase _deleteUserRequestUseCase;
 
         public UsersController(IGetAllUsersUseCase getAllUseCase,
+                               IGetUserUseCase getUserRequestUseCase,
                                ICreateUserRequestUseCase createUserRequestUseCase,
                                IUpdateUserRequestUseCase updateUserRequestUseCase,
                                IDeleteUserRequestUseCase deleteUserRequestUseCase)
         {
             _getAllUseCase = getAllUseCase;
+            _getUserRequestUseCase = getUserRequestUseCase;
             _createUserRequestUseCase = createUserRequestUseCase;
             _updateUserRequestUseCase = updateUserRequestUseCase;
             _deleteUserRequestUseCase = deleteUserRequestUseCase;
@@ -38,6 +41,21 @@ namespace LBHFSSPortalAPI.V1.Controllers
             try
             {
                 return Ok(await _getAllUseCase.Execute(userQueryParam).ConfigureAwait(false));
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [Route("users/{userId}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> RetrieveUser([FromRoute] int userId)
+        {
+            try
+            {
+                return Ok(await _getUserRequestUseCase.Execute(userId).ConfigureAwait(false));
             }
             catch (UseCaseException e)
             {
