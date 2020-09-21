@@ -307,6 +307,11 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.ImageId)
                     .HasConstraintName("services_image_id_fkey");
+
+                entity.HasOne(d => d.Organization)
+                    .WithMany(p => p.Services)
+                    .HasForeignKey(d => d.OrganizationId)
+                    .HasConstraintName("services_organization_id_fkey");
             });
 
             modelBuilder.Entity<Session>(entity =>

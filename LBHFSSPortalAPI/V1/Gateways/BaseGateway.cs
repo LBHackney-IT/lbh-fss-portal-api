@@ -8,22 +8,20 @@ namespace LBHFSSPortalAPI.V1.Gateways
     {
         public static void HandleDbUpdateException(DbUpdateException e)
         {
-            var exception = new UseCaseException()
+            var uce = new UseCaseException()
             {
                 UserErrorMessage = "An API database error was detected",
                 DevErrorMessage = e.Message
             };
 
-            var npgSqlEx = e.InnerException as Npgsql.PostgresException;
-
-            if (npgSqlEx != null)
+            if (e.InnerException is Npgsql.PostgresException npgSqlEx)
             {
-                exception.DevErrorMessage += Environment.NewLine + npgSqlEx.ConstraintName;
-                exception.DevErrorMessage += Environment.NewLine + npgSqlEx.Detail;
-                exception.DevErrorMessage += Environment.NewLine + npgSqlEx.MessageText;
+                uce.DevErrorMessage += Environment.NewLine + npgSqlEx.ConstraintName;
+                uce.DevErrorMessage += Environment.NewLine + npgSqlEx.Detail;
+                uce.DevErrorMessage += Environment.NewLine + npgSqlEx.MessageText;
             }
 
-            throw exception;
+            throw uce;
         }
     }
 }

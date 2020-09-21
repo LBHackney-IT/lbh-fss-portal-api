@@ -7,17 +7,25 @@ namespace LBHFSSPortalAPI.V1.Factories
 {
     public static class EntityFactory
     {
-        public static UserDomain ToDomain(this User usersEntity)
+        public static UserDomain ToDomain(this User user)
         {
-            return new UserDomain
+            var userDomain = new UserDomain()
             {
-                Id = usersEntity.Id,
-                Email = usersEntity.Email,
-                Name = usersEntity.Name,
-                Status = usersEntity.Status,
-                CreatedAt = usersEntity.CreatedAt,
-                SubId = usersEntity.SubId,
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                Status = user.Status,
+                CreatedAt = user.CreatedAt,
+                SubId = user.SubId,
             };
+
+            // Only one association expected in the MVP version
+            var org = user.Organizations.FirstOrDefault();
+
+            if (org != null)
+                userDomain.Organisation = org.ToDomain();
+
+            return userDomain;
         }
 
         public static User ToEntity(this UserDomain userDomain)

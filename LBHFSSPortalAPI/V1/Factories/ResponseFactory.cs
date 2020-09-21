@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
+using Microsoft.AspNetCore.Http;
 
 namespace LBHFSSPortalAPI.V1.Factories
 {
@@ -21,7 +23,7 @@ namespace LBHFSSPortalAPI.V1.Factories
 
         public static UserResponse ToResponse(this UserDomain domain)
         {
-            return new UserResponse
+            var response = new UserResponse()
             {
                 Id = domain.Id,
                 Name = domain.Name,
@@ -30,11 +32,30 @@ namespace LBHFSSPortalAPI.V1.Factories
                 CreatedAt = domain.CreatedAt,
                 SubId = domain.SubId
             };
+
+            if (domain.Organisation != null)
+                response.Organisation = domain.Organisation.ToResponse();
+
+            return response;
         }
 
         public static List<UserResponse> ToResponse(this IEnumerable<UserDomain> users)
         {
             return users.Select(p => p.ToResponse()).ToList();
+        }
+
+        public static OrganisationResponse ToResponse(this OrganizationsDomain domain)
+        {
+            return new OrganisationResponse()
+            {
+                Id = domain.Id,
+                Name = domain.Name
+            };
+        }
+
+        public static List<OrganisationResponse> ToResponse(this IEnumerable<OrganizationsDomain> orgs)
+        {
+            return orgs.Select(o => o.ToResponse()).ToList();
         }
     }
 }
