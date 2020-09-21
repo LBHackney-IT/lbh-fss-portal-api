@@ -59,7 +59,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                return BadRequest(e.UserErrorMessage);
+                return BadRequest(e);
             }
         }
 
@@ -74,7 +74,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                return BadRequest(e.UserErrorMessage);
+                return BadRequest(e);
             }
         }
 
@@ -90,7 +90,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                return BadRequest(e.UserErrorMessage);
+                return BadRequest(e);
             }
 
             return BadRequest("Could not delete the user");
