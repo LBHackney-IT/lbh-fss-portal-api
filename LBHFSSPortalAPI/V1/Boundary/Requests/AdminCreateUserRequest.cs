@@ -5,7 +5,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
     public class AdminCreateUserRequest
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Status { get; set; }
@@ -15,6 +14,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         public DateTime CreatedAt { get; set; }
 
         [JsonPropertyName("organisation_id")]
-        public int OrganisationId { get; set; }
+        public int? OrganisationId { get; set; }
     }
 }

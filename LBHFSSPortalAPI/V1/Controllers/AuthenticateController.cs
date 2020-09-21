@@ -63,13 +63,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                // Show a more detailed error message with call stack if running in development mode
-
-                // TODO (MJC): Inject the environment variable below (DI)
-                //if (_env.IsDev)
-                //      return BadRequest(e.DeveloperErrorMessage);
-
-                return BadRequest(e.UserErrorMessage);
+                return BadRequest(e);
             }
 
             return Accepted(response);
@@ -110,7 +104,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                return BadRequest(e.UserErrorMessage);
+                return BadRequest(e);
             }
         }
 
@@ -128,13 +122,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (UseCaseException e)
             {
-                // Show a more detailed error message with call stack if running in development mode
-
-                // TODO (MJC): Inject the environment variable below (DI) and move up to common code in base class
-                //if (_env.IsDev)
-                //      return BadRequest(e.DeveloperErrorMessage);
-
-                return BadRequest(e.UserErrorMessage);
+                return BadRequest(e);
             }
 
             return Ok();
