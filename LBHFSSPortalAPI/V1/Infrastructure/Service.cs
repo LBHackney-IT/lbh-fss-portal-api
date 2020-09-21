@@ -31,6 +31,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public int? ImageId { get; set; }
 
         public virtual File Image { get; set; }
+        public virtual Organization Organization { get; set; }
         public virtual ICollection<ServiceLocation> ServiceLocations { get; set; }
         public virtual ICollection<ServiceTaxonomy> ServiceTaxonomies { get; set; }
     }
