@@ -1,8 +1,8 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace LBHFSSPortalAPI.V1.Boundary.Response
+namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
-    public class LocationResponse
+    public class ServiceLocationRequest
     {
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
@@ -15,7 +15,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
 
         [JsonPropertyName("postal_code")]
         public string PostalCode { get; set; }
-
         public string Country { get; set; }
     }
 }

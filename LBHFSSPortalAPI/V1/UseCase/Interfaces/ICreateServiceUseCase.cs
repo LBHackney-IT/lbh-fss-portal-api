@@ -6,6 +6,6 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
     public interface ICreateServiceUseCase
     {
-        Task<ServiceResponse> Execute(UserQueryParam userQueryParam);
+        Task<ServiceResponse> Execute(AddServiceRequest request);
     }
 }

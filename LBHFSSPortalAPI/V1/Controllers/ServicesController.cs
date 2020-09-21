@@ -18,20 +18,53 @@ namespace LBHFSSPortalAPI.V1.Controllers
     public class ServicesController : BaseController
     {
         private ICreateServiceUseCase _createServiceUseCase;
+        private IGetServicesUseCase _getServicesUseCase;
 
-        public ServicesController(ICreateServiceUseCase createServiceUseCase)
+        public ServicesController(ICreateServiceUseCase createServiceUseCase, IGetServicesUseCase getServicesUseCase)
         {
             _createServiceUseCase = createServiceUseCase;
+            _getServicesUseCase = getServicesUseCase;
+        }
+
+        [Route("services/{serviceId}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetService([FromRoute] int serviceId)
+        {
+            try
+            {
+                var response = await _getServicesUseCase.Execute(serviceId).ConfigureAwait(false);
+                return Created("Created", response);
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [Route("services}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetService([FromQuery] ServicesQueryParam queryParam)
+        {
+            try
+            {
+                return Ok(await _getServicesUseCase.Execute(queryParam).ConfigureAwait(false));
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [Route("services")]
         [HttpPost]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddService([FromQuery] UserQueryParam userQueryParam)
+        public async Task<IActionResult> AddService([FromBody] AddServiceRequest request)
         {
             try
             {
-                var response = await _createServiceUseCase.Execute(userQueryParam).ConfigureAwait(false);
+                var response = await _createServiceUseCase.Execute(request).ConfigureAwait(false);
                 return Created("Created", response);
             }
             catch (UseCaseException e)
