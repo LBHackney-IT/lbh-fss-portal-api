@@ -4,6 +4,7 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
+using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -54,7 +55,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public UserResponse AdminExecute(AdminCreateUserRequest createRequestData)
         {
             UserResponse response = null;
-            string createdUserId;
+            string subId;
 
             // check for currently active user with the same email address (prevents 2 active
             // users with the same email address in the database which can cause problems
@@ -69,7 +70,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             try
             {
-                createdUserId = _authGateway.AdminCreateUser(createRequestData);
+                subId = _authGateway.AdminCreateUser(createRequestData);
             }
             catch (AmazonCognitoIdentityProviderException e)
             {
@@ -78,16 +79,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 return null;
             }
 
-            if (createdUserId != null)
+            if (subId != null)
             {
-                _usersGateway.AddUser(createRequestData);
+                var userDomain = _usersGateway.AddUser(createRequestData, subId);
 
-                response = new UserResponse
-                {
-                    Email = createRequestData.Email,
-                    Name = createRequestData.Name,
-                    SubId = createdUserId
-                };
+                if (userDomain != null)
+                    response = userDomain.ToResponse();
             }
 
             return response;

@@ -16,6 +16,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
     {
         private UsersController _classUnderTest;
         private Mock<IGetAllUsersUseCase> _fakeGetAllUsersUseCase;
+        private Mock<IGetUserUseCase> _fakeGetUserUseCase;
         private Mock<ICreateUserRequestUseCase> _fakeCreateUserRequestUseCase;
         private Mock<IUpdateUserRequestUseCase> _fakeUpdateUserRequestUseCase;
         private Mock<IDeleteUserRequestUseCase> _fakeDeleteUserRequestUseCase;
@@ -25,11 +26,13 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         public void SetUp()
         {
             _fakeGetAllUsersUseCase = new Mock<IGetAllUsersUseCase>();
+            _fakeGetUserUseCase = new Mock<IGetUserUseCase>();
             _fakeCreateUserRequestUseCase = new Mock<ICreateUserRequestUseCase>();
             _fakeUpdateUserRequestUseCase = new Mock<IUpdateUserRequestUseCase>();
             _fakeDeleteUserRequestUseCase = new Mock<IDeleteUserRequestUseCase>();
 
             _classUnderTest = new UsersController(_fakeGetAllUsersUseCase.Object,
+                                                  _fakeGetUserUseCase.Object,
                                                   _fakeCreateUserRequestUseCase.Object,
                                                   _fakeUpdateUserRequestUseCase.Object,
                                                   _fakeDeleteUserRequestUseCase.Object);
