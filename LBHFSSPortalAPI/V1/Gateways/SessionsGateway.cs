@@ -1,9 +1,9 @@
-using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Linq;
 
-namespace LBHFSSPortalAPI.V1.UseCase
+namespace LBHFSSPortalAPI.V1.Gateways
 {
     public class SessionsGateway : ISessionsGateway
     {
@@ -16,7 +16,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public Session AddSession(Session session)
         {
             var savedSession = _databaseContext.Sessions.Add(session);
-            int rows = _databaseContext.SaveChanges(); //log number of rows saved?
+            _databaseContext.SaveChanges();
             return savedSession.Entity;
         }
 

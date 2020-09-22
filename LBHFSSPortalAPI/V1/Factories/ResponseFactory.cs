@@ -57,5 +57,17 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             return orgs.Select(o => o.ToResponse()).ToList();
         }
+
+        public static ServiceResponse ToResponse(this ServiceDomain domain)
+        {
+            return new ServiceResponse()
+            {
+            };
+        }
+
+        public static List<ServiceResponse> ToResponse(this IEnumerable<ServiceDomain> services)
+        {
+            return services.Select(o => o.ToResponse()).ToList();
+        }
     }
 }

@@ -1,4 +1,5 @@
 using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -131,6 +132,7 @@ namespace LBHFSSPortalAPI
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
             services.AddScoped<ISessionsGateway, SessionsGateway>();
+            services.AddScoped<IServicesGateway, ServicesGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)

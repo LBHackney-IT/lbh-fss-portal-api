@@ -60,5 +60,15 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             return orgs.Select(o => o.ToDomain()).ToList();
         }
+
+        public static ServiceDomain ToDomain(this Service service)
+        {
+            var serviceDomain = new ServiceDomain()
+            {
+                                
+            };
+
+            return serviceDomain;
+        }
     }
 }

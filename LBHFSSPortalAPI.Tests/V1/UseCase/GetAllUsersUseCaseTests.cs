@@ -1,13 +1,13 @@
 using System.Linq;
 using AutoFixture;
 using LBHFSSPortalAPI.V1.Factories;
-using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 
 namespace LBHFSSPortalAPI.Tests.V1.UseCase
 {
