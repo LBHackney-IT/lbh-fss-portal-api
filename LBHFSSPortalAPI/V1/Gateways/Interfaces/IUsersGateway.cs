@@ -3,7 +3,7 @@ using LBHFSSPortalAPI.V1.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LBHFSSPortalAPI.V1.Gateways
+namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
 {
     public interface IUsersGateway
     {
