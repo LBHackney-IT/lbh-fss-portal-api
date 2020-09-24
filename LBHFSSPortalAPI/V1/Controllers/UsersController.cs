@@ -19,18 +19,21 @@ namespace LBHFSSPortalAPI.V1.Controllers
         private readonly ICreateUserRequestUseCase _createUserRequestUseCase;
         private readonly IUpdateUserRequestUseCase _updateUserRequestUseCase;
         private readonly IDeleteUserRequestUseCase _deleteUserRequestUseCase;
+        private readonly IConfirmUserUseCase _confirmUserUseCase;
 
         public UsersController(IGetAllUsersUseCase getAllUseCase,
                                IGetUserUseCase getUserRequestUseCase,
                                ICreateUserRequestUseCase createUserRequestUseCase,
                                IUpdateUserRequestUseCase updateUserRequestUseCase,
-                               IDeleteUserRequestUseCase deleteUserRequestUseCase)
+                               IDeleteUserRequestUseCase deleteUserRequestUseCase,
+                               IConfirmUserUseCase confirmUserUseCase)
         {
             _getAllUseCase = getAllUseCase;
             _getUserRequestUseCase = getUserRequestUseCase;
             _createUserRequestUseCase = createUserRequestUseCase;
             _updateUserRequestUseCase = updateUserRequestUseCase;
             _deleteUserRequestUseCase = deleteUserRequestUseCase;
+            _confirmUserUseCase = confirmUserUseCase;
         }
 
         [Route("users")]
@@ -112,6 +115,22 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
 
             return BadRequest("Could not delete the user");
+        }
+
+        [Route("users/{userId}/resend")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult ResendUserInvite([FromRoute] int userId)
+        {
+            try
+            {
+                _confirmUserUseCase.Resend(userId);
+                return Ok();
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
         }
     }
 }
