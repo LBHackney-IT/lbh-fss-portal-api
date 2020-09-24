@@ -28,5 +28,15 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             return userDomain.ToResponse();
         }
+
+        public UserResponse Execute(string accessKey)
+        {
+            var userDomain = _usersGateway.GetUserBySubId(accessKey);
+
+            if (userDomain != null)
+                return userDomain.ToResponse();
+
+            return null;
+        }
     }
 }
