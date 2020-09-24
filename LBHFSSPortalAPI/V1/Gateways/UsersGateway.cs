@@ -98,9 +98,14 @@ namespace LBHFSSPortalAPI.V1.Gateways
             if (!string.IsNullOrWhiteSpace(emailAddress))
             {
                 // Perform search for user based on email address and status
-                var user = _context.Users.SingleOrDefault(u =>
-                    u.Email == emailAddress &&
-                    u.Status == userStatus);
+                var user = _context.Users
+                    .Include(u => u.UserOrganizations)
+                    .ThenInclude(uo => uo.Organization)
+                    .Include(uo => uo.Organizations)
+                    .AsNoTracking()
+                    .SingleOrDefault(u =>
+                        u.Email == emailAddress &&
+                        u.Status == userStatus);
 
                 if (user != null)
                     userDomain = user.ToDomain();
@@ -120,7 +125,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
             if (!string.IsNullOrWhiteSpace(subId))
             {
                 // Perform search for user based on subscription ID
-                var user = _context.Users.SingleOrDefault(u => u.SubId == subId);
+                var user = _context.Users
+                    .Include(u => u.UserOrganizations)
+                    .ThenInclude(uo => uo.Organization)
+                    .Include(uo => uo.Organizations)
+                    .AsNoTracking()
+                    .SingleOrDefault(u => u.SubId == subId);
 
                 if (user != null)
                     userDomain = user.ToDomain();
@@ -233,7 +243,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             UserDomain userDomain = null;
 
-            var user = _context.Users.SingleOrDefault(u => u.Id == userId);
+            var user = _context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .AsNoTracking()
+                .SingleOrDefault(u => u.Id == userId);
 
             if (user != null)
                 userDomain = user.ToDomain();
@@ -244,7 +259,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public async Task<UserDomain> GetUserAsync(int userId)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
+            var user = await _context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(u => u.Id == userId)
+                .ConfigureAwait(false);
 
             if (user != null)
                 return user.ToDomain();
@@ -252,7 +273,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return null;
         }
 
-        public OrganizationsDomain GetAssociatedOrganisation(int userId)
+        public OrganizationDomain GetAssociatedOrganisation(int userId)
         {
             // Users and Organisations have a many to many relationship and use the UserOrganization
             // link entity to resolve this. But for the MVP, callers will only ever associate
@@ -268,9 +289,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return null;
         }
 
-        public OrganizationsDomain AssociateUserWithOrganisation(int userId, int organisationId)
+        public OrganizationDomain AssociateUserWithOrganisation(int userId, int organisationId)
         {
-            OrganizationsDomain response = null;
+            OrganizationDomain response = null;
 
             try
             {

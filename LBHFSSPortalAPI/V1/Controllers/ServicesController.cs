@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +6,6 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
-using LBHFSSPortalAPI.V1.Validations;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
@@ -19,22 +16,28 @@ namespace LBHFSSPortalAPI.V1.Controllers
     {
         private ICreateServiceUseCase _createServiceUseCase;
         private IGetServicesUseCase _getServicesUseCase;
+        private readonly IUpdateServiceUseCase _updateServiceUseCase;
+        private readonly IDeleteServiceUseCase _deleteServiceUseCase;
 
-        public ServicesController(ICreateServiceUseCase createServiceUseCase, IGetServicesUseCase getServicesUseCase)
+        public ServicesController(ICreateServiceUseCase createServiceUseCase,
+                                  IGetServicesUseCase getServicesUseCase,
+                                  IDeleteServiceUseCase deleteServiceUseCase,
+                                  IUpdateServiceUseCase updateServiceUseCase)
         {
             _createServiceUseCase = createServiceUseCase;
             _getServicesUseCase = getServicesUseCase;
+            _deleteServiceUseCase = deleteServiceUseCase;
+            _updateServiceUseCase = updateServiceUseCase;
         }
 
         [Route("services/{serviceId}")]
         [HttpGet]
-        [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetService([FromRoute] int serviceId)
         {
             try
             {
-                var response = await _getServicesUseCase.Execute(serviceId).ConfigureAwait(false);
-                return Created("Created", response);
+                return Ok(await _getServicesUseCase.Execute(serviceId).ConfigureAwait(false));
             }
             catch (UseCaseException e)
             {
@@ -42,10 +45,10 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Route("services}")]
+        [Route("services")]
         [HttpGet]
         [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetService([FromQuery] ServicesQueryParam queryParam)
+        public async Task<IActionResult> GetServices([FromQuery] ServicesQueryParam queryParam)
         {
             try
             {
@@ -66,6 +69,37 @@ namespace LBHFSSPortalAPI.V1.Controllers
             {
                 var response = await _createServiceUseCase.Execute(request).ConfigureAwait(false);
                 return Created("Created", response);
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [Route("services")]
+        [HttpPatch]
+        [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateService([FromBody] AddServiceRequest request)
+        {
+            try
+            {
+                return Ok(await _updateServiceUseCase.Execute(request).ConfigureAwait(false));
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [Route("services/{serviceId}")]
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteService([FromRoute] int serviceId)
+        {
+            try
+            {
+                await _deleteServiceUseCase.Execute(serviceId).ConfigureAwait(false);
+                return Ok();
             }
             catch (UseCaseException e)
             {

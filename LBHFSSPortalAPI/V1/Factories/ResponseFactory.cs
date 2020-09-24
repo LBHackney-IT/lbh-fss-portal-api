@@ -44,7 +44,7 @@ namespace LBHFSSPortalAPI.V1.Factories
             return users.Select(p => p.ToResponse()).ToList();
         }
 
-        public static OrganisationResponse ToResponse(this OrganizationsDomain domain)
+        public static OrganisationResponse ToResponse(this OrganizationDomain domain)
         {
             return new OrganisationResponse()
             {
@@ -53,21 +53,21 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
-        public static List<OrganisationResponse> ToResponse(this IEnumerable<OrganizationsDomain> orgs)
+        public static List<OrganisationResponse> ToResponse(this IEnumerable<OrganizationDomain> orgs)
         {
             return orgs.Select(o => o.ToResponse()).ToList();
         }
 
-        public static ServiceResponse ToResponse(this ServiceDomain domain)
-        {
-            return new ServiceResponse()
-            {
-            };
-        }
+        //public static ServiceResponse ToResponse(this ServiceDomain domain)
+        //{
+        //    return new ServiceResponse()
+        //    {
+        //    };
+        //}
 
-        public static List<ServiceResponse> ToResponse(this IEnumerable<ServiceDomain> services)
-        {
-            return services.Select(o => o.ToResponse()).ToList();
-        }
+        //public static List<ServiceResponse> ToResponse(this IEnumerable<ServiceDomain> services)
+        //{
+        //    return services.Select(o => o.ToResponse()).ToList();
+        //}
     }
 }
