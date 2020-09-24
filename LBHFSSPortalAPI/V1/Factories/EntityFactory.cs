@@ -46,9 +46,9 @@ namespace LBHFSSPortalAPI.V1.Factories
             return users.Select(p => p.ToDomain()).ToList();
         }
 
-        public static OrganizationsDomain ToDomain(this Organization orgEntity)
+        public static OrganizationDomain ToDomain(this Organization orgEntity)
         {
-            return new OrganizationsDomain
+            return new OrganizationDomain
             {
                 Id = orgEntity.Id,
                 Name = orgEntity.Name,
@@ -56,19 +56,19 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
-        public static List<OrganizationsDomain> ToDomain(this IEnumerable<Organization> orgs)
+        public static List<OrganizationDomain> ToDomain(this IEnumerable<Organization> orgs)
         {
             return orgs.Select(o => o.ToDomain()).ToList();
         }
 
-        public static ServiceDomain ToDomain(this Service service)
-        {
-            var serviceDomain = new ServiceDomain()
-            {
+        //public static ServiceDomain ToDomain(this Service service)
+        //{
+        //    var serviceDomain = new ServiceDomain()
+        //    {
                                 
-            };
+        //    };
 
-            return serviceDomain;
-        }
+        //    return serviceDomain;
+        //}
     }
 }
