@@ -121,7 +121,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 var accessKey = Request.Cookies[Cookies.AccessTokenName];
 
                 if (string.IsNullOrEmpty(accessKey))
-                    return BadRequest("no access key found in the request");
+                    return BadRequest("no access_token header found in the request");
 
                 return Ok(_getUserRequestUseCase.Execute(accessKey));
             }
