@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
-using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LBHFSSPortalAPI.V1.Factories
 {
@@ -30,11 +28,9 @@ namespace LBHFSSPortalAPI.V1.Factories
                 Email = domain.Email,
                 Status = domain.Status,
                 CreatedAt = domain.CreatedAt,
-                SubId = domain.SubId
+                SubId = domain.SubId,
+                Organisation = domain.Organizations?.FirstOrDefault()?.ToResponse()
             };
-
-            if (domain.Organisation != null)
-                response.Organisation = domain.Organisation.ToResponse();
 
             return response;
         }
@@ -52,22 +48,5 @@ namespace LBHFSSPortalAPI.V1.Factories
                 Name = domain.Name
             };
         }
-
-        public static List<OrganisationResponse> ToResponse(this IEnumerable<OrganizationDomain> orgs)
-        {
-            return orgs.Select(o => o.ToResponse()).ToList();
-        }
-
-        //public static ServiceResponse ToResponse(this ServiceDomain domain)
-        //{
-        //    return new ServiceResponse()
-        //    {
-        //    };
-        //}
-
-        //public static List<ServiceResponse> ToResponse(this IEnumerable<ServiceDomain> services)
-        //{
-        //    return services.Select(o => o.ToResponse()).ToList();
-        //}
     }
 }

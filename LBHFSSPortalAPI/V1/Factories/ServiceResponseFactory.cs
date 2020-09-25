@@ -1,145 +1,89 @@
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
+using System.Linq;
 
 namespace LBHFSSPortalAPI.V1.Factories
 {
     public static class ServiceResponseFactory
     {
-        // More information on this can be found here https://github.com/LBHackney-IT/lbh-base-api/wiki/Factory-object-mappings
         public static ServiceResponse ToResponse(this ServiceDomain domain)
         {
-            if (domain == null)
-                return null;
-            var response = domain == null ? null : new ServiceResponse
-            {
-                //Id = domain.Id,
-                //Name = domain.Name,
-                //Categories = domain.ServiceTaxonomies == null
-                //    ? new List<Category>()
-                //    : domain.ServiceTaxonomies
-                //        .Where(x => x.Taxonomy != null && x.Taxonomy.Vocabulary == "category")
-                //        .Select(x => new Category
-                //        {
-                //            Id = x.Taxonomy.Id,
-                //            Name = x.Taxonomy.Name,
-                //            Description = x.Taxonomy.Description,
-                //            Vocabulary = x.Taxonomy.Vocabulary,
-                //            Weight = x.Taxonomy.Weight
-                //        }).ToList(),
-                //Contact = new Contact
-                //{
-                //    Email = domain.Email,
-                //    Telephone = domain.Telephone,
-                //    Website = domain.Website
-                //},
-                //Demographic = domain.ServiceTaxonomies == null
-                //    ? new List<Demographic>()
-                //    : domain.ServiceTaxonomies
-                //        .Where(x => x.Taxonomy.Vocabulary == "demographic")
-                //        .Select(x => new Demographic
-                //        {
-                //            Id = x.Taxonomy.Id,
-                //            Name = x.Taxonomy.Name,
-                //            Vocabulary = x.Taxonomy.Vocabulary,
-                //        }).ToList(),
-                //Description = domain.Description,
-                //Images = new Image
-                //{
-                //    // TODO:  We need to get the resized image uri for this property
-                //    Medium = "new_uri_to_be_provided",
-                //    Original = domain.Image.Url
-                //},
-                //Locations = domain.ServiceLocations
-                //    .Select(x => new Location
-                //    {
-                //        Latitude = x.Latitude,
-                //        Longitude = x.Longitude,
-                //        //check if this is a string or integer (does it have preceding 0 or alpa characters)
-                //        Uprn = x.Uprn.ToString(),
-                //        Address1 = x.Address1,
-                //        //Address2 = x.Address2, // TODO (MJC): resolve missing property
-                //        City = x.City,
-                //        StateProvince = x.StateProvince,
-                //        PostalCode = x.PostalCode,
-                //        Country = x.Country
-                //    }).ToList(),
-                //Organization = new org.Organization
-                //{
-                //    Id = domain.Organization.Id,
-                //    Name = domain.Organization.Name,
-                //    Status = domain.Organization.Status
-                //},
-                //Referral = new Referral
-                //{
-                //    Email = domain.Email,
-                //    Website = domain.Website
-                //},
-                //Social = new Social
-                //{
-                //    Facebook = domain.Facebook,
-                //    Twitter = domain.Twitter,
-                //    Instagram = domain.Instagram,
-                //    Linkedin = domain.Linkedin
-                //},
-                //Status = domain.Status
-            };
+            var org = domain?.Organization;
+            var user = org?.UserOrganizations?.FirstOrDefault()?.User;
+
+            var response = domain == null
+                ? null
+                : new ServiceResponse
+                {
+                    Id = domain.Id,
+                    Name = domain.Name,
+                    UserId = user?.Id,
+                    UserName = user?.Name,
+                    OrganisationId = org?.Id,
+                    OrganisationName = org?.Name,
+                    Status = domain.Status,
+                    CreatedAt = domain.CreatedAt,
+                    UpdatedAt = domain.UpdatedAt,
+                    Description = domain.Description,
+                    Website = domain.Website,
+                    Email = domain.Email,
+                    Telephone = domain.Telephone,
+                    Facebook = domain.Facebook,
+                    Twitter = domain.Twitter,
+                    Instagram = domain.Instagram,
+                    Linkedin = domain.Linkedin,
+                    Keywords = domain.Keywords,
+                    ReferralLink = domain.ReferralLink,
+                    ReferralEmail = domain.ReferralEmail,
+                    Locations = domain.ServiceLocations?
+                        .Select(domain => new LocationResponse()
+                        {
+                            Latitude = domain.Latitude,
+                            Longitude = domain.Longitude,
+                            Uprn = domain.Uprn,
+                            Address1 = domain.Address1,
+                            City = domain.City,
+                            StateProvince = domain.StateProvince,
+                            PostalCode = domain.PostalCode,
+                            Country = domain.Country
+                        })
+                        .ToList(),
+                    Image = domain.Image == null
+                    ? null
+                    : new ImageResponse()
+                    {
+                        Id = domain.Image.Id,
+                        Medium = domain.Image.Url,
+                        Original = domain.Image.Url
+                    },
+                    Categories = domain.ServiceTaxonomies == null
+                    ? null
+                    : domain.ServiceTaxonomies
+                        .Where(t => t.Taxonomy != null && t.Taxonomy.Vocabulary == "category")
+                        .Select(t => new TaxonomyResponse
+                        {
+                            Id = t.Taxonomy.Id,
+                            Name = t.Taxonomy.Name,
+                            Description = t.Taxonomy.Description,
+                            Vocabulary = t.Taxonomy.Vocabulary,
+                            Weight = t.Taxonomy.Weight
+                        }).ToList(),
+                    Demographics = domain.ServiceTaxonomies == null
+                    ? null
+                    : domain.ServiceTaxonomies
+                        .Where(t => t.Taxonomy != null && t.Taxonomy.Vocabulary == "demographic")
+                        .Select(t => new TaxonomyResponse()
+                        {
+                            Id = t.Taxonomy.Id,
+                            Name = t.Taxonomy.Name,
+                            Description = t.Taxonomy.Description,
+                            Vocabulary = t.Taxonomy.Vocabulary,
+                            Weight = t.Taxonomy.Weight
+                        })
+                        .ToList()
+                };
+
             return response;
         }
-
-        //public static ServiceDomain ToDomain(this Service entity)
-        //{
-        //    if (entity == null)
-        //        return null;
-
-        //    return new ServiceDomain
-        //    {
-        //        Id = entity.Id,
-        //        Name = entity.Name,
-        //        Email = entity.Email,
-        //        Telephone = entity.Telephone,
-        //        Description = entity.Description,
-        //        Image = entity.Image.ToDomain(),
-        //        ImageId = entity.ImageId,
-        //        ServiceLocations = entity.ServiceLocations.ToDomain(),
-        //        Organization = entity.Organization.ToDomain(),
-        //        OrganizationId = entity.OrganizationId,
-        //        Website = entity.Website,
-        //        Facebook = entity.Facebook,
-        //        Twitter = entity.Twitter,
-        //        Instagram = entity.Instagram,
-        //        Linkedin = entity.Linkedin,
-        //        Status = entity.Status,
-        //        ServiceTaxonomies = entity.ServiceTaxonomies.ToDomain(),
-        //        CreatedAt = entity.CreatedAt,
-        //        UpdatedAt = entity.UpdatedAt,
-        //        Keywords = entity.Keywords,
-        //        ReferralEmail = entity.ReferralEmail,
-        //        ReferralLink = entity.ReferralLink
-        //    };
-        //}
-
-        //public static List<ServiceDomain> ToDomain(this IEnumerable<Service> entities)
-        //{
-        //    return entities.Select(s => s.ToDomain()).ToList();
-        //}
-
-        //public static FileDomain ToDomain(this File entity)
-        //{
-        //    if (entity == null)
-        //        return null;
-
-        //    return new FileDomain
-        //    {
-        //        Id = entity.Id,
-        //        CreatedAt = entity.CreatedAt,
-        //        // Services = entity.Services.ToDomain(), // TODO (MJC): Recursive?
-        //        Url = entity.Url
-        //    };
-        //}
-
-        //public static List<FileDomain> ToDomain(this IEnumerable<File> files)
-        //{
-        //    return files.Select(f => f.ToDomain()).ToList();
-        //}
     }
 }

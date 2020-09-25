@@ -17,10 +17,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
     public class UsersGateway : BaseGateway, IUsersGateway
     {
         private readonly DatabaseContext _context;
+        private readonly MappingHelper _mapper;
 
         public UsersGateway(DatabaseContext databaseContext)
         {
             _context = databaseContext;
+            _mapper = new MappingHelper();
         }
 
         public async Task<List<UserDomain>> GetAllUsers(UserQueryParam userQueryParam)
@@ -77,7 +79,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                response = userList.ToDomain();
+                response = _mapper.ToDomain(userList);
             }
             catch (InvalidOperationException e)
             {
@@ -108,7 +110,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         u.Status == userStatus);
 
                 if (user != null)
-                    userDomain = user.ToDomain();
+                    userDomain = _mapper.ToDomain(user);
             }
             else
             {
@@ -133,7 +135,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     .SingleOrDefault(u => u.SubId == subId);
 
                 if (user != null)
-                    userDomain = user.ToDomain();
+                    userDomain = _mapper.ToDomain(user);
             }
             else
             {
@@ -150,7 +152,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 var userEntity = userDomain.ToEntity();
                 _context.Users.Add(userEntity);
                 _context.SaveChanges();
-                userDomain = userEntity.ToDomain();
+                userDomain = _mapper.ToDomain(userEntity);
                 return userDomain;
             }
             catch (DbUpdateException dbe)
@@ -216,7 +218,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 _context.Users.Add(userEntity);
                 _context.SaveChanges();
-                userDomain = userEntity.ToDomain();
+                userDomain = _mapper.ToDomain(userEntity);
             }
             catch (DbUpdateException dbe)
             {
@@ -251,7 +253,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .SingleOrDefault(u => u.Id == userId);
 
             if (user != null)
-                userDomain = user.ToDomain();
+                userDomain = _mapper.ToDomain(user);
 
             return userDomain;
         }
@@ -268,7 +270,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .ConfigureAwait(false);
 
             if (user != null)
-                return user.ToDomain();
+                return _mapper.ToDomain(user);
 
             return null;
         }
@@ -283,8 +285,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .Include(uo => uo.Organization)
                 .FirstOrDefault(uo => uo.UserId == userId);
 
-            if (userOrg != null && userOrg.Organization != null)
-                return userOrg.Organization.ToDomain();
+            if (userOrg?.Organization != null)
+                return _mapper.ToDomain(userOrg.Organization);
 
             return null;
         }
@@ -328,7 +330,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 }
 
                 _context.SaveChanges();
-                response = orgEntity.ToDomain();
+                response = _mapper.ToDomain(orgEntity);
             }
             catch (DbUpdateException e)
             {
