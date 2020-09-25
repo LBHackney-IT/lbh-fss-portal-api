@@ -31,9 +31,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return servicesDomain.ToResponse();
         }
 
-        public Task<List<ServiceResponse>> Execute(ServicesQueryParam servicesQuery)
+        public async Task<List<ServiceResponse>> Execute(ServicesQueryParam servicesQuery)
         {
-            throw new System.NotImplementedException();
+            var servicesDomain = await _servicesGateway.GetServicesAsync(servicesQuery).ConfigureAwait(false);
+
+            if (servicesDomain == null)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = $"Could not retrieve services using the supplied search parameters"
+                };
+
+            return servicesDomain.ToResponse();
         }
     }
 }
