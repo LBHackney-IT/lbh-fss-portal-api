@@ -12,12 +12,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         private readonly DatabaseContext _context;
         private readonly MappingHelper _mapper;
 
-        public ServicesGateway(DatabaseContext databaseContext, MappingHelper map)
-        {
-            _context = databaseContext;
-            _mapper = map;
-        }
-
         public ServicesGateway(DatabaseContext databaseContext)
         {
             _context = databaseContext;
@@ -28,9 +22,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             var service = await _context.Services
                 .Include(s => s.Organization)
+                .ThenInclude(o => o.UserOrganizations)
+                .ThenInclude(uo => uo.User)
+                .Include(s => s.Image)
                 .Include(s => s.ServiceLocations)
                 .Include(s => s.ServiceTaxonomies)
-                //.ThenInclude(st => st.Select(t => t.)
+                .ThenInclude(st => st.Taxonomy)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(u => u.Id == serviceId)
                 .ConfigureAwait(false);

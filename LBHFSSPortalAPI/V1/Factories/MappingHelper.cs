@@ -19,12 +19,12 @@ namespace LBHFSSPortalAPI.V1.Factories
             {
                 cfg.CreateMap<Service, ServiceDomain>();
                 cfg.CreateMap<File, FileDomain>();
-                cfg.CreateMap<Organization, OrganizationDomain>()
-                    .ForMember(o => o.UserOrganizations, opt => opt.Ignore());
+                cfg.CreateMap<UserOrganization, UserOrganizationDomain>();
+                cfg.CreateMap<Organization, OrganizationDomain>();
+                cfg.CreateMap<Taxonomy, TaxonomyDomain>();
                 cfg.CreateMap<ServiceLocation, ServiceLocationDomain>();
                 cfg.CreateMap<ServiceTaxonomy, ServiceTaxonomyDomain>();
-                cfg.CreateMap<User, UserDomain>()
-                    .ForMember(u => u.Organisation, opt => opt.Ignore());
+                cfg.CreateMap<User, UserDomain>();
             });
 
             mapperConfig.AssertConfigurationIsValid();
@@ -36,19 +36,9 @@ namespace LBHFSSPortalAPI.V1.Factories
             return _mapper.Map<ServiceDomain>(service);
         }
 
-        public List<ServiceDomain> ToDomain(IEnumerable<Service> services)
-        {
-            return services.Select(s => ToDomain(s)).ToList();
-        }
-
         public FileDomain ToDomain(File file)
         {
             return _mapper.Map<FileDomain>(file);
-        }
-
-        public List<FileDomain> ToDomain(IEnumerable<File> files)
-        {
-            return files.Select(s => ToDomain(s)).ToList();
         }
 
         public OrganizationDomain ToDomain(Organization org)
@@ -56,19 +46,9 @@ namespace LBHFSSPortalAPI.V1.Factories
             return _mapper.Map<OrganizationDomain>(org);
         }
 
-        public List<OrganizationDomain> ToDomain(IEnumerable<Organization> orgs)
-        {
-            return orgs.Select(s => ToDomain(s)).ToList();
-        }
-
         public ServiceLocationDomain ToDomain(ServiceLocation location)
         {
             return _mapper.Map<ServiceLocationDomain>(location);
-        }
-
-        public List<ServiceLocationDomain> ToDomain(IEnumerable<ServiceLocation> locations)
-        {
-            return locations.Select(s => ToDomain(s)).ToList();
         }
 
         public ServiceTaxonomyDomain ToDomain(ServiceTaxonomy taxonomy)
@@ -76,14 +56,34 @@ namespace LBHFSSPortalAPI.V1.Factories
             return _mapper.Map<ServiceTaxonomyDomain>(taxonomy);
         }
 
-        public List<ServiceTaxonomyDomain> ToDomain(IEnumerable<ServiceTaxonomy> taxonomies)
-        {
-            return taxonomies.Select(s => ToDomain(s)).ToList();
-        }
-
         public UserDomain ToDomain(User user)
         {
             return _mapper.Map<UserDomain>(user);
+        }
+
+        public List<ServiceDomain> ToDomain(IEnumerable<Service> services)
+        {
+            return services.Select(s => ToDomain(s)).ToList();
+        }
+
+        public List<FileDomain> ToDomain(IEnumerable<File> files)
+        {
+            return files.Select(s => ToDomain(s)).ToList();
+        }
+
+        public List<OrganizationDomain> ToDomain(IEnumerable<Organization> orgs)
+        {
+            return orgs.Select(s => ToDomain(s)).ToList();
+        }
+
+        public List<ServiceLocationDomain> ToDomain(IEnumerable<ServiceLocation> locations)
+        {
+            return locations.Select(s => ToDomain(s)).ToList();
+        }
+
+        public List<ServiceTaxonomyDomain> ToDomain(IEnumerable<ServiceTaxonomy> taxonomies)
+        {
+            return taxonomies.Select(s => ToDomain(s)).ToList();
         }
 
         public List<UserDomain> ToDomain(IEnumerable<User> users)

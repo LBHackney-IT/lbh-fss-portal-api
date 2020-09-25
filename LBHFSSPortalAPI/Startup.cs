@@ -144,8 +144,11 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
             services.AddScoped<IUpdateUserRequestUseCase, UpdateUserRequestUseCase>();
             services.AddScoped<IDeleteUserRequestUseCase, DeleteUserRequestUseCase>();
-            services.AddScoped<IGetServicesUseCase, GetServicesUseCase>();
+
             services.AddScoped<ICreateServiceUseCase, CreateServiceUseCase>();
+            services.AddScoped<IGetServicesUseCase, GetServicesUseCase>();
+            services.AddScoped<IUpdateServiceUseCase, UpdateServiceUseCase>();
+            services.AddScoped<IDeleteServiceUseCase, DeleteServiceUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -6,13 +6,21 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
 {
     public class ServiceResponse
     {
-        public ServiceResponse()
-        {
-            Locations = new List<LocationResponse>();
-        }
-
         public int Id { get; set; }
         public string Name { get; set; }
+
+        [JsonPropertyName("user_id")]
+        public int? UserId { get; set; }
+
+        [JsonPropertyName("user_name")]
+        public string UserName { get; set; }
+
+        [JsonPropertyName("organisation_id")]
+        public int? OrganisationId { get; set; }
+
+        [JsonPropertyName("organisation_name")]
+        public string OrganisationName { get; set; }
+
         public string Status { get; set; }
 
         [JsonPropertyName("created_at")]
@@ -37,6 +45,9 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         [JsonPropertyName("referral_email")]
         public string ReferralEmail { get; set; }
 
+        public ImageResponse Image { get; set; }
         public List<LocationResponse> Locations { get; set; }
+        public List<TaxonomyResponse> Categories { get; set; }
+        public List<TaxonomyResponse> Demographics { get; set; }
     }
 }
