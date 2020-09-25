@@ -6,5 +6,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     public interface IGetUserUseCase
     {
         Task<UserResponse> Execute(int userId);
+
+        UserResponse Execute(string accessKey);
     }
 }

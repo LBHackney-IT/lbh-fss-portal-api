@@ -7,5 +7,6 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     {
         UserResponse Execute(UserConfirmRequest queryParam);
         void Resend(ConfirmationResendRequest confirmationResendRequest);
+        void Resend(int userId);
     }
 }
