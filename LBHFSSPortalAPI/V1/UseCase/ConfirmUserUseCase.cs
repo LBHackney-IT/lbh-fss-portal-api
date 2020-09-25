@@ -71,8 +71,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 CreatedAt = timestamp,
                 LastAccessAt = timestamp,
                 UserId = user.Id,
-                //Payload = (?)
-                //UserAgent = (?)
+                //Payload = (?) // TODO (MJC) - acquire from http request header
+                //UserAgent = (?) // TODO (MJC) - acquire from http request header
             };
 
             var savedSession = _sessionsGateway.AddSession(session);
@@ -93,6 +93,19 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public void Resend(ConfirmationResendRequest confirmationResendRequest)
         {
             _authenticateGateway.ResendConfirmation(confirmationResendRequest);
+        }
+
+        public void Resend(int userId)
+        {
+            var userDomain = _usersGateway.GetUser(userId);
+
+            if (userDomain == null)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = $"A user with the supplied ID of '{userId}' could not be found"
+                };
+
+            _authenticateGateway.ResendConfirmation(new ConfirmationResendRequest { Email = userDomain.Email });
         }
     }
 }
