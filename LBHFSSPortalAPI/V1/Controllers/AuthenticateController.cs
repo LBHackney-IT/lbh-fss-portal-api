@@ -17,14 +17,17 @@ namespace LBHFSSPortalAPI.V1.Controllers
         private readonly IAuthenticateUseCase _authenticateUseCase;
         private readonly ICreateUserRequestUseCase _createUserRequestUseCase;
         private readonly IConfirmUserUseCase _confirmUserUseCase;
+        private readonly IGetUserUseCase _getUserRequestUseCase;
 
         public AuthenticateController(IAuthenticateUseCase authenticateUseCase,
             ICreateUserRequestUseCase createUserRequestUseCase,
-            IConfirmUserUseCase confirmUserUseCase)
+            IConfirmUserUseCase confirmUserUseCase,
+            IGetUserUseCase getUserRequestUseCase)
         {
             _authenticateUseCase = authenticateUseCase;
             _createUserRequestUseCase = createUserRequestUseCase;
             _confirmUserUseCase = confirmUserUseCase;
+            _getUserRequestUseCase = getUserRequestUseCase;
         }
 
         [HttpPost]
@@ -99,8 +102,28 @@ namespace LBHFSSPortalAPI.V1.Controllers
             {
                 queryParam.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
                 var response = _authenticateUseCase.ExecuteLoginUser(queryParam);
-                Response.Cookies.Append(LoginUserResponse.AccessTokenName, response.AccessToken);
+                Response.Cookies.Append(Cookies.AccessTokenName, response.AccessToken);
                 return Ok();
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [Route("account")]
+        [HttpGet]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        public IActionResult GetLoggedInUser()
+        {
+            try
+            {
+                var accessKey = Request.Cookies[Cookies.AccessTokenName];
+
+                if (string.IsNullOrEmpty(accessKey))
+                    return BadRequest("no access_token header found in the request");
+
+                return Ok(_getUserRequestUseCase.Execute(accessKey));
             }
             catch (UseCaseException e)
             {
