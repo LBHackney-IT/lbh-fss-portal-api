@@ -1,5 +1,6 @@
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LBHFSSPortalAPI.V1.Factories
@@ -84,6 +85,11 @@ namespace LBHFSSPortalAPI.V1.Factories
                 };
 
             return response;
+        }
+
+        public static List<ServiceResponse> ToResponse(this List<ServiceDomain> services)
+        {
+            return services.Select(s => ToResponse(s)).ToList();
         }
     }
 }
