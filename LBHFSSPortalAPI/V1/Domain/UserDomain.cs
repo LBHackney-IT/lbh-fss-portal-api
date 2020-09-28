@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace LBHFSSPortalAPI.V1.Domain
 {
@@ -10,6 +11,7 @@ namespace LBHFSSPortalAPI.V1.Domain
         public string Status { get; set; }
         public DateTime? CreatedAt { get; set; }
         public string SubId { get; set; }
-        public OrganizationsDomain Organisation { get; set; }
+
+        public IEnumerable<OrganizationDomain> Organizations { get; set; }
     }
 }

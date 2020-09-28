@@ -9,6 +9,7 @@ using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using AdminCreateUserRequest = Amazon.CognitoIdentityProvider.Model.AdminCreateUserRequest;
 using LBHFSSPortalAPI.V1.Exceptions;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {

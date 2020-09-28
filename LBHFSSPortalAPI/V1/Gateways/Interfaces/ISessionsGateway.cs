@@ -1,6 +1,6 @@
 using LBHFSSPortalAPI.V1.Infrastructure;
 
-namespace LBHFSSPortalAPI.V1.Gateways
+namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
 {
     public interface ISessionsGateway
     {

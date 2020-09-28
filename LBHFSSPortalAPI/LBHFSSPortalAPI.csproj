@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="5.1.1" />
+        <PackageReference Include="AutoMapper" Version="10.0.0" />
         <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.3.113" />
         <PackageReference Include="EntityFramework" Version="6.4.4" />
         <PackageReference Include="Microsoft.AspNetCore.HealthChecks" Version="1.0.0" />

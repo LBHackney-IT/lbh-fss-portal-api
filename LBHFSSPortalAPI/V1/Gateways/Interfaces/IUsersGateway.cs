@@ -3,7 +3,7 @@ using LBHFSSPortalAPI.V1.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LBHFSSPortalAPI.V1.Gateways
+namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
 {
     public interface IUsersGateway
     {
@@ -15,8 +15,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
         UserDomain GetUserBySubId(string subId);
         UserDomain GetUser(int userId);
         Task<UserDomain> GetUserAsync(int userId);
-        OrganizationsDomain GetAssociatedOrganisation(int userId);
-        OrganizationsDomain AssociateUserWithOrganisation(int userId, int organisationId);
+        OrganizationDomain GetAssociatedOrganisation(int userId);
+        OrganizationDomain AssociateUserWithOrganisation(int userId, int organisationId);
         void RemoveUserOrganisationAssociation(int userId);
     }
 }
