@@ -1,4 +1,4 @@
-﻿namespace LBHFSSPortalAPI.V1.Domain
+namespace LBHFSSPortalAPI.V1.Domain
 {
     public class ServiceLocationDomain
     {
