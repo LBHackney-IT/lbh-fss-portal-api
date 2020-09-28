@@ -29,17 +29,15 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void GetsAllFromTheGateway()
         {
             var stubbedUsers = _fixture
-                .Build<UserDomain>()
-                //.Without(contact => contact.Contacts)
-                .CreateMany();
+                    .Build<UserDomain>()
+                    .Without(u => u.Organizations)
+                    .CreateMany();
 
             var userQueryParam = new UserQueryParam()
             {
                 Search = string.Empty,
                 Direction = "asc",
                 Sort = "name",
-                Limit = null, // (no limit)
-                Offset = null // (no offset)
             };
 
             _mockGateway.Setup(x => x.GetAllUsers(userQueryParam))
