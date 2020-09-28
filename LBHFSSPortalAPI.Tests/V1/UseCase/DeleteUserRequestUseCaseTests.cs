@@ -2,7 +2,7 @@ using AutoFixture;
 using FluentAssertions;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
-using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.UseCase;
 using Moq;
 using NUnit.Framework;

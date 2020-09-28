@@ -1,13 +1,13 @@
 using System.Linq;
 using AutoFixture;
 using LBHFSSPortalAPI.V1.Factories;
-using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.UseCase;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 
 namespace LBHFSSPortalAPI.Tests.V1.UseCase
 {
@@ -29,17 +29,15 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void GetsAllFromTheGateway()
         {
             var stubbedUsers = _fixture
-                .Build<UserDomain>()
-                //.Without(contact => contact.Contacts)
-                .CreateMany();
+                    .Build<UserDomain>()
+                    .Without(u => u.Organizations)
+                    .CreateMany();
 
             var userQueryParam = new UserQueryParam()
             {
                 Search = string.Empty,
                 Direction = "asc",
                 Sort = "name",
-                Limit = null, // (no limit)
-                Offset = null // (no offset)
             };
 
             _mockGateway.Setup(x => x.GetAllUsers(userQueryParam))

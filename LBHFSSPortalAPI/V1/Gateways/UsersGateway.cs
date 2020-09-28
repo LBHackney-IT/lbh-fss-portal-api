@@ -3,11 +3,11 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,11 +15,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
 {
     public class UsersGateway : BaseGateway, IUsersGateway
     {
-        private readonly DatabaseContext _context;
+        private readonly MappingHelper _mapper;
 
-        public UsersGateway(DatabaseContext databaseContext)
+        public UsersGateway(DatabaseContext context) : base(context)
         {
-            _context = databaseContext;
+            _mapper = new MappingHelper();
         }
 
         public async Task<List<UserDomain>> GetAllUsers(UserQueryParam userQueryParam)
@@ -39,7 +39,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     UserErrorMessage = "The sort direction was not valid (must be one of asc, desc)"
                 };
 
-            var matchingUsers = _context.Users.AsQueryable();
+            var matchingUsers = Context.Users.AsQueryable();
 
             // handle search 
             if (!string.IsNullOrWhiteSpace(userQueryParam.Search))
@@ -76,13 +76,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-                response = userList.ToDomain();
+                response = _mapper.ToDomain(userList);
             }
             catch (InvalidOperationException e)
             {
                 throw new UseCaseException()
                 {
-                    UserErrorMessage = "Could not run the query with the supplied input parameters",
+                    UserErrorMessage = "Could not run the user search query with the supplied input parameters",
                     DevErrorMessage = e.Message
                 };
             }
@@ -94,20 +94,21 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             UserDomain userDomain = null;
 
-            if (!string.IsNullOrWhiteSpace(emailAddress))
-            {
-                // Perform search for user based on email address and status
-                var user = _context.Users.SingleOrDefault(u =>
+            if (string.IsNullOrWhiteSpace(emailAddress))
+                throw new UseCaseException { UserErrorMessage = "Invalid user email address supplied" };
+
+            // Perform search for user based on email address and status
+            var user = Context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .AsNoTracking()
+                .SingleOrDefault(u =>
                     u.Email == emailAddress &&
                     u.Status == userStatus);
 
-                if (user != null)
-                    userDomain = user.ToDomain();
-            }
-            else
-            {
-                // throw 'invalid email' gateway exception
-            }
+            if (user != null)
+                userDomain = _mapper.ToDomain(user);
 
             return userDomain;
         }
@@ -116,18 +117,19 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             UserDomain userDomain = null;
 
-            if (!string.IsNullOrWhiteSpace(subId))
-            {
-                // Perform search for user based on subscription ID
-                var user = _context.Users.SingleOrDefault(u => u.SubId == subId);
+            if (string.IsNullOrWhiteSpace(subId))
+                throw new UseCaseException { UserErrorMessage = "Invalid sub_id value supplied" };
 
-                if (user != null)
-                    userDomain = user.ToDomain();
-            }
-            else
-            {
-                // throw 'invalid email' gateway exception
-            }
+            // Perform search for user based on subscription ID
+            var user = Context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .AsNoTracking()
+                .SingleOrDefault(u => u.SubId == subId);
+
+            if (user != null)
+                userDomain = _mapper.ToDomain(user);
 
             return userDomain;
         }
@@ -137,9 +139,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 var userEntity = userDomain.ToEntity();
-                _context.Users.Add(userEntity);
-                _context.SaveChanges();
-                userDomain = userEntity.ToDomain();
+                Context.Users.Add(userEntity);
+                Context.SaveChanges();
+                userDomain = _mapper.ToDomain(userEntity);
                 return userDomain;
             }
             catch (DbUpdateException dbe)
@@ -160,7 +162,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                var userEntity = _context.Users.FirstOrDefault(u => u.Id == userDomain.Id);
+                var userEntity = Context.Users.FirstOrDefault(u => u.Id == userDomain.Id);
 
                 if (userEntity != null)
                 {
@@ -169,11 +171,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     userEntity.Status = userDomain.Status;
                     userEntity.CreatedAt = userDomain.CreatedAt;
                     userEntity.SubId = userDomain.SubId;
-                    _context.SaveChanges();
+                    Context.SaveChanges();
                 }
                 else
                 {
-                    // user was not found
+                    throw new UseCaseException { UserErrorMessage = $"User with ID '{userDomain.Id}' could not be found" };
                 }
             }
             catch (DbUpdateException dbe)
@@ -203,9 +205,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             try
             {
-                _context.Users.Add(userEntity);
-                _context.SaveChanges();
-                userDomain = userEntity.ToDomain();
+                Context.Users.Add(userEntity);
+                Context.SaveChanges();
+                userDomain = _mapper.ToDomain(userEntity);
             }
             catch (DbUpdateException dbe)
             {
@@ -232,49 +234,59 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             UserDomain userDomain = null;
 
-            var user = _context.Users.SingleOrDefault(u => u.Id == userId);
+            var user = Context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .AsNoTracking()
+                .SingleOrDefault(u => u.Id == userId);
 
             if (user != null)
-                userDomain = user.ToDomain();
+                userDomain = _mapper.ToDomain(user);
 
             return userDomain;
         }
 
-
         public async Task<UserDomain> GetUserAsync(int userId)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId).ConfigureAwait(false);
+            var user = await Context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(u => u.Id == userId)
+                .ConfigureAwait(false);
 
             if (user != null)
-                return user.ToDomain();
+                return _mapper.ToDomain(user);
 
             return null;
         }
 
-        public OrganizationsDomain GetAssociatedOrganisation(int userId)
+        public OrganizationDomain GetAssociatedOrganisation(int userId)
         {
             // Users and Organisations have a many to many relationship and use the UserOrganization
             // link entity to resolve this. But for the MVP, callers will only ever associate
             // one organisation with one user
 
-            var userOrg = _context.UserOrganizations
+            var userOrg = Context.UserOrganizations
                 .Include(uo => uo.Organization)
                 .FirstOrDefault(uo => uo.UserId == userId);
 
-            if (userOrg != null && userOrg.Organization != null)
-                return userOrg.Organization.ToDomain();
+            if (userOrg?.Organization != null)
+                return _mapper.ToDomain(userOrg.Organization);
 
             return null;
         }
 
-        public OrganizationsDomain AssociateUserWithOrganisation(int userId, int organisationId)
+        public OrganizationDomain AssociateUserWithOrganisation(int userId, int organisationId)
         {
-            OrganizationsDomain response = null;
+            OrganizationDomain response = null;
 
             try
             {
                 // check organisation actually exists before creating association in database
-                var orgEntity = _context.Organizations.FirstOrDefault(o => o.Id == organisationId);
+                var orgEntity = Context.Organizations.FirstOrDefault(o => o.Id == organisationId);
 
                 if (orgEntity == null)
                 {
@@ -285,13 +297,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     };
                 }
 
-                var userOrg = _context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
+                var userOrg = Context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
 
                 // check if an association already exists and modify this one if it does
                 if (userOrg != null)
                 {
                     userOrg.OrganizationId = organisationId;
-                    _context.UserOrganizations.Update(userOrg);
+                    Context.UserOrganizations.Update(userOrg);
                 }
                 else
                 {
@@ -302,11 +314,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         UserId = userId,
                         OrganizationId = organisationId
                     };
-                    _context.UserOrganizations.Add(userOrg);
+                    Context.UserOrganizations.Add(userOrg);
                 }
 
-                _context.SaveChanges();
-                response = orgEntity.ToDomain();
+                Context.SaveChanges();
+                response = _mapper.ToDomain(orgEntity);
             }
             catch (DbUpdateException e)
             {
@@ -324,54 +336,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public void RemoveUserOrganisationAssociation(int userId)
         {
-            var userOrg = _context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
+            var userOrg = Context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
 
             if (userOrg != null)
             {
-                _context.Remove(userOrg);
-                _context.SaveChanges();
+                Context.Remove(userOrg);
+                Context.SaveChanges();
             }
-        }
-
-        /// <summary>
-        /// Searches for the given database column name (case-insensitive) and returns EF entity name
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="columnToFind"></param>
-        /// <returns></returns>
-        private string GetEntityPropertyForColumnName(Type type, string columnToFind)
-        {
-            var entityType = _context.Model.FindEntityType(type.FullName);
-
-            if (entityType != null)
-            {
-                columnToFind = columnToFind.Trim().ToLower(CultureInfo.CurrentCulture);
-
-                foreach (var prop in entityType.GetProperties())
-                {
-                    var columnName = prop.GetColumnName();
-
-                    if (string.Compare(columnToFind, columnName, true, CultureInfo.CurrentCulture) == 0)
-                    {
-                        return prop.Name;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private static SortDirection ConvertToEnum(string directionString)
-        {
-            if (!string.IsNullOrWhiteSpace(directionString))
-            {
-                directionString = directionString.ToLower(CultureInfo.CurrentCulture).Trim();
-
-                if (Enum.TryParse(directionString, true, out SortDirection direction))
-                    return direction;
-            }
-
-            return SortDirection.None;
         }
     }
 }
