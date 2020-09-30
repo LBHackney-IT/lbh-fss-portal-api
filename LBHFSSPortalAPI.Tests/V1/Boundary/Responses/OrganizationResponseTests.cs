@@ -1,21 +1,22 @@
 using System;
 using FluentAssertions;
 using LBHFSSPortalAPI.Tests.TestHelpers;
-using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using NUnit.Framework;
 
 namespace LBHFSSPortalAPI.Tests.V1.Boundary.Requests
 {
     [TestFixture]
-    public class OrganizationRequestTests
+    public class OrganizationResponseTests
     {
-        [TestCase(TestName = "Organization create request object should have the correct properties")]
+        [TestCase(TestName = "Organization response object should have the correct properties")]
         public void GetServiceResponseObjectShouldHaveCorrectProperties()
         {
-            var entityType = typeof(OrganisationRequest);
-            entityType.GetProperties().Length.Should().Be(31);
-            var entity = Randomm.Create<OrganisationRequest>();
+            var entityType = typeof(OrganisationResponse);
+            entityType.GetProperties().Length.Should().Be(32);
+            var entity = Randomm.Create<OrganisationResponse>();
+            Assert.That(entity, Has.Property("Id").InstanceOf(typeof(int)));
             Assert.That(entity, Has.Property("Name").InstanceOf(typeof(string)));
             Assert.That(entity, Has.Property("CreatedAt").InstanceOf(typeof(DateTime)));
             Assert.That(entity, Has.Property("UpdatedAt").InstanceOf(typeof(DateTime)));
