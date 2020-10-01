@@ -5,7 +5,7 @@ namespace LBHFSSPortalAPI.V1.Validations
 {
     public static class UserRoleValidator
     {
-        private static readonly List<string> _validUserRoles = new List<string> { "VSCO", "Viewer", "Admin" };
+        private static readonly List<string> _validUserRoles = new List<string> { "VCSO", "Viewer", "Admin" };
 
         public static List<string> ToValidList(List<string> roles)
         {
