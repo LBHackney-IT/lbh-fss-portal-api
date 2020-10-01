@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -46,7 +47,14 @@ namespace LBHFSSPortalAPI.Tests
         {
             Client.Dispose();
             _factory.Dispose();
-            _transaction.Rollback();
+            try
+            {
+                _transaction.Rollback();
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine(e);
+            }
             _transaction.Dispose();
         }
     }

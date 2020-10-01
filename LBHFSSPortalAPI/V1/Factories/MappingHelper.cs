@@ -3,6 +3,7 @@ using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 
 namespace LBHFSSPortalAPI.V1.Factories
 {

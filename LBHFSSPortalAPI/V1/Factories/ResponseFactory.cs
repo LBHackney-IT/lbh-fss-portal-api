@@ -45,7 +45,35 @@ namespace LBHFSSPortalAPI.V1.Factories
             return new OrganisationResponse()
             {
                 Id = domain.Id,
-                Name = domain.Name
+                Name = domain.Name,
+                CreatedAt = domain.CreatedAt,
+                UpdatedAt = domain.UpdatedAt,
+                SubmittedAt = domain.SubmittedAt,
+                ReviewedAt = domain.ReviewedAt,
+                ReviewerMessage = domain.ReviewerMessage,
+                Status = domain.Status,
+                IsRegisteredCharity = domain.IsRegisteredCharity,
+                CharityNumber = domain.CharityNumber,
+                HasHcOrColGrant = domain.HasHcOrColGrant,
+                HasHcvsOrHgOrAelGrant = domain.HasHcvsOrHgOrAelGrant,
+                IsTraRegistered = domain.IsTraRegistered,
+                RslOrHaAssociation = domain.RslOrHaAssociation,
+                IsLotteryFunded = domain.IsLotteryFunded,
+                LotteryFundedProject = domain.LotteryFundedProject,
+                FundingOther = domain.FundingOther,
+                HasChildSupport = domain.HasChildSupport,
+                ChildSafeguardingLeadFirstName = domain.ChildSafeguardingLeadFirstName,
+                ChildSafeguardingLeadLastName = domain.ChildSafeguardingLeadLastName,
+                ChildSafeguardingLeadTrainingMonth = domain.ChildSafeguardingLeadTrainingMonth,
+                ChildSafeguardingLeadTrainingYear = domain.ChildSafeguardingLeadTrainingYear,
+                HasAdultSupport = domain.HasAdultSupport,
+                HasAdultSafeguardingLead = domain.HasAdultSafeguardingLead,
+                AdultSafeguardingLeadFirstName = domain.AdultSafeguardingLeadFirstName,
+                AdultSafeguardingLeadLastName = domain.AdultSafeguardingLeadLastName,
+                AdultSafeguardingLeadTrainingMonth = domain.AdultSafeguardingLeadTrainingMonth,
+                AdultSafeguardingLeadTrainingYear = domain.AdultSafeguardingLeadTrainingYear,
+                HasEnhancedSupport = domain.HasEnhancedSupport,
+                IsLocalOfferListed = domain.IsLocalOfferListed
             };
         }
     }

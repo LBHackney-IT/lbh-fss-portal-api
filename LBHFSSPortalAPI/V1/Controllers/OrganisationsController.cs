@@ -1,5 +1,5 @@
 using System;
-using Amazon.Runtime.Internal;
+using System.Collections.Generic;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -23,16 +23,14 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(typeof(OrganisationResponse), 201)]
         public IActionResult CreateOrganisation(OrganisationRequest organisationRequest)
         {
-            var organisationResponse = new OrganisationResponse();
-            return Created(new Uri("api/v1/organisations/1", UriKind.Relative), organisationResponse);
             //add validation
-            //var response = _organisationsUseCase.ExecuteCreate(OrganisationRequest.ToDomain());
-            //return Created(new Uri("test", UriKind.Relative), response);
+            var response = _organisationsUseCase.ExecuteCreate(organisationRequest);
+            if (response != null)
+                return Created(new Uri($"/{response.Id}", UriKind.Relative), response);
+
             // Validations
-            // return BadRequest(
-            // new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = validationResponse.Errors });
+            return BadRequest(
+            new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = new List<string>{"Unable to create organisation."} });
         }
-
-
     }
 }
