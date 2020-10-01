@@ -1,7 +1,9 @@
 using System.Linq;
+using AutoMapper;
 using FluentAssertions;
 using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Domain;
+using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using NUnit.Framework;
@@ -12,6 +14,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
     public class OrganisationsGatewayTests : DatabaseTests
     {
         private OrganisationsGateway _classUnderTest;
+        private MappingHelper _mapper = new MappingHelper();
 
         [SetUp]
         public void Setup()
@@ -62,6 +65,25 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
             _classUnderTest.DeleteOrganisation(organisation.Id);
             var expectedResult = DatabaseContext.Organizations.Find(organisation.Id);
             expectedResult.Should().BeNull();
+        }
+
+        [TestCase(TestName = "Given an organisation object when the gateway is called with the object the gateway will update the organisation that matches")]
+        public void GivenAnOrganisationAMatchingOrganisationGetsUpdated()
+        {
+            var organisation = EntityHelpers.CreateOrganization();
+            DatabaseContext.Add(organisation);
+            DatabaseContext.SaveChanges();
+            var organisationDomain = _mapper.ToDomain(organisation);
+            organisationDomain.Name = Randomm.Text();
+            _classUnderTest.PatchOrganisation(organisationDomain);
+            var expectedResult = DatabaseContext.Organizations.Find(organisation.Id);
+            expectedResult.Should().BeEquivalentTo(organisationDomain, options =>
+            {
+                options.Excluding(ex => ex.ReviewerU);
+                options.Excluding(ex => ex.Services);
+                options.Excluding(ex => ex.UserOrganizations);
+                return options;
+            });
         }
 
     }

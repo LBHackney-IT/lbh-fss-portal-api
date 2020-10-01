@@ -109,7 +109,30 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(400);
         }
+        #endregion
 
+        #region Patch Organisation
+        [TestCase(TestName = "When the organisations controller PatchOrganisation action is called, the OrganisationsUseCase ExecutePatch method is called once with data and id provided")]
+        public void PatchOrganisationControllerActionCallsTheOrganisationsUseCase()
+        {
+            var requestParams = Randomm.Create<OrganisationRequest>();
+            var requestId = Randomm.Id();
+            _classUnderTest.PatchOrganisation(requestId, requestParams);
+            _mockUseCase.Verify(uc => uc.ExecutePatch(It.Is<int>(p => p == requestId), It.Is<OrganisationRequest>(p => p == requestParams)), Times.Once);
+        }
+
+        [TestCase(TestName = "When the organisations controller PatchOrganisation action is called and the organisation gets patched it returns a response with a status code")]
+        public void PatchReturnsResponseWithStatus()
+        {
+            var expected = Randomm.Create<OrganisationResponse>();
+            var id = Randomm.Id();
+            var reqParams = Randomm.Create<OrganisationRequest>();
+            _mockUseCase.Setup(u => u.ExecutePatch(It.IsAny<int>(), It.IsAny<OrganisationRequest>())).Returns(expected);
+            var response = _classUnderTest.PatchOrganisation(id, reqParams) as OkObjectResult;
+            response.Should().NotBeNull();
+            response.StatusCode.Should().Be(200);
+            response.Value.Should().BeEquivalentTo(expected);
+        }
         #endregion
     }
 }

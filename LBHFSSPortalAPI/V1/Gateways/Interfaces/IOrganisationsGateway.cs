@@ -9,5 +9,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         OrganizationDomain GetOrganisation(int id);
 
         void DeleteOrganisation(int id);
+        OrganizationDomain PatchOrganisation(OrganizationDomain organisationDomain);
     }
 }
