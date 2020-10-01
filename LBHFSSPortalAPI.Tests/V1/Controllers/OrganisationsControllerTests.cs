@@ -23,6 +23,8 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
             _classUnderTest = new OrganisationsController(_mockUseCase.Object);
         }
 
+        #region Create Organisation
+
         [TestCase(TestName = "When the organisations controller CreateOrganisation action is called the OrganisationsUseCase ExecuteCreate method is called once with data provided")]
         public void CreateOrganisationControllerActionCallsTheOrganisationsUseCase()
         {
@@ -42,5 +44,40 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
             response.StatusCode.Should().Be(201);
             response.Value.Should().BeEquivalentTo(expected);
         }
+
+        #endregion
+
+        #region Get Organisation
+        [TestCase(TestName = "When the organisations controller GetOrganisation action is called the OrganisationsUseCase ExecuteGet method is called once with id provided")]
+        public void GetOrganisationControllerActionCallsTheOrganisationsUseCase()
+        {
+            var requestParam = Randomm.Create<int>();
+            _classUnderTest.GetOrganisation(requestParam);
+            _mockUseCase.Verify(uc => uc.ExecuteGet(It.Is<int>(p => p == requestParam)), Times.Once);
+        }
+
+        [TestCase(TestName = "When the organisations controller GetOrganisation action is called with an id, if matched an organisation with a 200 status code")]
+        public void ReturnsGetResponseWith200Status()
+        {
+            var expected = Randomm.Create<OrganisationResponse>();
+            var requestParam = Randomm.Create<int>();
+            _mockUseCase.Setup(u => u.ExecuteGet(It.Is<int>(p => p == requestParam))).Returns(expected);
+            var response = _classUnderTest.GetOrganisation(requestParam) as OkObjectResult;
+            response.Should().NotBeNull();
+            response.StatusCode.Should().Be(200);
+            response.Value.Should().BeEquivalentTo(expected);
+        }
+
+        [TestCase(TestName = "When the organisations controller GetOrganisation action is called with an id, if not matched an error response is returned with a 404 status code")]
+        public void ReturnsGetResponseWith404Status()
+        {
+            var reqParam = Randomm.Create<int>();
+            _mockUseCase.Setup(u => u.ExecuteGet(It.IsAny<int>())).Returns((OrganisationResponse) null);
+            var response = _classUnderTest.GetOrganisation(reqParam) as NotFoundObjectResult;
+            response.Should().NotBeNull();
+            response.StatusCode.Should().Be(404);
+        }
+
+        #endregion
     }
 }

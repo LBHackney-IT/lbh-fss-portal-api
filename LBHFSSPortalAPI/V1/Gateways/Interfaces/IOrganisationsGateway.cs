@@ -6,5 +6,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     public interface IOrganisationsGateway
     {
         OrganizationDomain CreateOrganisation(Organization request);
+        OrganizationDomain GetOrganisation(int id);
     }
 }

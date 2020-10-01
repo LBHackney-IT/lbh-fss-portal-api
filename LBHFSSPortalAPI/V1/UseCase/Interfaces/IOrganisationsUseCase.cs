@@ -6,5 +6,6 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     public interface IOrganisationsUseCase
     {
         OrganisationResponse ExecuteCreate(OrganisationRequest requestParams);
+        OrganisationResponse ExecuteGet(int id);
     }
 }
