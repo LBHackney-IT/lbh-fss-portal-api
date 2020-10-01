@@ -19,5 +19,11 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var gatewayResponse = _organisationsGateway.CreateOrganisation(requestParams.ToEntity());
             return gatewayResponse == null ? new OrganisationResponse() : gatewayResponse.ToResponse();
         }
+
+        public OrganisationResponse ExecuteGet(int id)
+        {
+            var gatewayResponse = _organisationsGateway.GetOrganisation(id);
+            return gatewayResponse == null ? new OrganisationResponse() : gatewayResponse.ToResponse();
+        }
     }
 }

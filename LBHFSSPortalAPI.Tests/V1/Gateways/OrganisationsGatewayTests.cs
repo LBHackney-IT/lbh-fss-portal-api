@@ -34,5 +34,23 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
                 return options;
             });
         }
+
+        [TestCase(TestName = "Given an organisation id when the gateway is called with the id the gateway will return an organisation that matches")]
+        public void GivenAnIdAMatchingOrganisationGetsReturned()
+        {
+            var organisation = EntityHelpers.CreateOrganization();
+            DatabaseContext.Add(organisation);
+            DatabaseContext.SaveChanges();
+            var gatewayResult = _classUnderTest.GetOrganisation(organisation.Id);
+            var expectedResult = DatabaseContext.Organizations.Find(organisation.Id);
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.Should().BeEquivalentTo(expectedResult, options =>
+            {
+                options.Excluding(ex => ex.ReviewerU);
+                options.Excluding(ex => ex.Services);
+                options.Excluding(ex => ex.UserOrganizations);
+                return options;
+            });
+        }
     }
 }

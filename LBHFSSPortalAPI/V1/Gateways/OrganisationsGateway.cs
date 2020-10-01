@@ -29,5 +29,20 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             return _mapper.ToDomain(request);
         }
+
+        public OrganizationDomain GetOrganisation(int id)
+        {
+            // add some exception handling
+            try
+            {
+                var organization = Context.Organizations.Find(id);
+                return _mapper.ToDomain(organization);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
 }

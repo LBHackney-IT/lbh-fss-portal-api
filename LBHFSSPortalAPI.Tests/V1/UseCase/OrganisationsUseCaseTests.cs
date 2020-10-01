@@ -25,6 +25,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             _classUnderTest = new OrganisationsUseCase(_mockOrganisationsGateway.Object);
         }
 
+        #region Create Organisation
         [TestCase(TestName = "A call to the organisations use case create method calls the gateway create action")]
         public void CreateOrganisationUseCaseCallsGatewayCreateOrganisation()
         {
@@ -33,8 +34,8 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             _mockOrganisationsGateway.Verify(u => u.CreateOrganisation(It.IsAny<Organization>()), Times.Once);
         }
 
-        [TestCase(TestName = "Given an organisation domain object is provided the created organisation is returned from the gateway")]
-        public void ReturnsOrganisation()
+        [TestCase(TestName = "Given an organisation domain object is provided the created organisation is returned")]
+        public void ReturnsCreatedOrganisation()
         {
             var requestParams = Randomm.Create<OrganisationRequest>();
             var domainData = requestParams.ToDomain();
@@ -44,5 +45,29 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);
         }
+
+        #endregion
+
+        #region Get Organisation
+        [TestCase(TestName = "A call to the organisations use case get method calls the gateway get action")]
+        public void GetOrganisationUseCaseCallsGatewayGetOrganisation()
+        {
+            var id = Randomm.Create<int>();
+            _classUnderTest.ExecuteGet(id);
+            _mockOrganisationsGateway.Verify(u => u.GetOrganisation(It.IsAny<int>()), Times.Once);
+        }
+
+        [TestCase(TestName = "Given a valid organisation id is provided a matching organisation is returned")]
+        public void ReturnsOrganisation()
+        {
+            var organisation = Randomm.Create<OrganizationDomain>();
+            var id = Randomm.Create<int>();
+            _mockOrganisationsGateway.Setup(g => g.GetOrganisation(It.IsAny<int>())).Returns(organisation);
+            var expectedResponse = organisation.ToResponse();
+            var response = _classUnderTest.ExecuteGet(id);
+            response.Should().NotBeNull();
+            response.Should().BeEquivalentTo(expectedResponse);
+        }
+        #endregion
     }
 }

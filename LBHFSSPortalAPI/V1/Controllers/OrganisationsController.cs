@@ -30,7 +30,22 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
             // Validations
             return BadRequest(
-            new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = new List<string>{"Unable to create organisation."} });
+            new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = new List<string> { "Unable to create organisation." } });
+        }
+
+        [HttpGet]
+        [Route("{Id}")]
+        [ProducesResponseType(typeof(OrganisationResponse), 200)]
+        public IActionResult GetOrganisation(int id)
+        {
+            //add validation
+            var response = _organisationsUseCase.ExecuteGet(id);
+            if (response != null)
+                return Ok(response);
+
+            // Validations
+            return NotFound(
+                new ErrorResponse($"Item not found") { Status = "Not found", Errors = new List<string> { $"Organisation with id {id} not found" } });
         }
     }
 }
