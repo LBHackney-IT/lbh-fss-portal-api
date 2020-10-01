@@ -97,5 +97,19 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         }
         #endregion
 
+        #region Patch Organisation
+        [TestCase(TestName = "A call to the organisations use case patch method calls the gateway patch action")]
+        public void PatchOrganisationUseCaseCallsGatewayPatchOrganisation()
+        {
+            var organisation = Randomm.Create<OrganisationRequest>();
+            var requestId = Randomm.Id();
+            _mockOrganisationsGateway.Setup(gw => gw.GetOrganisation(It.IsAny<int>())).Returns(organisation.ToDomain());
+            _mockOrganisationsGateway.Setup(gw => gw.PatchOrganisation(It.IsAny<OrganizationDomain>())).Returns(organisation.ToDomain());
+            _classUnderTest.ExecutePatch(requestId, organisation);
+            _mockOrganisationsGateway.Verify(u => u.GetOrganisation(It.IsAny<int>()), Times.Once);
+            _mockOrganisationsGateway.Verify(u => u.PatchOrganisation(It.IsAny<OrganizationDomain>()), Times.Once);
+        }
+        #endregion
+
     }
 }

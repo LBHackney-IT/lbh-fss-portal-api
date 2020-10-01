@@ -37,7 +37,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [HttpGet]
         [Route("{Id}")]
         [ProducesResponseType(typeof(OrganisationResponse), 200)]
-        public IActionResult GetOrganisation(int id)
+        public IActionResult GetOrganisation([FromRoute] int id)
         {
             //add validation
             var response = _organisationsUseCase.ExecuteGet(id);
@@ -49,9 +49,24 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 new ErrorResponse($"Item not found") { Status = "Not found", Errors = new List<string> { $"Organisation with id {id} not found" } });
         }
 
+        [HttpPatch]
+        [Route("{Id}")]
+        [ProducesResponseType(typeof(OrganisationResponse), 200)]
+        public IActionResult PatchOrganisation([FromRoute] int id, OrganisationRequest organisationRequest)
+        {
+            //add validation
+            var response = _organisationsUseCase.ExecutePatch(id, organisationRequest);
+            if (response != null)
+                return Ok(response);
+
+            // Validations
+            return BadRequest(
+                new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = new List<string> { "Unable to create organisation." } });
+        }
+
         [HttpDelete]
         [Route("{Id}")]
-        public IActionResult DeleteOrganisation(int id)
+        public IActionResult DeleteOrganisation([FromRoute] int id)
         {
             //add validation
 

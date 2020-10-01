@@ -7,6 +7,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     {
         OrganisationResponse ExecuteCreate(OrganisationRequest requestParams);
         OrganisationResponse ExecuteGet(int id);
+        OrganisationResponse ExecutePatch(int id, OrganisationRequest requestParams);
         void ExecuteDelete(int id);
     }
 }
