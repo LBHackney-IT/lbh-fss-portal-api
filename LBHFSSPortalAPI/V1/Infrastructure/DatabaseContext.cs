@@ -515,7 +515,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnType("character varying");
             });
 
-            SetupSeedData(modelBuilder);
+            //SetupSeedData(modelBuilder);
         }
 
         private static void SetupSeedData(ModelBuilder modelBuilder)

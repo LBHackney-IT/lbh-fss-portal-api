@@ -18,6 +18,7 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
         [TestCase(TestName = "Given that valid parameters are provided, organizations are added to the database")]
         public async Task PostOrganisationCreatesOrganisation()
         {
+            DatabaseContext.Database.RollbackTransaction();
             var organization = Randomm.Create<OrganisationRequest>();
             var organizationString = JsonConvert.SerializeObject(organization);
             HttpContent postContent = new StringContent(organizationString, Encoding.UTF8, "application/json");
@@ -31,8 +32,7 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
             var organisationId = deserializedBody.Id;
             var dbOrganisation = DatabaseContext.Organizations.Find(organisationId);
             dbOrganisation.Should().NotBeNull();
-            // Change to dbOrganization to a response object.  A factory is needed.
-            dbOrganisation.Should().BeEquivalentTo(deserializedBody);
+            DatabaseContext.Database.BeginTransaction();
         }
     }
 }
