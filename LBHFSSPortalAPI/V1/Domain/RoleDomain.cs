@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace LBHFSSPortalAPI.V1.Domain
 {
