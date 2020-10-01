@@ -5,6 +5,7 @@ using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
+using LBHFSSPortalAPI.V1.Validations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -72,6 +73,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     .Include(u => u.UserOrganizations)
                     .ThenInclude(uo => uo.Organization)
                     .Include(uo => uo.Organizations)
+                    .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -90,7 +93,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return response;
         }
 
-        public UserDomain GetUser(string emailAddress, string userStatus)
+        public UserDomain GetUserByEmail(string emailAddress, string userStatus)
         {
             UserDomain userDomain = null;
 
@@ -102,6 +105,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .Include(u => u.UserOrganizations)
                 .ThenInclude(uo => uo.Organization)
                 .Include(uo => uo.Organizations)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
                 .AsNoTracking()
                 .SingleOrDefault(u =>
                     u.Email == emailAddress &&
@@ -125,6 +130,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .Include(u => u.UserOrganizations)
                 .ThenInclude(uo => uo.Organization)
                 .Include(uo => uo.Organizations)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
                 .AsNoTracking()
                 .SingleOrDefault(u => u.SubId == subId);
 
@@ -134,8 +141,113 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return userDomain;
         }
 
+        public UserDomain GetUserById(int userId)
+        {
+            var user = Context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .AsNoTracking()
+                .SingleOrDefault(u => u.Id == userId);
+
+            if (user != null)
+                return _mapper.ToDomain(user);
+
+            return null;
+        }
+
+        public async Task<UserDomain> GetUserByIdAsync(int userId)
+        {
+            var user = await Context.Users
+                .Include(u => u.UserOrganizations)
+                .ThenInclude(uo => uo.Organization)
+                .Include(uo => uo.Organizations)
+                .Include(u => u.UserRoles)
+                .ThenInclude(uo => uo.Role)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(u => u.Id == userId)
+                .ConfigureAwait(false);
+
+            if (user != null)
+                return _mapper.ToDomain(user);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the list of role names associated to the user with the given user ID
+        /// </summary>
+        public List<string> GetUserRoleList(int userId)
+        {
+            var roleNames = Context.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .Select(r => r.Role)
+                .Where(r => r != null)
+                .Select(r => r.Name)
+                .ToList();
+
+            return roleNames;
+        }
+
+        public UserDomain AddUser(AdminCreateUserRequest requestData, string subId)
+        {
+            // POST /users
+
+            UserDomain userDomain = null;
+
+            var userEntity = new User()
+            {
+                CreatedAt = requestData.CreatedAt.HasValue
+                    ? requestData.CreatedAt
+                    : DateTime.UtcNow,
+                Email = requestData.Email,
+                Name = requestData.Name,
+                Status = requestData.Status,
+                SubId = subId
+            };
+
+            try
+            {
+                // add the user
+                Context.Users.Add(userEntity);
+                Context.SaveChanges();
+
+                if (requestData.OrganisationId.HasValue)
+                {
+                    AssociateUserWithOrganisation(userEntity.Id, requestData.OrganisationId.Value);
+                }
+
+                if (requestData.Roles != null)
+                {
+                    var validatedRoles = UserRoleValidator.ToValidList(requestData.Roles);
+                    AddRolesToUser(userEntity.Id, validatedRoles);
+                }
+
+                // refresh the user domain object
+                userDomain = GetUserById(userEntity.Id);
+            }
+            catch (DbUpdateException dbe)
+            {
+                HandleDbUpdateException(dbe);
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
+
+            return userDomain;
+        }
+
         public UserDomain AddUser(UserDomain userDomain)
         {
+            // POST /registration
+
+            // Adds basic user record for registration process
+
             try
             {
                 var userEntity = userDomain.ToEntity();
@@ -160,22 +272,39 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public void UpdateUser(UserDomain userDomain)
         {
+            // PATCH /users
+
             try
             {
                 var userEntity = Context.Users.FirstOrDefault(u => u.Id == userDomain.Id);
 
-                if (userEntity != null)
-                {
-                    userEntity.Email = userDomain.Email;
-                    userEntity.Name = userDomain.Name;
-                    userEntity.Status = userDomain.Status;
-                    userEntity.CreatedAt = userDomain.CreatedAt;
-                    userEntity.SubId = userDomain.SubId;
-                    Context.SaveChanges();
-                }
-                else
-                {
+                if (userEntity == null)
                     throw new UseCaseException { UserErrorMessage = $"User with ID '{userDomain.Id}' could not be found" };
+
+                userEntity.Email = userDomain.Email;
+                userEntity.Name = userDomain.Name;
+                userEntity.Status = userDomain.Status;
+                userEntity.CreatedAt = userDomain.CreatedAt;
+                userEntity.SubId = userDomain.SubId;
+                Context.SaveChanges();
+
+                // add any role associations this user does not already have
+                if (userDomain.UserRoles != null)
+                {
+                    // Since we are updating the user, clear any current role associations even if the request
+                    // contains an empty list of roles. The behaviour is to clear the associated roles if an empty
+                    // list of roles is provided
+                    ClearUserRoles(userEntity.Id);
+
+                    var rolesInDomain = GetRoleNamesFromUserDomain(userDomain);
+                    if (rolesInDomain != null)
+                    {
+                        // add any valid new roles
+                        var validRoles = UserRoleValidator.ToValidList(rolesInDomain);
+
+                        if (validRoles.Any())
+                            AddRolesToUser(userEntity.Id, validRoles);
+                    }
                 }
             }
             catch (DbUpdateException dbe)
@@ -188,79 +317,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 LambdaLogger.Log(e.StackTrace);
                 throw;
             }
-        }
-
-        public UserDomain AddUser(AdminCreateUserRequest requestData, string subId)
-        {
-            UserDomain userDomain = null;
-
-            var userEntity = new User()
-            {
-                CreatedAt = requestData.CreatedAt,
-                Email = requestData.Email,
-                Name = requestData.Name,
-                Status = requestData.Status,
-                SubId = subId
-            };
-
-            try
-            {
-                Context.Users.Add(userEntity);
-                Context.SaveChanges();
-                userDomain = _mapper.ToDomain(userEntity);
-            }
-            catch (DbUpdateException dbe)
-            {
-                HandleDbUpdateException(dbe);
-            }
-            catch (Exception e)
-            {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
-                throw;
-            }
-
-            if (requestData.OrganisationId.HasValue)
-            {
-                // Perform the association and refresh the user entity organisation details
-                AssociateUserWithOrganisation(userEntity.Id, requestData.OrganisationId.Value);
-                userDomain = GetUser(userEntity.Id);
-            }
-
-            return userDomain;
-        }
-
-        public UserDomain GetUser(int userId)
-        {
-            UserDomain userDomain = null;
-
-            var user = Context.Users
-                .Include(u => u.UserOrganizations)
-                .ThenInclude(uo => uo.Organization)
-                .Include(uo => uo.Organizations)
-                .AsNoTracking()
-                .SingleOrDefault(u => u.Id == userId);
-
-            if (user != null)
-                userDomain = _mapper.ToDomain(user);
-
-            return userDomain;
-        }
-
-        public async Task<UserDomain> GetUserAsync(int userId)
-        {
-            var user = await Context.Users
-                .Include(u => u.UserOrganizations)
-                .ThenInclude(uo => uo.Organization)
-                .Include(uo => uo.Organizations)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(u => u.Id == userId)
-                .ConfigureAwait(false);
-
-            if (user != null)
-                return _mapper.ToDomain(user);
-
-            return null;
         }
 
         public OrganizationDomain GetAssociatedOrganisation(int userId)
@@ -342,6 +398,62 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 Context.Remove(userOrg);
                 Context.SaveChanges();
+            }
+        }
+
+        private void ClearUserRoles(int userId)
+        {
+            try
+            {
+                var userRoles = Context.UserRoles.Where(ur => ur.UserId == userId);
+                Context.UserRoles.RemoveRange(userRoles);
+                Context.SaveChanges();
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e);
+            }
+        }
+
+        private static List<string> GetRoleNamesFromUserDomain(UserDomain userDomain)
+        {
+            var roleDomains = userDomain?.UserRoles
+                .Select(ur => ur.Role)
+                .Where(ur => ur != null)
+                .Select(r => r.Name)
+                .ToList();
+
+            return roleDomains;
+        }
+
+        private void AddRolesToUser(int userId, List<string> roles)
+        {
+            if (roles != null)
+            {
+                foreach (var role in roles)
+                {
+                    // check if the role exists and add if not create a new role entity
+                    var roleEntity = Context.Roles.FirstOrDefault(r => r.Name == role);
+
+                    if (roleEntity == null)
+                        roleEntity = new Role { CreatedAt = DateTime.UtcNow, Name = role };
+
+                    Context.UserRoles.Add(new UserRole()
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        Role = roleEntity,
+                        UserId = userId
+                    });
+
+                    try
+                    {
+                        Context.SaveChanges();
+                    }
+                    catch (DbUpdateException e)
+                    {
+                        HandleDbUpdateException(e);
+                    }
+                }
             }
         }
     }

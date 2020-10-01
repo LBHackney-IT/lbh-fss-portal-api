@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 
 namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace LBHFSSPortalAPI.V1.Boundary.Requests
@@ -7,7 +8,7 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
     {
         public string Name { get; set; }
         public string Status { get; set; }
-        public string Roles { get; set; }
+        public List<string> Roles { get; set; }
         public string Password { get; set; }
 
         [JsonPropertyName("created_at")]
