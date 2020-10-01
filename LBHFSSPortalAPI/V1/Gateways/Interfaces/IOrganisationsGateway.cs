@@ -7,5 +7,7 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     {
         OrganizationDomain CreateOrganisation(Organization request);
         OrganizationDomain GetOrganisation(int id);
+
+        void DeleteOrganisation(int id);
     }
 }

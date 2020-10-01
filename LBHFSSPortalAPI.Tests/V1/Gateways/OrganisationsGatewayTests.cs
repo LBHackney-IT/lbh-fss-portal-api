@@ -52,5 +52,17 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
                 return options;
             });
         }
+
+        [TestCase(TestName = "Given an organisation id when the gateway is called with the id the gateway will delete the organisation that matches")]
+        public void GivenAnIdAMatchingOrganisationGetsDeleted()
+        {
+            var organisation = EntityHelpers.CreateOrganization();
+            DatabaseContext.Add(organisation);
+            DatabaseContext.SaveChanges();
+            _classUnderTest.DeleteOrganisation(organisation.Id);
+            var expectedResult = DatabaseContext.Organizations.Find(organisation.Id);
+            expectedResult.Should().BeNull();
+        }
+
     }
 }

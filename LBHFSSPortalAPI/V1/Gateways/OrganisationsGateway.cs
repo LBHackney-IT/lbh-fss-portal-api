@@ -44,5 +44,23 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
         }
+
+        public void DeleteOrganisation(int id)
+        {
+            // add some exception handling
+            try
+            {
+                var organization = Context.Organizations.Find(id);
+                if (organization == null)
+                    throw new InvalidOperationException("Organisation does not exist");
+                Context.Organizations.Remove(organization);
+                Context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
 }

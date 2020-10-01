@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -46,6 +47,25 @@ namespace LBHFSSPortalAPI.V1.Controllers
             // Validations
             return NotFound(
                 new ErrorResponse($"Item not found") { Status = "Not found", Errors = new List<string> { $"Organisation with id {id} not found" } });
+        }
+
+        [HttpDelete]
+        [Route("{Id}")]
+        public IActionResult DeleteOrganisation(int id)
+        {
+            //add validation
+
+            try
+            {
+                _organisationsUseCase.ExecuteDelete(id);
+                return Ok();
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine(e);
+                return BadRequest(
+                    new ErrorResponse($"Item doesn't exist") { Status = "Bad request", Errors = new List<string> { $"An organisation with id {id} does not exist" } });
+            }
         }
     }
 }
