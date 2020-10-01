@@ -25,5 +25,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var gatewayResponse = _organisationsGateway.GetOrganisation(id);
             return gatewayResponse == null ? new OrganisationResponse() : gatewayResponse.ToResponse();
         }
+
+        public void ExecuteDelete(int id)
+        {
+            _organisationsGateway.DeleteOrganisation(id);
+        }
     }
 }

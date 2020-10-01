@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
@@ -69,5 +70,32 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             response.Should().BeEquivalentTo(expectedResponse);
         }
         #endregion
+
+        #region Delete Organisation
+        [TestCase(TestName = "A call to the organisations use case delete method calls the gateway delete action")]
+        public void DeleteOrganisationUseCaseCallsGatewayDeleteOrganisation()
+        {
+            var id = Randomm.Create<int>();
+            _classUnderTest.ExecuteDelete(id);
+            _mockOrganisationsGateway.Verify(u => u.DeleteOrganisation(It.IsAny<int>()), Times.Once);
+        }
+
+        [TestCase(TestName = "Given a valid organisation id is provided a if an organisation is deleted then no exception is thrown")]
+        public void CallsGatewayDeleteAndDoesNotThrowErrorIfSuccessful()
+        {
+            var id = Randomm.Create<int>();
+            _mockOrganisationsGateway.Setup(g => g.DeleteOrganisation(It.IsAny<int>()));
+            _classUnderTest.Invoking(c => c.ExecuteDelete(id)).Should().NotThrow();
+        }
+
+        [TestCase(TestName = "Given an organisation id is provided if no organisation is matched then an exception is thrown")]
+        public void CallsGatewayDeleteAndThrowsErrorIfNotSuccessful()
+        {
+            var id = Randomm.Create<int>();
+            _mockOrganisationsGateway.Setup(g => g.DeleteOrganisation(It.IsAny<int>())).Throws<InvalidOperationException>();
+            _classUnderTest.Invoking(c => c.ExecuteDelete(id)).Should().Throw<InvalidOperationException>();
+        }
+        #endregion
+
     }
 }
