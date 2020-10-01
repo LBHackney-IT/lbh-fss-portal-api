@@ -12,6 +12,8 @@ namespace LBHFSSPortalAPI.V1.Domain
         public DateTime? CreatedAt { get; set; }
         public string SubId { get; set; }
 
-        public IEnumerable<OrganizationDomain> Organizations { get; set; }
+        public List<UserRoleDomain> UserRoles { get; set; }
+
+        public List<OrganizationDomain> Organizations { get; set; }
     }
 }

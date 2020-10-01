@@ -18,7 +18,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public async Task<UserResponse> Execute(int userId)
         {
-            var userDomain = await _usersGateway.GetUserAsync(userId).ConfigureAwait(false);
+            var userDomain = await _usersGateway.GetUserByIdAsync(userId).ConfigureAwait(false);
 
             if (userDomain == null)
                 throw new UseCaseException()

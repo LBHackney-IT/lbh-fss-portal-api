@@ -27,6 +27,8 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         [JsonPropertyName("created_at")]
         public DateTime? CreatedAt { get; set; }
 
+        public List<string> Roles { get; set; }
+
         [JsonPropertyName("organisation")]
         public OrganisationResponse Organisation { get; set; }
     }
