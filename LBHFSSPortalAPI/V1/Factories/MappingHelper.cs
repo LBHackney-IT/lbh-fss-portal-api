@@ -11,7 +11,7 @@ namespace LBHFSSPortalAPI.V1.Factories
     /// </summary>
     public class MappingHelper
     {
-        private Mapper _mapper;
+        private readonly Mapper _mapper;
 
         public MappingHelper()
         {

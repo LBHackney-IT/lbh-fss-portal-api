@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
-    public class BaseGateway
+    public abstract class BaseGateway
     {
         protected DatabaseContext Context { get; set; }
 
@@ -16,7 +16,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             Context = databaseContext;
         }
 
-        public static void HandleDbUpdateException(DbUpdateException e)
+        protected static void HandleDbUpdateException(DbUpdateException e)
         {
             var uce = new UseCaseException()
             {

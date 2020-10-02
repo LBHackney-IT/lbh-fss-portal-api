@@ -6,6 +6,6 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
     public interface ICreateServiceUseCase
     {
-        Task<ServiceResponse> Execute(AddServiceRequest request);
+        Task<ServiceResponse> Execute(CreateServiceRequest request);
     }
 }

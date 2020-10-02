@@ -7,7 +7,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 {
     public class UpdateServiceUseCase : IUpdateServiceUseCase
     {
-        public Task<ServiceResponse> Execute(AddServiceRequest request)
+        public Task<ServiceResponse> Execute(CreateServiceRequest request)
         {
             throw new System.NotImplementedException();
         }

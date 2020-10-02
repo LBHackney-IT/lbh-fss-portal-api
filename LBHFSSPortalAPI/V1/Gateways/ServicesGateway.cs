@@ -1,4 +1,5 @@
 using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
@@ -19,6 +20,78 @@ namespace LBHFSSPortalAPI.V1.Gateways
         public ServicesGateway(DatabaseContext context) : base(context)
         {
             _mapper = new MappingHelper();
+        }
+
+        public Task<ServiceResponse> CreateService(CreateServiceRequest request)
+        {
+            if (request == null)
+                throw new UseCaseException
+                {
+                    UserErrorMessage = "Could not add a new service, valid request was not provided"
+                };
+
+            var service = new Service()
+            {
+                Name = request.Name,
+                Status = request.Status,
+                CreatedAt = request.CreatedAt ?? DateTime.UtcNow,
+                UpdatedAt = request.UpdatedAt,
+                Description = request.Description,
+                Website = request.Website,
+                Email = request.Email,
+                Telephone = request.Telephone,
+                Facebook = request.Facebook,
+                Twitter = request.Twitter,
+                Instagram = request.Instagram,
+                Linkedin = request.Linkedin,
+                Keywords = request.Keywords,
+                ReferralLink = request.ReferralLink,
+                ReferralEmail = request.ReferralEmail,
+                OrganizationId = request.OrganisationId,
+
+                ServiceLocations = request?.Locations
+                    .Select(l => new ServiceLocation()
+                    {
+                        Latitude = l.Latitude,
+                        Longitude = l.Longitude,
+                        Uprn = l.Uprn,
+                        Address1 = l.Address1,
+                        City = l.City,
+                        StateProvince = l.StateProvince,
+                        PostalCode = l.PostalCode,
+                        Country = l.Country
+                    })
+                    .ToList(),
+                ServiceTaxonomies = new List<ServiceTaxonomy>(),
+            };
+
+            var taxonomies = new List<ServiceTaxonomy>();
+
+            if (request.Categories != null && request.Categories.Any())
+            {
+                taxonomies.AddRange(
+                    request.Categories
+                        .Select(c => new ServiceTaxonomy()
+                        {
+                            TaxonomyId = c.Id,
+                            //D
+                            
+                        })
+                        .ToList());
+            }
+
+            if (request.Demographics != null && request.Demographics.Any())
+            {
+                taxonomies.AddRange(
+                    request.Demographics
+                        .Select(c => new ServiceTaxonomy()
+                        {
+                            TaxonomyId = c.Id
+                        })
+                        .ToList());
+            }
+
+            return null;
         }
 
         public async Task<ServiceDomain> GetServiceAsync(int serviceId)
