@@ -63,7 +63,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("services")]
         [HttpPost]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddService([FromBody] AddServiceRequest request)
+        public async Task<IActionResult> AddService([FromBody] CreateServiceRequest request)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("services")]
         [HttpPatch]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateService([FromBody] AddServiceRequest request)
+        public async Task<IActionResult> UpdateService([FromBody] CreateServiceRequest request)
         {
             try
             {
