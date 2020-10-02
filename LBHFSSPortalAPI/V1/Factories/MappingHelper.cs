@@ -25,6 +25,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                 cfg.CreateMap<ServiceLocation, ServiceLocationDomain>();
                 cfg.CreateMap<ServiceTaxonomy, ServiceTaxonomyDomain>();
                 cfg.CreateMap<User, UserDomain>();
+                cfg.CreateMap<UserRole, UserRoleDomain>();
+                cfg.CreateMap<Role, RoleDomain>();
             });
 
             mapperConfig.AssertConfigurationIsValid();
