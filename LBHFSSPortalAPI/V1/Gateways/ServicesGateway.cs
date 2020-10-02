@@ -75,7 +75,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         {
                             TaxonomyId = c.Id,
                             //D
-                            
+
                         })
                         .ToList());
             }
