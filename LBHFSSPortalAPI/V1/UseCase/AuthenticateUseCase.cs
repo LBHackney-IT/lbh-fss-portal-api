@@ -37,7 +37,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 throw new UseCaseException() { UserErrorMessage = "Could not login as the password was invalid" };
 
             var loginResult = _authenticateGateway.LoginUser(loginParams);
-            var user = _usersGateway.GetUser(loginParams.Email, UserStatus.Active);
+            var user = _usersGateway.GetUserByEmail(loginParams.Email, UserStatus.Active);
             var loginResponse = CreateLoginSession(loginParams, user);
 
             return loginResponse;

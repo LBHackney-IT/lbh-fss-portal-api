@@ -23,7 +23,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             bool success = false;
 
-            var user = _usersGateway.GetUser(userId);
+            var user = _usersGateway.GetUserById(userId);
 
             if (_authenticateGateway.DeleteUser(user.Email))
             {
