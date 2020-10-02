@@ -188,6 +188,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("address_1")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.Address2)
+                    .HasColumnName("address_2")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.City)
                     .HasColumnName("city")
                     .HasColumnType("character varying");
@@ -421,6 +425,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.Property(e => e.Vocabulary)
                     .HasColumnName("vocabulary")
+                    .HasColumnType("character varying");
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
                     .HasColumnType("character varying");
 
                 entity.Property(e => e.Weight).HasColumnName("weight");
