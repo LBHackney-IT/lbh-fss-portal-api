@@ -289,7 +289,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         Latitude = l.Latitude,
                         Longitude = l.Longitude,
                         Uprn = 0, //l.Uprn, DATABASE CHANGE REQUIRED - NEEDS TO BE A STRING!
-                    Address1 = l.Address1,
+                        Address1 = l.Address1,
                         City = l.City,
                         StateProvince = l.StateProvince,
                         PostalCode = l.PostalCode,
