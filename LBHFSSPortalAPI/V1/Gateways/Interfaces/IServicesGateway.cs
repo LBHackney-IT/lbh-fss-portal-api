@@ -1,5 +1,4 @@
 using LBHFSSPortalAPI.V1.Boundary.Requests;
-using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +9,8 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     {
         Task<ServiceDomain> GetServiceAsync(int serviceId);
         Task<List<ServiceDomain>> GetServicesAsync(ServicesQueryParam servicesQuery);
-        Task<ServiceResponse> CreateService(CreateServiceRequest request);
+        Task<ServiceDomain> CreateService(ServiceRequest request);
+        Task DeleteService(int serviceId);
+        Task<ServiceDomain> UpdateService(ServiceRequest request, int serviceId);
     }
 }

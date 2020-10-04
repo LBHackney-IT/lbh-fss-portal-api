@@ -1,12 +1,8 @@
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
-using LBHFSSPortalAPI.V1.Domain;
-using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LBHFSSPortalAPI.V1.UseCase
@@ -20,15 +16,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _servicesGateway = servicesGateway;
         }
 
-        public async Task<ServiceResponse> Execute(CreateServiceRequest request)
+        public async Task<ServiceResponse> Execute(ServiceRequest request)
         {
             Validate(request);
+            var serviceDomain = await _servicesGateway.CreateService(request).ConfigureAwait(false);
 
-            return await _servicesGateway.CreateService(request).ConfigureAwait(false);
+            return serviceDomain.ToResponse();
         }
 
-        private void Validate(CreateServiceRequest request)
+        private void Validate(ServiceRequest request)
         {
+            // all fine for now :)
         }
     }
 }

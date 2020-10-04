@@ -63,7 +63,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("services")]
         [HttpPost]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddService([FromBody] CreateServiceRequest request)
+        public async Task<IActionResult> AddService([FromBody] ServiceRequest request)
         {
             try
             {
@@ -76,14 +76,14 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Route("services")]
+        [Route("services/{serviceId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateService([FromBody] CreateServiceRequest request)
+        public async Task<IActionResult> UpdateService([FromBody] ServiceRequest request, [FromRoute] int serviceId)
         {
             try
             {
-                return Ok(await _updateServiceUseCase.Execute(request).ConfigureAwait(false));
+                return Ok(await _updateServiceUseCase.Execute(request, serviceId).ConfigureAwait(false));
             }
             catch (UseCaseException e)
             {

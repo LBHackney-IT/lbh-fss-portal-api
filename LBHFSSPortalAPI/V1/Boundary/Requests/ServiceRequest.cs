@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
-    public class CreateServiceRequest
+    public class ServiceRequest
     {
         public string Name { get; set; }
 
@@ -35,8 +35,8 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         [JsonPropertyName("referral_email")]
         public string ReferralEmail { get; set; }
 
-        public virtual ICollection<ServiceLocationRequest> Locations { get; set; }
-        public virtual ICollection<TaxonomyRequest> Categories { get; set; }
-        public virtual ICollection<TaxonomyRequest> Demographics { get; set; }
+        public virtual List<ServiceLocationRequest> Locations { get; set; }
+        public virtual List<TaxonomyRequest> Categories { get; set; }
+        public virtual List<int> Demographics { get; set; }
     }
 }

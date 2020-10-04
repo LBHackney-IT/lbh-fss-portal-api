@@ -1,3 +1,4 @@
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System.Threading.Tasks;
 
@@ -5,9 +6,16 @@ namespace LBHFSSPortalAPI.V1.UseCase
 {
     public class DeleteServiceUseCase : IDeleteServiceUseCase
     {
-        public Task Execute(int serviceId)
+        private readonly IServicesGateway _servicesGateway;
+
+        public DeleteServiceUseCase(IServicesGateway servicesGateway)
         {
-            throw new System.NotImplementedException();
+            _servicesGateway = servicesGateway;
+        }
+
+        public async Task Execute(int serviceId)
+        {
+            await _servicesGateway.DeleteService(serviceId).ConfigureAwait(false);
         }
     }
 }
