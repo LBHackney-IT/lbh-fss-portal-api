@@ -3,6 +3,7 @@ using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 
 namespace LBHFSSPortalAPI.V1.Factories
 {
@@ -19,8 +20,8 @@ namespace LBHFSSPortalAPI.V1.Factories
             {
                 cfg.CreateMap<Service, ServiceDomain>();
                 cfg.CreateMap<File, FileDomain>();
-                cfg.CreateMap<UserOrganization, UserOrganizationDomain>();
-                cfg.CreateMap<Organization, OrganizationDomain>();
+                cfg.CreateMap<UserOrganisation, UserOrganisationDomain>();
+                cfg.CreateMap<Organisation, OrganisationDomain>();
                 cfg.CreateMap<Taxonomy, TaxonomyDomain>();
                 cfg.CreateMap<ServiceLocation, ServiceLocationDomain>();
                 cfg.CreateMap<ServiceTaxonomy, ServiceTaxonomyDomain>();
@@ -43,9 +44,9 @@ namespace LBHFSSPortalAPI.V1.Factories
             return _mapper.Map<FileDomain>(file);
         }
 
-        public OrganizationDomain ToDomain(Organization org)
+        public OrganisationDomain ToDomain(Organisation org)
         {
-            return _mapper.Map<OrganizationDomain>(org);
+            return _mapper.Map<OrganisationDomain>(org);
         }
 
         public ServiceLocationDomain ToDomain(ServiceLocation location)
@@ -73,7 +74,7 @@ namespace LBHFSSPortalAPI.V1.Factories
             return files.Select(s => ToDomain(s)).ToList();
         }
 
-        public List<OrganizationDomain> ToDomain(IEnumerable<Organization> orgs)
+        public List<OrganisationDomain> ToDomain(IEnumerable<Organisation> orgs)
         {
             return orgs.Select(s => ToDomain(s)).ToList();
         }
