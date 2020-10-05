@@ -8,7 +8,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Boundary.Requests
 {
     public class OrganisationResponseListTests
     {
-                [TestCase(TestName = "Organisation response object should have the correct properties")]
+        [TestCase(TestName = "Organisation response object should have the correct properties")]
         public void GetServiceResponseObjectShouldHaveCorrectProperties()
         {
             var entityType = typeof(OrganisationResponseList);
