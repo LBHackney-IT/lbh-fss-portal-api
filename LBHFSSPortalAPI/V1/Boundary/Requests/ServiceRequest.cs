@@ -4,10 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
-    public class AddServiceRequest
+    public class ServiceRequest
     {
-        public int Id { get; set; }
-        public int? OrganizationId { get; set; }
+        public string Name { get; set; }
+
+        [JsonPropertyName("organisation_id")]
+        public int? OrganisationId { get; set; }
+
         public string Status { get; set; }
 
         [JsonPropertyName("created_at")]
@@ -16,7 +19,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         [JsonPropertyName("updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
-        public string Name { get; set; }
         public string Description { get; set; }
         public string Website { get; set; }
         public string Email { get; set; }
@@ -33,10 +35,8 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         [JsonPropertyName("referral_email")]
         public string ReferralEmail { get; set; }
 
-        [JsonPropertyName("image_id")]
-        public int? ImageId { get; set; }
-
-        public virtual ICollection<ServiceLocationRequest> Locations { get; set; }
-        public virtual ICollection<TaxonomyRequest> Categories { get; set; }
+        public virtual List<ServiceLocationRequest> Locations { get; set; }
+        public virtual List<TaxonomyRequest> Categories { get; set; }
+        public virtual List<int> Demographics { get; set; }
     }
 }
