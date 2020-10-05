@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Factories;
@@ -24,6 +25,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             var gatewayResponse = _organisationsGateway.GetOrganisation(id);
             return gatewayResponse == null ? new OrganisationResponse() : gatewayResponse.ToResponse();
+        }
+
+        public async Task<OrganisationResponseList> ExecuteGet(OrganisationSearchRequest requestParams)
+        {
+            var gatewayResponse = await _organisationsGateway.SearchOrganisations(requestParams).ConfigureAwait(false);
+            return gatewayResponse == null ? new OrganisationResponseList() : gatewayResponse.ToResponse();
         }
 
         public OrganisationResponse ExecutePatch(int id, OrganisationRequest request)

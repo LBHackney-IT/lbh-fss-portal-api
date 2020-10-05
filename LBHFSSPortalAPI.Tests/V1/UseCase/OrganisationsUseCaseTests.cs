@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FluentAssertions;
 using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
@@ -111,5 +112,26 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         }
         #endregion
 
+        #region Search Organisation
+        [TestCase(TestName = "A call to the organisations use case get method with search params calls the gateway search action")]
+        public void GetOrganisationUseCaseWithSearchParamsCallsGatewaySearchOrganisation()
+        {
+            var searchParams = Randomm.Create<OrganisationSearchRequest>();
+            _classUnderTest.ExecuteGet(searchParams);
+            _mockOrganisationsGateway.Verify(u => u.SearchOrganisations(It.IsAny<OrganisationSearchRequest>()), Times.Once);
+        }
+
+        [TestCase(TestName = "Given a valid search parameters are provided matching organisations are returned")]
+        public void ReturnsOrganisations()
+        {
+            var organisations = Randomm.CreateMany<OrganisationDomain>(10).ToList();
+            var searchParams = Randomm.Create<OrganisationSearchRequest>();
+            _mockOrganisationsGateway.Setup(g => g.SearchOrganisations(It.IsAny<OrganisationSearchRequest>())).ReturnsAsync(organisations);
+            var expectedResponse = organisations.ToResponse();
+            var response = _classUnderTest.ExecuteGet(searchParams).Result;
+            response.Should().NotBeNull();
+            response.Should().BeEquivalentTo(expectedResponse);
+        }
+        #endregion
     }
 }

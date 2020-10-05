@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -29,7 +30,7 @@ namespace LBHFSSPortalAPI.Tests
 
             _builder = new DbContextOptionsBuilder();
             _builder.UseNpgsql(_connection);
-
+            CustomizeAssertions.ApproximationDateTime();
         }
 
         [SetUp]
