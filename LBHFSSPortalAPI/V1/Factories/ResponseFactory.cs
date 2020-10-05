@@ -79,7 +79,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 AdultSafeguardingLeadTrainingYear = domain.AdultSafeguardingLeadTrainingYear,
                 HasEnhancedSupport = domain.HasEnhancedSupport,
                 IsLocalOfferListed = domain.IsLocalOfferListed,
-                Reviewer = domain.ReviewerU == null? new OrganisationReviewer() : new OrganisationReviewer
+                Reviewer = domain.ReviewerU == null ? new OrganisationReviewer() : new OrganisationReviewer
                 {
                     Id = domain.ReviewerU.Id,
                     Name = domain.ReviewerU.Name
@@ -91,7 +91,7 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             if (organisations == null)
                 return null;
-            return new OrganisationResponseList {Organisations = organisations.Select(o => o.ToResponse()).ToList()};
+            return new OrganisationResponseList { Organisations = organisations.Select(o => o.ToResponse()).ToList() };
         }
     }
 }
