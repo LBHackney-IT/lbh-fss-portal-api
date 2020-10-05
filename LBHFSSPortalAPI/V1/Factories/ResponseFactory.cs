@@ -80,5 +80,12 @@ namespace LBHFSSPortalAPI.V1.Factories
                 IsLocalOfferListed = domain.IsLocalOfferListed
             };
         }
+
+        public static OrganisationResponseList ToResponse(this IEnumerable<OrganisationDomain> organisations)
+        {
+            if (organisations == null)
+                return null;
+            return new OrganisationResponseList {Organisations = organisations.Select(o => o.ToResponse()).ToList()};
+        }
     }
 }

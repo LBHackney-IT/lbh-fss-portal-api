@@ -49,6 +49,24 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 new ErrorResponse($"Item not found") { Status = "Not found", Errors = new List<string> { $"Organisation with id {id} not found" } });
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(OrganisationResponseList), 200)]
+        public IActionResult SearchOrganisations([FromQuery] OrganisationSearchRequest requestParams)
+        {
+            //add validation
+            //try
+            //{
+                var response = _organisationsUseCase.ExecuteGet(requestParams);
+                return Ok(response);
+            //}
+            // catch (Exception e)
+            // {
+            //     Console.WriteLine(e.Message);
+            //     return BadRequest(
+            //         new ErrorResponse($"An error occurred") { Status = "Error", Errors = new List<string> { $"An error occurred while processing this request.  Please see logs for details." } });
+            // }
+        }
+
         [HttpPatch]
         [Route("{Id}")]
         [ProducesResponseType(typeof(OrganisationResponse), 200)]

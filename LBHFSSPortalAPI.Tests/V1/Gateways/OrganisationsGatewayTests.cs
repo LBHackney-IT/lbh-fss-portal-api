@@ -2,6 +2,7 @@ using System.Linq;
 using AutoMapper;
 using FluentAssertions;
 using LBHFSSPortalAPI.Tests.TestHelpers;
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways;
@@ -86,5 +87,26 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
             });
         }
 
+        [TestCase(TestName = "Given search parameters, when the gateway is called with the gateway will return a organisations that match")]
+        public void GivenSearchParametersMatchingOrganisationsGetReturned()
+        {
+            var organisations = EntityHelpers.CreateOrganisations(10).ToList();
+            DatabaseContext.AddRange(organisations);
+            DatabaseContext.SaveChanges();
+            var searchParams = new OrganisationSearchRequest();
+            var orgToFind = organisations.First();
+            searchParams.Search = orgToFind.Name;
+            searchParams.Sort = "Name";
+            searchParams.Direction = SortDirection.Asc.ToString();
+            var gatewayResult = _classUnderTest.SearchOrganisations(searchParams).Result;
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.First().Should().BeEquivalentTo(orgToFind, options =>
+            {
+                options.Excluding(ex => ex.ReviewerU);
+                options.Excluding(ex => ex.Services);
+                options.Excluding(ex => ex.UserOrganisations);
+                return options;
+            });
+        }
     }
 }

@@ -160,7 +160,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return serviceLocations;
         }
 
-        public static ICollection<Organisation> Createorganisations(int count = _count)
+        public static ICollection<Organisation> CreateOrganisations(int count = _count)
         {
             var organisations = new List<Organisation>();
             for (var a = 0; a < count; a++)

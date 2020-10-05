@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Amazon.Lambda.Core;
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
@@ -44,6 +48,72 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public async Task<List<OrganisationDomain>> SearchOrganisations(OrganisationSearchRequest requestParams)
+        {
+            // Search       search term to use (searches on [name] column for the MVP)
+            // Sort         the column name by which to sort
+            // Direction    sort order; asc, desc
+            // Limit        maximum number of records to return
+            // Offset       number of records to skip for pagination
+
+            List<OrganisationDomain> response = new List<OrganisationDomain>();
+            var direction = ConvertToEnum(requestParams.Direction);
+
+            if (direction == SortDirection.None)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "The sort direction was not valid (must be one of asc, desc)"
+                };
+
+            var matchingOrganisations = Context.Organisations.AsQueryable();
+
+            // handle search
+            if (!string.IsNullOrWhiteSpace(requestParams.Search))
+                matchingOrganisations = matchingOrganisations.Where(o => EF.Functions.Like(o.Name, $"%{requestParams.Search}%"));
+
+            // handle sort by column name and sort direction
+            var entityPropName = GetEntityPropertyForColumnName(typeof(Organisation), requestParams.Sort);
+
+            if (entityPropName == null)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = $"The 'Sort' parameter contained the value '{requestParams.Sort}' " +
+                                        "which is not a valid column name"
+                };
+
+            matchingOrganisations = (direction == SortDirection.Asc) ?
+                matchingOrganisations.OrderBy(u => EF.Property<Organisation>(u, entityPropName)) :
+                matchingOrganisations.OrderByDescending(u => EF.Property<Organisation>(u, entityPropName));
+
+            // handle pagination options
+            if (requestParams.Limit.HasValue)
+                matchingOrganisations = matchingOrganisations.Take(requestParams.Limit.Value);
+
+            if (requestParams.Offset.HasValue)
+                matchingOrganisations = matchingOrganisations.Skip(requestParams.Offset.Value);
+
+            try
+            {
+                var organisationList = await matchingOrganisations
+                    .Include(o => o.ReviewerU)
+                    .AsNoTracking()
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                response = _mapper.ToDomain(organisationList);
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "Could not run the user search query with the supplied input parameters",
+                    DevErrorMessage = e.Message
+                };
+            }
+
+            return response;
         }
 
         public void DeleteOrganisation(int id)
