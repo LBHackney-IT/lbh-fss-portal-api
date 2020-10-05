@@ -12,7 +12,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         }
 
         public int Id { get; set; }
-        public int? OrganizationId { get; set; }
+        public int? OrganisationId { get; set; }
         public string Status { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
@@ -31,7 +31,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public int? ImageId { get; set; }
 
         public virtual File Image { get; set; }
-        public virtual Organization Organization { get; set; }
+        public virtual Organisation Organisation { get; set; }
         public virtual ICollection<ServiceLocation> ServiceLocations { get; set; }
         public virtual ICollection<ServiceTaxonomy> ServiceTaxonomies { get; set; }
     }

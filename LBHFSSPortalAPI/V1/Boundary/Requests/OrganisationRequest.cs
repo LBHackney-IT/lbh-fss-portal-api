@@ -1,11 +1,10 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace LBHFSSPortalAPI.V1.Boundary.Response
+namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
-    public class OrganisationResponse
+    public class OrganisationRequest
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         [JsonPropertyName("created_at")]
         public DateTime? CreatedAt { get; set; }
@@ -66,13 +65,7 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         public bool? HasEnhancedSupport { get; set; }
         [JsonPropertyName("is_local_offer_listed")]
         public bool? IsLocalOfferListed { get; set; }
-        [JsonPropertyName("reviewer")]
-        public OrganisationReviewer Reviewer { get; set; }
-    }
-
-    public class OrganisationReviewer
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        [JsonPropertyName("reviewer_id")]
+        public int? ReviewerId { get; set; }
     }
 }

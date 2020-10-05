@@ -9,8 +9,8 @@ namespace LBHFSSPortalAPI.V1.Factories
     {
         public static ServiceResponse ToResponse(this ServiceDomain domain)
         {
-            var org = domain?.Organization;
-            var user = org?.UserOrganizations?.FirstOrDefault()?.User;
+            var org = domain?.Organisation;
+            var user = org?.UserOrganisations?.FirstOrDefault()?.User;
 
             var response = domain == null
                 ? null
