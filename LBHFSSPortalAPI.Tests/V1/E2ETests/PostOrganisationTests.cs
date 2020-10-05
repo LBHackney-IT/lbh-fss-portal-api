@@ -19,7 +19,7 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
         public async Task PostOrganisationCreatesOrganisation()
         {
             DatabaseContext.Database.RollbackTransaction();
-            var organisation = Randomm.Create<OrganisationRequest>();
+            var organisation = EntityHelpers.CreatePostOrganisation();
             var organisationString = JsonConvert.SerializeObject(organisation);
             HttpContent postContent = new StringContent(organisationString, Encoding.UTF8, "application/json");
             var requestUri = new Uri("api/v1/organisations", UriKind.Relative);
