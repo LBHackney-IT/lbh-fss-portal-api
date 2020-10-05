@@ -73,7 +73,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         }
 
         [HttpPost]
-        [Route("registration/confirmation/resend")]
+        [Route("registration/confirmation/resend-request")]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
         public IActionResult ResendConfirmationCode([FromBody] ConfirmationResendRequest confirmationResendRequest)
         {

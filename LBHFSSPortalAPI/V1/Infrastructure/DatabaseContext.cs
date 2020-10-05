@@ -188,6 +188,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("address_1")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.Address2)
+                    .HasColumnName("address_2")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.City)
                     .HasColumnName("city")
                     .HasColumnType("character varying");
@@ -423,6 +427,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("vocabulary")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.Weight).HasColumnName("weight");
             });
 
@@ -470,22 +478,23 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .ValueGeneratedOnAdd()
                     .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
                 entity.Property(e => e.RoleId).HasColumnName("role_id");
 
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.UserRoles)
-                    .HasForeignKey<UserRole>(d => d.Id)
-                    .HasConstraintName("user_roles_id_fkey");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.UserRoles)
                     .HasForeignKey(d => d.RoleId)
                     .HasConstraintName("user_roles_role_id_fkey");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserRoles)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("user_roles_user_id_fkey");
             });
 
             modelBuilder.Entity<User>(entity =>

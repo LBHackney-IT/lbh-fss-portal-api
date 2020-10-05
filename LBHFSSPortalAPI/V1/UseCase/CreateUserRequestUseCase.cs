@@ -61,7 +61,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             // check for currently active user with the same email address (prevents 2 active
             // users with the same email address in the database which can cause problems
             // elsewhere, e.g. 'login user')
-            var user = _usersGateway.GetUser(createRequestData.Email, UserStatus.Active);
+            var user = _usersGateway.GetUserByEmail(createRequestData.Email, UserStatus.Active);
 
             if (user != null)
                 throw new UseCaseException()
@@ -93,7 +93,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         private UserDomain SaveNewUser(UserCreateRequest createRequestData, string createdUserId)
         {
-            var user = _usersGateway.GetUser(createRequestData.Email, UserStatus.Invited);
+            var user = _usersGateway.GetUserByEmail(createRequestData.Email, UserStatus.Invited);
 
             if (user == null)
             {

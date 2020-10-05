@@ -30,11 +30,11 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             if (_authenticateGateway.ConfirmSignup(confirmRequest))
             {
-                var user = _usersGateway.GetUser(confirmRequest.Email, UserStatus.Invited);
+                var user = _usersGateway.GetUserByEmail(confirmRequest.Email, UserStatus.Invited);
 
                 if (user == null)
                 {
-                    user = _usersGateway.GetUser(confirmRequest.Email, UserStatus.Unverified);
+                    user = _usersGateway.GetUserByEmail(confirmRequest.Email, UserStatus.Unverified);
 
                     if (user == null)
                     {
@@ -98,7 +98,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public void Resend(int userId)
         {
-            var userDomain = _usersGateway.GetUser(userId);
+            var userDomain = _usersGateway.GetUserById(userId);
 
             if (userDomain == null)
                 throw new UseCaseException()

@@ -12,7 +12,7 @@ namespace LBHFSSPortalAPI.V1.Factories
     /// </summary>
     public class MappingHelper
     {
-        private Mapper _mapper;
+        private readonly Mapper _mapper;
 
         public MappingHelper()
         {
@@ -26,6 +26,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                 cfg.CreateMap<ServiceLocation, ServiceLocationDomain>();
                 cfg.CreateMap<ServiceTaxonomy, ServiceTaxonomyDomain>();
                 cfg.CreateMap<User, UserDomain>();
+                cfg.CreateMap<UserRole, UserRoleDomain>();
+                cfg.CreateMap<Role, RoleDomain>();
             });
 
             mapperConfig.AssertConfigurationIsValid();
