@@ -8,6 +8,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
 {
     public static class EntityHelpers
     {
+        const int _count = 3;
         public static Service CreateService()
         {
             var service = Randomm.Build<Service>()
@@ -118,7 +119,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return serviceTaxonomy;
         }
 
-        public static ICollection<Taxonomy> CreateTaxonomies(int count = 3)
+        public static ICollection<Taxonomy> CreateTaxonomies(int count = _count)
         {
             var taxonomies = new List<Taxonomy>();
             for (var a = 0; a < count; a++)
@@ -129,7 +130,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return taxonomies;
         }
 
-        public static ICollection<Service> CreateServices(int count = 3)
+        public static ICollection<Service> CreateServices(int count = _count)
         {
             var services = new List<Service>();
             for (var a = 0; a < count; a++)
@@ -139,7 +140,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return services;
         }
 
-        public static ICollection<ServiceTaxonomy> CreateServiceTaxonomies(int count = 3)
+        public static ICollection<ServiceTaxonomy> CreateServiceTaxonomies(int count = _count)
         {
             var serviceTaxonomies = new List<ServiceTaxonomy>();
             for (var a = 0; a < count; a++)
@@ -149,7 +150,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return serviceTaxonomies;
         }
 
-        public static ICollection<ServiceLocation> CreateServiceLocations(int count = 3)
+        public static ICollection<ServiceLocation> CreateServiceLocations(int count = _count)
         {
             var serviceLocations = new List<ServiceLocation>();
             for (var a = 0; a < count; a++)
@@ -157,6 +158,16 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
                 serviceLocations.Add(CreateServiceLocation());
             }
             return serviceLocations;
+        }
+
+        public static ICollection<Organization> CreateOrganizations(int count = _count)
+        {
+            var organizations = new List<Organization>();
+            for (var a = 0; a < count; a++)
+            {
+                organizations.Add(CreateOrganization());
+            }
+            return organizations;
         }
 
         public static SynonymGroup CreateSynonymGroupWithWords(int count = 3)
