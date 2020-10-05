@@ -63,7 +63,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("services")]
         [HttpPost]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
-        public async Task<IActionResult> AddService([FromBody] AddServiceRequest request)
+        public async Task<IActionResult> AddService([FromBody] ServiceRequest request)
         {
             try
             {
@@ -76,14 +76,14 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Route("services")]
+        [Route("services/{serviceId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateService([FromBody] AddServiceRequest request)
+        public async Task<IActionResult> UpdateService([FromBody] ServiceRequest request, [FromRoute] int serviceId)
         {
             try
             {
-                return Ok(await _updateServiceUseCase.Execute(request).ConfigureAwait(false));
+                return Ok(await _updateServiceUseCase.Execute(request, serviceId).ConfigureAwait(false));
             }
             catch (UseCaseException e)
             {
@@ -106,5 +106,35 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 return BadRequest(e);
             }
         }
+
+        [Route("address-lookup")]
+        [HttpGet]
+        [ProducesResponseType(typeof(List<AddressLookupResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> LookupAddress([FromQuery] string postcode)
+        {
+            try
+            {
+                var response = new AddressLookupResponse()
+                {
+                    Longitude = 999,
+                    Latitude = 999,
+                    Uprn = 999,
+                    Address1 = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
+                    Address2 = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
+                    City = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
+                    StateProvince = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
+                    PostalCode = postcode ?? "NOT_YET_IMPLEMENTED_STUBBED_DATA",
+                    Country = "NOT_YET_IMPLEMENTED_STUBBED_DATA"
+                };
+
+                return Ok(response);
+                //return Ok(await _getServicesUseCase.LookupAddress(queryParam).ConfigureAwait(false));
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
     }
 }

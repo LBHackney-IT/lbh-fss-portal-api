@@ -1,4 +1,5 @@
 using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
@@ -21,19 +22,134 @@ namespace LBHFSSPortalAPI.V1.Gateways
             _mapper = new MappingHelper();
         }
 
+        public async Task<ServiceDomain> CreateService(ServiceRequest request)
+        {
+            if (request == null)
+                throw new UseCaseException
+                {
+                    UserErrorMessage = "Could not add a new service, a valid 'create service' request was not provided"
+                };
+
+            if (!request.OrganisationId.HasValue)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "Service cannot be added as the provided organisation ID was not valid"
+                };
+
+            var organisation = await Context.Organizations
+                .FirstOrDefaultAsync(o => o.Id == request.OrganisationId)
+                .ConfigureAwait(false);
+
+            if (organisation == null)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = $"Could not find organisation ID '{request.OrganisationId}'"
+                };
+
+            var service = new Service()
+            {
+                Name = request.Name,
+                Status = request.Status ?? ServiceStatus.Created,
+                CreatedAt = request.CreatedAt ?? DateTime.UtcNow,
+                UpdatedAt = request.UpdatedAt,
+                Description = request.Description,
+                Website = request.Website,
+                Email = request.Email,
+                Telephone = request.Telephone,
+                Facebook = request.Facebook,
+                Twitter = request.Twitter,
+                Instagram = request.Instagram,
+                Linkedin = request.Linkedin,
+                Keywords = request.Keywords,
+                ReferralLink = request.ReferralLink,
+                ReferralEmail = request.ReferralEmail,
+                OrganizationId = request.OrganisationId,
+
+                ServiceLocations = request?.Locations
+                    .Select(l => new ServiceLocation()
+                    {
+                        Latitude = l.Latitude,
+                        Longitude = l.Longitude,
+                        Uprn = 0, //l.Uprn, DATABASE CHANGE REQUIRED - NEEDS TO BE A STRING!
+                        Address1 = l.Address1,
+                        City = l.City,
+                        StateProvince = l.StateProvince,
+                        PostalCode = l.PostalCode,
+                        Country = l.Country
+                    })
+                    .ToList(),
+                ServiceTaxonomies = new List<ServiceTaxonomy>(),
+            };
+
+            // business rule: if no service name is provided, default to the Organisation name
+            if (string.IsNullOrWhiteSpace(service.Name))
+            {
+                service.Name = organisation.Name;
+            }
+
+            // TODO (MJC): Implement the below next week to associate service with categories & demographics.
+
+            //var taxonomies = new List<ServiceTaxonomy>();
+
+            //if (request.Categories != null && request.Categories.Any())
+            //{
+            //    taxonomies.AddRange(
+            //        request.Categories
+            //            .Select(c => new ServiceTaxonomy()
+            //            {
+            //                TaxonomyId = c.Id,
+            //                //D
+
+            //            })
+            //            .ToList());
+            //}
+
+            //if (request.Demographics != null && request.Demographics.Any())
+            //{
+            //    taxonomies.AddRange(
+            //        request.Demographics
+            //            .Select(c => new ServiceTaxonomy()
+            //            {
+            //                TaxonomyId = c.Id
+            //            })
+            //            .ToList());
+            //}
+
+            try
+            {
+                Context.Services.Add(service);
+                Context.SaveChanges();
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e);
+            }
+
+            // Get fresh copy of the service from the database
+            service = await GetServiceById(service.Id).ConfigureAwait(false);
+            var serviceDomain = _mapper.ToDomain(service);
+
+            return serviceDomain;
+        }
+
+        public async Task DeleteService(int serviceId)
+        {
+            try
+            {
+                var service = await GetServiceById(serviceId).ConfigureAwait(false);
+                service.Status = ServiceStatus.Deleted;
+                Context.Update(service);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e);
+            }
+        }
+
         public async Task<ServiceDomain> GetServiceAsync(int serviceId)
         {
-            var service = await Context.Services
-                .Include(s => s.Organization)
-                .ThenInclude(o => o.UserOrganizations)
-                .ThenInclude(uo => uo.User)
-                .Include(s => s.Image)
-                .Include(s => s.ServiceLocations)
-                .Include(s => s.ServiceTaxonomies)
-                .ThenInclude(st => st.Taxonomy)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(u => u.Id == serviceId)
-                .ConfigureAwait(false);
+            var service = await GetServiceById(serviceId).ConfigureAwait(false);
 
             if (service != null)
                 return _mapper.ToDomain(service);
@@ -88,6 +204,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 var services = await matchingServices
+                    .Where(s => s.Status != ServiceStatus.Deleted)
                     .Include(s => s.Organization)
                     .ThenInclude(o => o.UserOrganizations)
                     .ThenInclude(uo => uo.User)
@@ -112,5 +229,143 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             return response;
         }
+
+        public async Task<ServiceDomain> UpdateService(ServiceRequest request, int serviceId)
+        {
+            if (request == null)
+                throw new UseCaseException
+                {
+                    UserErrorMessage = "Could not add a new service, a valid 'create service' request was not provided"
+                };
+
+            if (!request.OrganisationId.HasValue)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "Service cannot be added as the provided organisation ID was not valid"
+                };
+
+            var organisation = await Context.Organizations
+                .FirstOrDefaultAsync(o => o.Id == request.OrganisationId)
+                .ConfigureAwait(false);
+
+            if (organisation == null)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = $"Could not find organisation ID {request.OrganisationId}"
+                };
+
+            var service = await GetServiceById(serviceId).ConfigureAwait(false);
+
+            if (service == null)
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = $"Could not find a service with the given ID {serviceId}"
+                };
+
+            service.Name = request.Name ?? service.Name;
+            service.Status = request.Status ?? ServiceStatus.Updated;
+            service.CreatedAt = request.CreatedAt ?? service.CreatedAt;
+            service.UpdatedAt = DateTime.UtcNow;
+            service.Description = request.Description ?? service.Description;
+            service.Website = request.Website ?? service.Website;
+            service.Email = request.Email ?? service.Email;
+            service.Telephone = request.Telephone ?? service.Telephone;
+            service.Facebook = request.Facebook ?? service.Facebook;
+            service.Twitter = request.Twitter ?? service.Twitter;
+            service.Instagram = request.Instagram ?? service.Instagram;
+            service.Linkedin = request.Linkedin ?? service.Linkedin;
+            service.Keywords = request.Keywords ?? service.Keywords;
+            service.ReferralLink = request.ReferralLink ?? service.ReferralLink;
+            service.ReferralEmail = request.ReferralEmail ?? service.ReferralEmail;
+
+            service.Organization = null;
+            service.OrganizationId = request.OrganisationId ?? service.OrganizationId;
+
+            if (request.Locations != null)
+            {
+                service.ServiceLocations = request.Locations
+                    .Select(l => new ServiceLocation()
+                    {
+                        Latitude = l.Latitude,
+                        Longitude = l.Longitude,
+                        Uprn = 0, //l.Uprn, DATABASE CHANGE REQUIRED - NEEDS TO BE A STRING!
+                        Address1 = l.Address1,
+                        City = l.City,
+                        StateProvince = l.StateProvince,
+                        PostalCode = l.PostalCode,
+                        Country = l.Country
+                    })
+                    .ToList();
+            }
+
+            // business rule: if no service name is provided, default to the Organisation name
+            if (string.IsNullOrWhiteSpace(service.Name))
+            {
+                service.Name = organisation.Name;
+            }
+
+            // TODO (MJC): Implement the below next week to associate service with categories & demographics.
+
+            //var taxonomies = new List<ServiceTaxonomy>();
+
+            //if (request.Categories != null && request.Categories.Any())
+            //{
+            //    taxonomies.AddRange(
+            //        request.Categories
+            //            .Select(c => new ServiceTaxonomy()
+            //            {
+            //                TaxonomyId = c.Id,
+            //                //D
+
+            //            })
+            //            .ToList());
+            //}
+
+            //if (request.Demographics != null && request.Demographics.Any())
+            //{
+            //    taxonomies.AddRange(
+            //        request.Demographics
+            //            .Select(c => new ServiceTaxonomy()
+            //            {
+            //                TaxonomyId = c.Id
+            //            })
+            //            .ToList());
+            //}
+
+            try
+            {
+                Context.Update(service);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e);
+            }
+
+            // Get fresh copy of the service from the database
+            service = await GetServiceById(service.Id).ConfigureAwait(false);
+            var serviceDomain = _mapper.ToDomain(service);
+
+            return serviceDomain;
+        }
+
+        private async Task<Service> GetServiceById(int serviceId)
+        {
+            var service = await Context.Services
+                .Where(s => s.Status != ServiceStatus.Deleted)
+                .Include(s => s.Organization)
+                .ThenInclude(o => o.UserOrganizations)
+                .ThenInclude(uo => uo.User)
+                .Include(s => s.Image)
+                .Include(s => s.ServiceLocations)
+                .Include(s => s.ServiceTaxonomies)
+                .ThenInclude(st => st.Taxonomy)
+                .AsNoTracking()
+                .SingleOrDefaultAsync(u => u.Id == serviceId)
+                .ConfigureAwait(false);
+
+            return service;
+        }
     }
 }
+
