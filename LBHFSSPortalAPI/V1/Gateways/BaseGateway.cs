@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
-    public class BaseGateway
+    public abstract class BaseGateway
     {
         protected DatabaseContext Context { get; set; }
 
@@ -16,7 +16,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             Context = databaseContext;
         }
 
-        public static void HandleDbUpdateException(DbUpdateException e)
+        protected static void HandleDbUpdateException(DbUpdateException e)
         {
             var uce = new UseCaseException()
             {
@@ -55,19 +55,22 @@ namespace LBHFSSPortalAPI.V1.Gateways
         /// <returns></returns>
         protected string GetEntityPropertyForColumnName(Type type, string columnToFind)
         {
-            var entityType = Context.Model.FindEntityType(type.FullName);
-
-            if (entityType != null)
+            if (columnToFind != null)
             {
-                columnToFind = columnToFind.Trim().ToLower(CultureInfo.CurrentCulture);
+                var entityType = Context.Model.FindEntityType(type.FullName);
 
-                foreach (var prop in entityType.GetProperties())
+                if (entityType != null)
                 {
-                    var columnName = prop.GetColumnName();
+                    columnToFind = columnToFind.Trim().ToLower(CultureInfo.CurrentCulture);
 
-                    if (string.Compare(columnToFind, columnName, true, CultureInfo.CurrentCulture) == 0)
+                    foreach (var prop in entityType.GetProperties())
                     {
-                        return prop.Name;
+                        var columnName = prop.GetColumnName();
+
+                        if (string.Compare(columnToFind, columnName, true, CultureInfo.CurrentCulture) == 0)
+                        {
+                            return prop.Name;
+                        }
                     }
                 }
             }

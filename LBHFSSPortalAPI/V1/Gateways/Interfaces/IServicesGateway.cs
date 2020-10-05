@@ -9,5 +9,8 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     {
         Task<ServiceDomain> GetServiceAsync(int serviceId);
         Task<List<ServiceDomain>> GetServicesAsync(ServicesQueryParam servicesQuery);
+        Task<ServiceDomain> CreateService(ServiceRequest request);
+        Task DeleteService(int serviceId);
+        Task<ServiceDomain> UpdateService(ServiceRequest request, int serviceId);
     }
 }
