@@ -57,6 +57,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 ReviewerMessage = domain.ReviewerMessage,
                 Status = domain.Status,
                 IsRegisteredCharity = domain.IsRegisteredCharity,
+                IsHackneyBased = domain.IsHackneyBased,
                 CharityNumber = domain.CharityNumber,
                 HasHcOrColGrant = domain.HasHcOrColGrant,
                 HasHcvsOrHgOrAelGrant = domain.HasHcvsOrHgOrAelGrant,
@@ -77,7 +78,12 @@ namespace LBHFSSPortalAPI.V1.Factories
                 AdultSafeguardingLeadTrainingMonth = domain.AdultSafeguardingLeadTrainingMonth,
                 AdultSafeguardingLeadTrainingYear = domain.AdultSafeguardingLeadTrainingYear,
                 HasEnhancedSupport = domain.HasEnhancedSupport,
-                IsLocalOfferListed = domain.IsLocalOfferListed
+                IsLocalOfferListed = domain.IsLocalOfferListed,
+                Reviewer = domain.ReviewerU == null? new OrganisationReviewer() : new OrganisationReviewer
+                {
+                    Id = domain.ReviewerU.Id,
+                    Name = domain.ReviewerU.Name
+                }
             };
         }
 

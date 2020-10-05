@@ -23,11 +23,13 @@ namespace LBHFSSPortalAPI.V1.Factories
                 HasHcOrColGrant = request.HasHcOrColGrant,
                 HasHcvsOrHgOrAelGrant = request.HasHcvsOrHgOrAelGrant,
                 IsTraRegistered = request.IsTraRegistered,
+                IsHackneyBased = request.IsHackneyBased,
                 RslOrHaAssociation = request.RslOrHaAssociation,
                 IsLotteryFunded = request.IsLotteryFunded,
                 LotteryFundedProject = request.LotteryFundedProject,
                 FundingOther = request.FundingOther,
                 HasChildSupport = request.HasChildSupport,
+                HasChildSafeguardingLead = request.HasChildSafeguardingLead,
                 ChildSafeguardingLeadFirstName = request.ChildSafeguardingLeadFirstName,
                 ChildSafeguardingLeadLastName = request.ChildSafeguardingLeadLastName,
                 ChildSafeguardingLeadTrainingMonth = request.ChildSafeguardingLeadTrainingMonth,
@@ -40,6 +42,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 AdultSafeguardingLeadTrainingYear = request.AdultSafeguardingLeadTrainingYear,
                 HasEnhancedSupport = request.HasEnhancedSupport,
                 IsLocalOfferListed = request.IsLocalOfferListed,
+                ReviewerUid = request.ReviewerId
             };
         }
 
@@ -55,6 +58,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 ReviewerMessage = request.ReviewerMessage,
                 Status = request.Status,
                 IsRegisteredCharity = request.IsRegisteredCharity,
+                IsHackneyBased = request.IsHackneyBased,
                 CharityNumber = request.CharityNumber,
                 HasHcOrColGrant = request.HasHcOrColGrant,
                 HasHcvsOrHgOrAelGrant = request.HasHcvsOrHgOrAelGrant,
@@ -64,6 +68,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 LotteryFundedProject = request.LotteryFundedProject,
                 FundingOther = request.FundingOther,
                 HasChildSupport = request.HasChildSupport,
+                HasChildSafeguardingLead = request.HasChildSafeguardingLead,
                 ChildSafeguardingLeadFirstName = request.ChildSafeguardingLeadFirstName,
                 ChildSafeguardingLeadLastName = request.ChildSafeguardingLeadLastName,
                 ChildSafeguardingLeadTrainingMonth = request.ChildSafeguardingLeadTrainingMonth,
@@ -75,7 +80,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                 AdultSafeguardingLeadTrainingMonth = request.AdultSafeguardingLeadTrainingMonth,
                 AdultSafeguardingLeadTrainingYear = request.AdultSafeguardingLeadTrainingYear,
                 HasEnhancedSupport = request.HasEnhancedSupport,
-                IsLocalOfferListed = request.IsLocalOfferListed
+                IsLocalOfferListed = request.IsLocalOfferListed,
+                ReviewerUid = request.ReviewerId
             };
         }
     }

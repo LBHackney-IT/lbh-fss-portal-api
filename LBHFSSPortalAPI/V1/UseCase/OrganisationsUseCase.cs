@@ -24,7 +24,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public OrganisationResponse ExecuteGet(int id)
         {
             var gatewayResponse = _organisationsGateway.GetOrganisation(id);
-            return gatewayResponse == null ? new OrganisationResponse() : gatewayResponse.ToResponse();
+            return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
         public async Task<OrganisationResponseList> ExecuteGet(OrganisationSearchRequest requestParams)
@@ -41,33 +41,36 @@ namespace LBHFSSPortalAPI.V1.UseCase
             organisationDomain.Name = request.Name ?? organisationDomain.Name;
             organisationDomain.CreatedAt = request.CreatedAt ?? organisationDomain.CreatedAt;
             organisationDomain.Status = request.Status ?? organisationDomain.Status;
-            organisationDomain.UpdatedAt = request.UpdatedAt;
-            organisationDomain.SubmittedAt = request.SubmittedAt;
-            organisationDomain.ReviewedAt = request.ReviewedAt;
-            organisationDomain.ReviewerMessage = request.ReviewerMessage;
-            organisationDomain.Status = request.Status;
-            organisationDomain.IsRegisteredCharity = request.IsRegisteredCharity;
-            organisationDomain.CharityNumber = request.CharityNumber;
-            organisationDomain.HasHcOrColGrant = request.HasHcOrColGrant;
-            organisationDomain.HasHcvsOrHgOrAelGrant = request.HasHcvsOrHgOrAelGrant;
-            organisationDomain.IsTraRegistered = request.IsTraRegistered;
-            organisationDomain.RslOrHaAssociation = request.RslOrHaAssociation;
-            organisationDomain.IsLotteryFunded = request.IsLotteryFunded;
-            organisationDomain.LotteryFundedProject = request.LotteryFundedProject;
-            organisationDomain.FundingOther = request.FundingOther;
-            organisationDomain.HasChildSupport = request.HasChildSupport;
-            organisationDomain.ChildSafeguardingLeadFirstName = request.ChildSafeguardingLeadFirstName;
-            organisationDomain.ChildSafeguardingLeadLastName = request.ChildSafeguardingLeadLastName;
-            organisationDomain.ChildSafeguardingLeadTrainingMonth = request.ChildSafeguardingLeadTrainingMonth;
-            organisationDomain.ChildSafeguardingLeadTrainingYear = request.ChildSafeguardingLeadTrainingYear;
-            organisationDomain.HasAdultSupport = request.HasAdultSupport;
-            organisationDomain.HasAdultSafeguardingLead = request.HasAdultSafeguardingLead;
-            organisationDomain.AdultSafeguardingLeadFirstName = request.AdultSafeguardingLeadFirstName;
-            organisationDomain.AdultSafeguardingLeadLastName = request.AdultSafeguardingLeadLastName;
-            organisationDomain.AdultSafeguardingLeadTrainingMonth = request.AdultSafeguardingLeadTrainingMonth;
-            organisationDomain.AdultSafeguardingLeadTrainingYear = request.AdultSafeguardingLeadTrainingYear;
-            organisationDomain.HasEnhancedSupport = request.HasEnhancedSupport;
-            organisationDomain.IsLocalOfferListed = request.IsLocalOfferListed;
+            organisationDomain.UpdatedAt = request.UpdatedAt ?? organisationDomain.UpdatedAt;
+            organisationDomain.SubmittedAt = request.SubmittedAt ?? organisationDomain.SubmittedAt;
+            organisationDomain.ReviewedAt = request.ReviewedAt ?? organisationDomain.ReviewedAt;
+            organisationDomain.ReviewerMessage = request.ReviewerMessage ?? organisationDomain.ReviewerMessage;
+            organisationDomain.Status = request.Status ?? organisationDomain.Status;
+            organisationDomain.IsRegisteredCharity = request.IsRegisteredCharity ?? organisationDomain.IsRegisteredCharity;
+            organisationDomain.IsHackneyBased = request.IsHackneyBased ?? organisationDomain.IsRegisteredCharity;
+            organisationDomain.CharityNumber = request.CharityNumber ?? organisationDomain.CharityNumber;
+            organisationDomain.HasHcOrColGrant = request.HasHcOrColGrant ?? organisationDomain.HasHcOrColGrant;
+            organisationDomain.HasHcvsOrHgOrAelGrant = request.HasHcvsOrHgOrAelGrant ?? organisationDomain.HasHcvsOrHgOrAelGrant;
+            organisationDomain.IsTraRegistered = request.IsTraRegistered ?? organisationDomain.IsTraRegistered;
+            organisationDomain.RslOrHaAssociation = request.RslOrHaAssociation ?? organisationDomain.RslOrHaAssociation;
+            organisationDomain.IsLotteryFunded = request.IsLotteryFunded ?? organisationDomain.IsLotteryFunded;
+            organisationDomain.LotteryFundedProject = request.LotteryFundedProject ?? organisationDomain.LotteryFundedProject;
+            organisationDomain.FundingOther = request.FundingOther ?? organisationDomain.FundingOther;
+            organisationDomain.HasChildSupport = request.HasChildSupport ?? organisationDomain.HasChildSupport;
+            organisationDomain.HasChildSafeguardingLead = request.HasChildSafeguardingLead ?? organisationDomain.HasChildSafeguardingLead;
+            organisationDomain.ChildSafeguardingLeadFirstName = request.ChildSafeguardingLeadFirstName ?? organisationDomain.ChildSafeguardingLeadFirstName;
+            organisationDomain.ChildSafeguardingLeadLastName = request.ChildSafeguardingLeadLastName ?? organisationDomain.ChildSafeguardingLeadLastName;
+            organisationDomain.ChildSafeguardingLeadTrainingMonth = request.ChildSafeguardingLeadTrainingMonth ?? organisationDomain.ChildSafeguardingLeadTrainingMonth;
+            organisationDomain.ChildSafeguardingLeadTrainingYear = request.ChildSafeguardingLeadTrainingYear ?? organisationDomain.ChildSafeguardingLeadTrainingYear;
+            organisationDomain.HasAdultSupport = request.HasAdultSupport ?? organisationDomain.HasAdultSupport;
+            organisationDomain.HasAdultSafeguardingLead = request.HasAdultSafeguardingLead ?? organisationDomain.HasAdultSafeguardingLead;
+            organisationDomain.AdultSafeguardingLeadFirstName = request.AdultSafeguardingLeadFirstName ?? organisationDomain.AdultSafeguardingLeadFirstName;
+            organisationDomain.AdultSafeguardingLeadLastName = request.AdultSafeguardingLeadLastName ?? organisationDomain.AdultSafeguardingLeadLastName;
+            organisationDomain.AdultSafeguardingLeadTrainingMonth = request.AdultSafeguardingLeadTrainingMonth ?? organisationDomain.AdultSafeguardingLeadTrainingMonth;
+            organisationDomain.AdultSafeguardingLeadTrainingYear = request.AdultSafeguardingLeadTrainingYear ?? organisationDomain.AdultSafeguardingLeadTrainingYear;
+            organisationDomain.HasEnhancedSupport = request.HasEnhancedSupport ?? organisationDomain.HasEnhancedSupport;
+            organisationDomain.IsLocalOfferListed = request.IsLocalOfferListed ?? organisationDomain.IsLocalOfferListed;
+            organisationDomain.ReviewerUid = request.ReviewerId ?? organisationDomain.ReviewerUid;
             var gatewayResponse = _organisationsGateway.PatchOrganisation(organisationDomain);
             return gatewayResponse.ToResponse();
         }

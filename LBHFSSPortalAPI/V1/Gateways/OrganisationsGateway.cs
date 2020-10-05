@@ -40,7 +40,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                var organisation = Context.Organisations.Find(id);
+                var organisation = Context.Organisations
+                    .Include(o => o.ReviewerU)
+                    .FirstOrDefault(o => o.Id == id);
                 return _mapper.ToDomain(organisation);
             }
             catch (Exception e)
@@ -88,11 +90,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 matchingOrganisations.OrderByDescending(u => EF.Property<Organisation>(u, entityPropName));
 
             // handle pagination options
-            if (requestParams.Limit.HasValue)
-                matchingOrganisations = matchingOrganisations.Take(requestParams.Limit.Value);
-
             if (requestParams.Offset.HasValue)
                 matchingOrganisations = matchingOrganisations.Skip(requestParams.Offset.Value);
+
+            if (requestParams.Limit.HasValue)
+                matchingOrganisations = matchingOrganisations.Take(requestParams.Limit.Value);
 
             try
             {
@@ -137,7 +139,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                var org = Context.Organisations.Find(organisationDomain.Id);
+                var org = Context.Organisations
+                    .Include(o => o.ReviewerU)
+                    .FirstOrDefault(o => o.Id == organisationDomain.Id);
                 org.Name = organisationDomain.Name;
                 org.CreatedAt = organisationDomain.CreatedAt;
                 org.UpdatedAt = organisationDomain.UpdatedAt;
@@ -150,6 +154,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 org.HasHcOrColGrant = organisationDomain.HasHcOrColGrant;
                 org.HasHcvsOrHgOrAelGrant = organisationDomain.HasHcvsOrHgOrAelGrant;
                 org.IsTraRegistered = organisationDomain.IsTraRegistered;
+                org.IsHackneyBased = organisationDomain.IsHackneyBased;
                 org.RslOrHaAssociation = organisationDomain.RslOrHaAssociation;
                 org.IsLotteryFunded = organisationDomain.IsLotteryFunded;
                 org.LotteryFundedProject = organisationDomain.LotteryFundedProject;
@@ -167,8 +172,10 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 org.AdultSafeguardingLeadTrainingYear = organisationDomain.AdultSafeguardingLeadTrainingYear;
                 org.HasEnhancedSupport = organisationDomain.HasEnhancedSupport;
                 org.IsLocalOfferListed = organisationDomain.IsLocalOfferListed;
+                org.ReviewerUid = organisationDomain.ReviewerUid;
+                Context.Organisations.Attach(org);
                 Context.SaveChanges();
-                return organisationDomain;
+                return _mapper.ToDomain(org);
             }
             catch (DbUpdateException dbe)
             {

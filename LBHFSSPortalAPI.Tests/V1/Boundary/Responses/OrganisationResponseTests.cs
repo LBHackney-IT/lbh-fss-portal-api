@@ -14,7 +14,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Boundary.Requests
         public void GetServiceResponseObjectShouldHaveCorrectProperties()
         {
             var entityType = typeof(OrganisationResponse);
-            entityType.GetProperties().Length.Should().Be(32);
+            entityType.GetProperties().Length.Should().Be(33);
             var entity = Randomm.Create<OrganisationResponse>();
             Assert.That(entity, Has.Property("Id").InstanceOf(typeof(int)));
             Assert.That(entity, Has.Property("Name").InstanceOf(typeof(string)));
@@ -48,7 +48,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Boundary.Requests
             Assert.That(entity, Has.Property("AdultSafeguardingLeadTrainingYear").InstanceOf(typeof(string)));
             Assert.That(entity, Has.Property("HasEnhancedSupport").InstanceOf(typeof(bool)));
             Assert.That(entity, Has.Property("IsLocalOfferListed").InstanceOf(typeof(bool)));
-            //Assert.That(entity, Has.Property("Reviewer").InstanceOf(typeof(UserRequestObject)));
+            Assert.That(entity, Has.Property("Reviewer").InstanceOf(typeof(OrganisationReviewer)));
         }
 
     }

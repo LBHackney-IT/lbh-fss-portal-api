@@ -56,7 +56,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             //add validation
             //try
             //{
-                var response = _organisationsUseCase.ExecuteGet(requestParams);
+                var response = _organisationsUseCase.ExecuteGet(requestParams).Result;
                 return Ok(response);
             //}
             // catch (Exception e)

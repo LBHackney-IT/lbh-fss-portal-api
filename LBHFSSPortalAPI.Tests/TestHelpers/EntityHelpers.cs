@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AutoFixture;
+using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Infrastructure;
 
 namespace LBHFSSPortalAPI.Tests.TestHelpers
@@ -59,6 +60,14 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             var organisation = Randomm.Build<Organisation>()
                 .Without(o => o.Id)
                 .With(o => o.ReviewerU, CreateUser())
+                .Create();
+            return organisation;
+        }
+
+        public static OrganisationRequest CreatePostOrganisation()
+        {
+            var organisation = Randomm.Build<OrganisationRequest>()
+                .Without(o => o.ReviewerId)
                 .Create();
             return organisation;
         }
