@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-namespace LBHFSSPortalAPI.V1.Infrastructure
+namespace LBHFSSPortalAPI.V1.Domain
 {
-    public partial class Organization
+    public class OrganisationDomain
     {
-        public Organization()
+        public OrganisationDomain()
         {
-            Services = new HashSet<Service>();
-            UserOrganizations = new HashSet<UserOrganization>();
+            Services = new HashSet<ServiceDomain>();
+            UserOrganisations = new HashSet<UserOrganisationDomain>();
         }
 
         public int Id { get; set; }
@@ -45,8 +45,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public bool? HasEnhancedSupport { get; set; }
         public bool? IsLocalOfferListed { get; set; }
 
-        public virtual User ReviewerU { get; set; }
-        public virtual ICollection<Service> Services { get; set; }
-        public virtual ICollection<UserOrganization> UserOrganizations { get; set; }
+        public virtual UserDomain ReviewerU { get; set; }
+        public virtual ICollection<ServiceDomain> Services { get; set; }
+        public virtual ICollection<UserOrganisationDomain> UserOrganisations { get; set; }
     }
 }

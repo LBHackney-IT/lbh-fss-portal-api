@@ -32,7 +32,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var requestParams = Randomm.Create<OrganisationRequest>();
             _classUnderTest.ExecuteCreate(requestParams);
-            _mockOrganisationsGateway.Verify(u => u.CreateOrganisation(It.IsAny<Organization>()), Times.Once);
+            _mockOrganisationsGateway.Verify(u => u.CreateOrganisation(It.IsAny<Organisation>()), Times.Once);
         }
 
         [TestCase(TestName = "Given an organisation domain object is provided the created organisation is returned")]
@@ -40,7 +40,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var requestParams = Randomm.Create<OrganisationRequest>();
             var domainData = requestParams.ToDomain();
-            _mockOrganisationsGateway.Setup(g => g.CreateOrganisation(It.IsAny<Organization>())).Returns(domainData);
+            _mockOrganisationsGateway.Setup(g => g.CreateOrganisation(It.IsAny<Organisation>())).Returns(domainData);
             var expectedResponse = domainData.ToResponse();
             var response = _classUnderTest.ExecuteCreate(requestParams);
             response.Should().NotBeNull();
@@ -61,7 +61,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         [TestCase(TestName = "Given a valid organisation id is provided a matching organisation is returned")]
         public void ReturnsOrganisation()
         {
-            var organisation = Randomm.Create<OrganizationDomain>();
+            var organisation = Randomm.Create<OrganisationDomain>();
             var id = Randomm.Create<int>();
             _mockOrganisationsGateway.Setup(g => g.GetOrganisation(It.IsAny<int>())).Returns(organisation);
             var expectedResponse = organisation.ToResponse();
@@ -104,10 +104,10 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             var organisation = Randomm.Create<OrganisationRequest>();
             var requestId = Randomm.Id();
             _mockOrganisationsGateway.Setup(gw => gw.GetOrganisation(It.IsAny<int>())).Returns(organisation.ToDomain());
-            _mockOrganisationsGateway.Setup(gw => gw.PatchOrganisation(It.IsAny<OrganizationDomain>())).Returns(organisation.ToDomain());
+            _mockOrganisationsGateway.Setup(gw => gw.PatchOrganisation(It.IsAny<OrganisationDomain>())).Returns(organisation.ToDomain());
             _classUnderTest.ExecutePatch(requestId, organisation);
             _mockOrganisationsGateway.Verify(u => u.GetOrganisation(It.IsAny<int>()), Times.Once);
-            _mockOrganisationsGateway.Verify(u => u.PatchOrganisation(It.IsAny<OrganizationDomain>()), Times.Once);
+            _mockOrganisationsGateway.Verify(u => u.PatchOrganisation(It.IsAny<OrganisationDomain>()), Times.Once);
         }
         #endregion
 

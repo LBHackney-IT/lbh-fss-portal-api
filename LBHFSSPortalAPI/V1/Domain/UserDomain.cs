@@ -14,6 +14,6 @@ namespace LBHFSSPortalAPI.V1.Domain
 
         public List<UserRoleDomain> UserRoles { get; set; }
 
-        public List<OrganizationDomain> Organizations { get; set; }
+        public List<OrganisationDomain> Organisations { get; set; }
     }
 }

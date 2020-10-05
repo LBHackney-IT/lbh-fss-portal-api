@@ -30,7 +30,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var stubbedUsers = _fixture
                     .Build<UserDomain>()
-                    .Without(u => u.Organizations)
+                    .Without(u => u.Organisations)
                     .Without(u => u.UserRoles)
                     .CreateMany();
 

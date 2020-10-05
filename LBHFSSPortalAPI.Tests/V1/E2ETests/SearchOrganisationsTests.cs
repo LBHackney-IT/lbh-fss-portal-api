@@ -20,10 +20,10 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
         public async Task SearchOrganisationBySearchParamsReturnsOrganisations()
         {
             DatabaseContext.Database.RollbackTransaction();
-            var organizations = EntityHelpers.CreateOrganizations();
-            DatabaseContext.Organizations.AddRange(organizations);
+            var organisations = EntityHelpers.Createorganisations();
+            DatabaseContext.Organisations.AddRange(organisations);
             DatabaseContext.SaveChanges();
-            var requestUri = new Uri($"api/v1/organisations/{organizations.First().Id}", UriKind.Relative);
+            var requestUri = new Uri($"api/v1/organisations/{organisations.First().Id}", UriKind.Relative);
             var response = await Client.GetAsync(requestUri).ConfigureAwait(false);
             response.StatusCode.Should().Be(200);
             var content = response.Content;

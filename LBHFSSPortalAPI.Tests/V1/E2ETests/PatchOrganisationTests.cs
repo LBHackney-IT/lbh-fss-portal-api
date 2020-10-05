@@ -15,18 +15,18 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class PatchOrganisationTests : IntegrationTests<Startup>
     {
-        [TestCase(TestName = "Given that valid parameters are provided, the specified organization is updated in the database")]
+        [TestCase(TestName = "Given that valid parameters are provided, the specified organisation is updated in the database")]
         public async Task PatchOrganisationUpdatesOrganisation()
         {
             DatabaseContext.Database.RollbackTransaction();
-            var organisation = EntityHelpers.CreateOrganization();
-            DatabaseContext.Organizations.Add(organisation);
+            var organisation = EntityHelpers.CreateOrganisation();
+            DatabaseContext.Organisations.Add(organisation);
             DatabaseContext.SaveChanges();
             var updOrganisation = new OrganisationRequest();
             updOrganisation.Name = Randomm.Text();
             updOrganisation.ReviewerMessage = null; // we are assuming null means no change to the record
-            var organizationString = JsonConvert.SerializeObject(updOrganisation);
-            HttpContent patchContent = new StringContent(organizationString, Encoding.UTF8, "application/json");
+            var organisationString = JsonConvert.SerializeObject(updOrganisation);
+            HttpContent patchContent = new StringContent(organisationString, Encoding.UTF8, "application/json");
             var requestUri = new Uri($"api/v1/organisations/{organisation.Id}", UriKind.Relative);
             var response = await Client.PatchAsync(requestUri, patchContent).ConfigureAwait(false);
             patchContent.Dispose();
@@ -35,7 +35,7 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
             var stringResponse = await content.ReadAsStringAsync().ConfigureAwait(true);
             var deserializedBody = JsonConvert.DeserializeObject<OrganisationResponse>(stringResponse);
             var organisationId = deserializedBody.Id;
-            var dbOrganisation = DatabaseContext.Organizations.Find(organisationId);
+            var dbOrganisation = DatabaseContext.Organisations.Find(organisationId);
             dbOrganisation.Should().NotBeNull();
             dbOrganisation.Name.Should().Be(organisation.Name);
             dbOrganisation.ReviewerMessage.Should().Be(organisation.ReviewerMessage);  //should not be set to null if not changed

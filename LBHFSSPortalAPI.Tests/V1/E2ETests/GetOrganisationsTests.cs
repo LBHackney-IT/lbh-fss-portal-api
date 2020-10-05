@@ -19,8 +19,8 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
         public async Task GetOrganisationByIdReturnsOrganisation()
         {
             DatabaseContext.Database.RollbackTransaction();
-            var organisation = EntityHelpers.CreateOrganization();
-            DatabaseContext.Organizations.Add(organisation);
+            var organisation = EntityHelpers.CreateOrganisation();
+            DatabaseContext.Organisations.Add(organisation);
             DatabaseContext.SaveChanges();
             var requestUri = new Uri($"api/v1/organisations/{organisation.Id}", UriKind.Relative);
             var response = await Client.GetAsync(requestUri).ConfigureAwait(false);

@@ -8,9 +8,9 @@ using NUnit.Framework;
 namespace LBHFSSPortalAPI.Tests.V1.Boundary.Requests
 {
     [TestFixture]
-    public class OrganizationRequestTests
+    public class OrganisationRequestTests
     {
-        [TestCase(TestName = "Organization create request object should have the correct properties")]
+        [TestCase(TestName = "Organisation create request object should have the correct properties")]
         public void GetServiceResponseObjectShouldHaveCorrectProperties()
         {
             var entityType = typeof(OrganisationRequest);

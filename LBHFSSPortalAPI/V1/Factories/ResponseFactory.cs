@@ -29,7 +29,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 Status = domain.Status,
                 CreatedAt = domain.CreatedAt,
                 SubId = domain.SubId,
-                Organisation = domain.Organizations?.FirstOrDefault()?.ToResponse(),
+                Organisation = domain.Organisations?.FirstOrDefault()?.ToResponse(),
                 Roles = domain.UserRoles?
                     .Select(ur => ur.Role)
                     .Select(r => r.Name)
@@ -44,7 +44,7 @@ namespace LBHFSSPortalAPI.V1.Factories
             return users.Select(p => p.ToResponse()).ToList();
         }
 
-        public static OrganisationResponse ToResponse(this OrganizationDomain domain)
+        public static OrganisationResponse ToResponse(this OrganisationDomain domain)
         {
             return new OrganisationResponse()
             {
