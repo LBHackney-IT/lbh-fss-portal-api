@@ -5,10 +5,10 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
 {
     public interface IOrganisationsGateway
     {
-        OrganizationDomain CreateOrganisation(Organization request);
-        OrganizationDomain GetOrganisation(int id);
+        OrganisationDomain CreateOrganisation(Organisation request);
+        OrganisationDomain GetOrganisation(int id);
 
         void DeleteOrganisation(int id);
-        OrganizationDomain PatchOrganisation(OrganizationDomain organisationDomain);
+        OrganisationDomain PatchOrganisation(OrganisationDomain organisationDomain);
     }
 }

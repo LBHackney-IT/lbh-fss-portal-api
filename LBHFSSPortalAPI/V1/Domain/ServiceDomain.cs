@@ -6,7 +6,7 @@ namespace LBHFSSPortalAPI.V1.Domain
     public class ServiceDomain
     {
         public int Id { get; set; }
-        public int? OrganizationId { get; set; }
+        public int? OrganisationId { get; set; }
         public string Status { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
@@ -25,7 +25,7 @@ namespace LBHFSSPortalAPI.V1.Domain
         public int? ImageId { get; set; }
 
         public virtual FileDomain Image { get; set; }
-        public virtual OrganizationDomain Organization { get; set; }
+        public virtual OrganisationDomain Organisation { get; set; }
         public virtual ICollection<ServiceLocationDomain> ServiceLocations { get; set; }
         public virtual ICollection<ServiceTaxonomyDomain> ServiceTaxonomies { get; set; }
     }

@@ -7,9 +7,9 @@ namespace LBHFSSPortalAPI.V1.Factories
 {
     public static class RequestFactory
     {
-        public static OrganizationDomain ToDomain(this OrganisationRequest request)
+        public static OrganisationDomain ToDomain(this OrganisationRequest request)
         {
-            return new OrganizationDomain()
+            return new OrganisationDomain()
             {
                 Name = request.Name,
                 CreatedAt = request.CreatedAt,
@@ -43,9 +43,9 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
-        public static Organization ToEntity(this OrganisationRequest request)
+        public static Organisation ToEntity(this OrganisationRequest request)
         {
-            return new Organization()
+            return new Organisation()
             {
                 Name = request.Name,
                 CreatedAt = request.CreatedAt,

@@ -36,7 +36,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     UserErrorMessage = "Service cannot be added as the provided organisation ID was not valid"
                 };
 
-            var organisation = await Context.Organizations
+            var organisation = await Context.Organisations
                 .FirstOrDefaultAsync(o => o.Id == request.OrganisationId)
                 .ConfigureAwait(false);
 
@@ -63,7 +63,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 Keywords = request.Keywords,
                 ReferralLink = request.ReferralLink,
                 ReferralEmail = request.ReferralEmail,
-                OrganizationId = request.OrganisationId,
+                OrganisationId = request.OrganisationId,
 
                 ServiceLocations = request?.Locations
                     .Select(l => new ServiceLocation()
@@ -176,7 +176,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             var matchingServices = Context.Services.AsQueryable();
 
-            // handle search 
+            // handle search
             if (!string.IsNullOrWhiteSpace(servicesQuery.Search))
                 matchingServices = matchingServices.Where(s => EF.Functions.Like(s.Name, $"%{servicesQuery.Search}%"));
 
@@ -205,8 +205,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 var services = await matchingServices
                     .Where(s => s.Status != ServiceStatus.Deleted)
-                    .Include(s => s.Organization)
-                    .ThenInclude(o => o.UserOrganizations)
+                    .Include(s => s.Organisation)
+                    .ThenInclude(o => o.UserOrganisations)
                     .ThenInclude(uo => uo.User)
                     .Include(s => s.Image)
                     .Include(s => s.ServiceLocations)
@@ -244,7 +244,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     UserErrorMessage = "Service cannot be added as the provided organisation ID was not valid"
                 };
 
-            var organisation = await Context.Organizations
+            var organisation = await Context.Organisations
                 .FirstOrDefaultAsync(o => o.Id == request.OrganisationId)
                 .ConfigureAwait(false);
 
@@ -278,8 +278,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             service.ReferralLink = request.ReferralLink ?? service.ReferralLink;
             service.ReferralEmail = request.ReferralEmail ?? service.ReferralEmail;
 
-            service.Organization = null;
-            service.OrganizationId = request.OrganisationId ?? service.OrganizationId;
+            service.Organisation = null;
+            service.OrganisationId = request.OrganisationId ?? service.OrganisationId;
 
             if (request.Locations != null)
             {
@@ -353,8 +353,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             var service = await Context.Services
                 .Where(s => s.Status != ServiceStatus.Deleted)
-                .Include(s => s.Organization)
-                .ThenInclude(o => o.UserOrganizations)
+                .Include(s => s.Organisation)
+                .ThenInclude(o => o.UserOrganisations)
                 .ThenInclude(uo => uo.User)
                 .Include(s => s.Image)
                 .Include(s => s.ServiceLocations)

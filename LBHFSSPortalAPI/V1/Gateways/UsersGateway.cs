@@ -42,7 +42,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             var matchingUsers = Context.Users.AsQueryable();
 
-            // handle search 
+            // handle search
             if (!string.IsNullOrWhiteSpace(userQueryParam.Search))
                 matchingUsers = matchingUsers.Where(u => EF.Functions.Like(u.Name, $"%{userQueryParam.Search}%"));
 
@@ -70,9 +70,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 var userList = await matchingUsers
-                    .Include(u => u.UserOrganizations)
-                    .ThenInclude(uo => uo.Organization)
-                    .Include(uo => uo.Organizations)
+                    .Include(u => u.UserOrganisations)
+                    .ThenInclude(uo => uo.Organisation)
+                    .Include(uo => uo.Organisations)
                     .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
                     .AsNoTracking()
@@ -102,9 +102,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             // Perform search for user based on email address and status
             var user = Context.Users
-                .Include(u => u.UserOrganizations)
-                .ThenInclude(uo => uo.Organization)
-                .Include(uo => uo.Organizations)
+                .Include(u => u.UserOrganisations)
+                .ThenInclude(uo => uo.Organisation)
+                .Include(uo => uo.Organisations)
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .AsNoTracking()
@@ -127,9 +127,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             // Perform search for user based on subscription ID
             var user = Context.Users
-                .Include(u => u.UserOrganizations)
-                .ThenInclude(uo => uo.Organization)
-                .Include(uo => uo.Organizations)
+                .Include(u => u.UserOrganisations)
+                .ThenInclude(uo => uo.Organisation)
+                .Include(uo => uo.Organisations)
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .AsNoTracking()
@@ -144,9 +144,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
         public UserDomain GetUserById(int userId)
         {
             var user = Context.Users
-                .Include(u => u.UserOrganizations)
-                .ThenInclude(uo => uo.Organization)
-                .Include(uo => uo.Organizations)
+                .Include(u => u.UserOrganisations)
+                .ThenInclude(uo => uo.Organisation)
+                .Include(uo => uo.Organisations)
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .AsNoTracking()
@@ -161,9 +161,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
         public async Task<UserDomain> GetUserByIdAsync(int userId)
         {
             var user = await Context.Users
-                .Include(u => u.UserOrganizations)
-                .ThenInclude(uo => uo.Organization)
-                .Include(uo => uo.Organizations)
+                .Include(u => u.UserOrganisations)
+                .ThenInclude(uo => uo.Organisation)
+                .Include(uo => uo.Organisations)
                 .Include(u => u.UserRoles)
                 .ThenInclude(uo => uo.Role)
                 .AsNoTracking()
@@ -319,58 +319,58 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public OrganizationDomain GetAssociatedOrganisation(int userId)
+        public OrganisationDomain GetAssociatedOrganisation(int userId)
         {
-            // Users and Organisations have a many to many relationship and use the UserOrganization
+            // Users and Organisations have a many to many relationship and use the UserOrganisation
             // link entity to resolve this. But for the MVP, callers will only ever associate
             // one organisation with one user
 
-            var userOrg = Context.UserOrganizations
-                .Include(uo => uo.Organization)
+            var userOrg = Context.UserOrganisations
+                .Include(uo => uo.Organisation)
                 .FirstOrDefault(uo => uo.UserId == userId);
 
-            if (userOrg?.Organization != null)
-                return _mapper.ToDomain(userOrg.Organization);
+            if (userOrg?.Organisation != null)
+                return _mapper.ToDomain(userOrg.Organisation);
 
             return null;
         }
 
-        public OrganizationDomain AssociateUserWithOrganisation(int userId, int organisationId)
+        public OrganisationDomain AssociateUserWithOrganisation(int userId, int organisationId)
         {
-            OrganizationDomain response = null;
+            OrganisationDomain response = null;
 
             try
             {
                 // check organisation actually exists before creating association in database
-                var orgEntity = Context.Organizations.FirstOrDefault(o => o.Id == organisationId);
+                var orgEntity = Context.Organisations.FirstOrDefault(o => o.Id == organisationId);
 
                 if (orgEntity == null)
                 {
                     throw new UseCaseException()
                     {
                         UserErrorMessage = $"The supplied organisation ID '{organisationId}' was not found",
-                        DevErrorMessage = $"The [Organizations] table does not contain an organisation with ID = {organisationId}"
+                        DevErrorMessage = $"The [organisations] table does not contain an organisation with ID = {organisationId}"
                     };
                 }
 
-                var userOrg = Context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
+                var userOrg = Context.UserOrganisations.FirstOrDefault(u => u.UserId == userId);
 
                 // check if an association already exists and modify this one if it does
                 if (userOrg != null)
                 {
-                    userOrg.OrganizationId = organisationId;
-                    Context.UserOrganizations.Update(userOrg);
+                    userOrg.OrganisationId = organisationId;
+                    Context.UserOrganisations.Update(userOrg);
                 }
                 else
                 {
                     // create new organisation <-> user association
-                    userOrg = new UserOrganization()
+                    userOrg = new UserOrganisation()
                     {
                         CreatedAt = DateTime.UtcNow,
                         UserId = userId,
-                        OrganizationId = organisationId
+                        OrganisationId = organisationId
                     };
-                    Context.UserOrganizations.Add(userOrg);
+                    Context.UserOrganisations.Add(userOrg);
                 }
 
                 Context.SaveChanges();
@@ -392,7 +392,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public void RemoveUserOrganisationAssociation(int userId)
         {
-            var userOrg = Context.UserOrganizations.FirstOrDefault(u => u.UserId == userId);
+            var userOrg = Context.UserOrganisations.FirstOrDefault(u => u.UserId == userId);
 
             if (userOrg != null)
             {

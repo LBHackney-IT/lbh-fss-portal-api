@@ -12,7 +12,7 @@ using NUnit.Framework;
 namespace LBHFSSPortalAPI.Tests.V1.Controllers
 {
     [TestFixture]
-    public class OrganizationsControllerTests
+    public class organisationsControllerTests
     {
         private OrganisationsController _classUnderTest;
         private Mock<IOrganisationsUseCase> _mockUseCase;

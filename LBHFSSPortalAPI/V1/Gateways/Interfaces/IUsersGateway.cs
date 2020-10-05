@@ -15,8 +15,8 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         UserDomain GetUserBySubId(string subId);
         UserDomain GetUserById(int userId);
         Task<UserDomain> GetUserByIdAsync(int userId);
-        OrganizationDomain GetAssociatedOrganisation(int userId);
-        OrganizationDomain AssociateUserWithOrganisation(int userId, int organisationId);
+        OrganisationDomain GetAssociatedOrganisation(int userId);
+        OrganisationDomain AssociateUserWithOrganisation(int userId, int organisationId);
         void RemoveUserOrganisationAssociation(int userId);
         List<string> GetUserRoleList(int userId);
     }

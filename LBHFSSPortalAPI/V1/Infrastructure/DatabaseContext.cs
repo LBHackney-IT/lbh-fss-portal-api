@@ -14,7 +14,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         }
 
         public virtual DbSet<File> Files { get; set; }
-        public virtual DbSet<Organization> Organizations { get; set; }
+        public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<ServiceLocation> ServiceLocations { get; set; }
         public virtual DbSet<ServiceTaxonomy> ServiceTaxonomies { get; set; }
@@ -23,7 +23,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public virtual DbSet<SynonymGroup> SynonymGroups { get; set; }
         public virtual DbSet<SynonymWord> SynonymWords { get; set; }
         public virtual DbSet<Taxonomy> Taxonomies { get; set; }
-        public virtual DbSet<UserOrganization> UserOrganizations { get; set; }
+        public virtual DbSet<UserOrganisation> UserOrganisations { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
@@ -54,7 +54,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnType("character varying");
             });
 
-            modelBuilder.Entity<Organization>(entity =>
+            modelBuilder.Entity<Organisation>(entity =>
             {
                 entity.ToTable("organizations");
 
@@ -153,7 +153,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
 
                 entity.HasOne(d => d.ReviewerU)
-                    .WithMany(p => p.Organizations)
+                    .WithMany(p => p.Organisations)
                     .HasForeignKey(d => d.ReviewerUid)
                     .HasConstraintName("organizations_reviewer_uid_fkey");
             });
@@ -291,7 +291,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("name")
                     .HasColumnType("character varying");
 
-                entity.Property(e => e.OrganizationId).HasColumnName("organization_id");
+                entity.Property(e => e.OrganisationId).HasColumnName("organization_id");
 
                 entity.Property(e => e.ReferralEmail)
                     .HasColumnName("referral_email")
@@ -324,9 +324,9 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasForeignKey(d => d.ImageId)
                     .HasConstraintName("services_image_id_fkey");
 
-                entity.HasOne(d => d.Organization)
+                entity.HasOne(d => d.Organisation)
                     .WithMany(p => p.Services)
-                    .HasForeignKey(d => d.OrganizationId)
+                    .HasForeignKey(d => d.OrganisationId)
                     .HasConstraintName("services_organization_id_fkey");
             });
 
@@ -434,13 +434,13 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.Property(e => e.Weight).HasColumnName("weight");
             });
 
-            modelBuilder.Entity<UserOrganization>(entity =>
+            modelBuilder.Entity<UserOrganisation>(entity =>
             {
                 entity.ToTable("user_organizations");
 
                 entity.HasIndex(e => e.Id);
 
-                entity.HasIndex(e => e.OrganizationId);
+                entity.HasIndex(e => e.OrganisationId);
 
                 entity.HasIndex(e => e.UserId);
 
@@ -450,18 +450,18 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
-                entity.Property(e => e.OrganizationId).HasColumnName("organization_id");
+                entity.Property(e => e.OrganisationId).HasColumnName("organization_id");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
-                entity.HasOne(d => d.Organization)
-                    .WithMany(p => p.UserOrganizations)
-                    .HasForeignKey(d => d.OrganizationId)
+                entity.HasOne(d => d.Organisation)
+                    .WithMany(p => p.UserOrganisations)
+                    .HasForeignKey(d => d.OrganisationId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_organizations_organization_id_fkey");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserOrganizations)
+                    .WithMany(p => p.UserOrganisations)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_organizations_user_id_fkey");

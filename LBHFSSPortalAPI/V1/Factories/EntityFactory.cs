@@ -18,9 +18,9 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
-        public static Organization ToEntity(this OrganizationDomain domain)
+        public static Organisation ToEntity(this OrganisationDomain domain)
         {
-            return new Organization
+            return new Organisation
             {
                 Id = domain.Id,
                 Name = domain.Name,

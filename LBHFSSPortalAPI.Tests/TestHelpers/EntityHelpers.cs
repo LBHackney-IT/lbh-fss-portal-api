@@ -13,7 +13,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
         {
             var service = Randomm.Build<Service>()
                 .Without(s => s.Id)
-                .With(s => s.Organization, CreateOrganization())
+                .With(s => s.Organisation, CreateOrganisation())
                 .With(s => s.Image, CreateFile)
                 .With(s => s.ServiceTaxonomies, CreateServiceTaxonomies(1))
                 .With(s => s.ServiceLocations, CreateServiceLocations())
@@ -54,13 +54,13 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
                 .With(s => s.Group, CreateSynonymGroup())
                 .Create();
         }
-        public static Organization CreateOrganization()
+        public static Organisation CreateOrganisation()
         {
-            var organization = Randomm.Build<Organization>()
+            var organisation = Randomm.Build<Organisation>()
                 .Without(o => o.Id)
                 .With(o => o.ReviewerU, CreateUser())
                 .Create();
-            return organization;
+            return organisation;
         }
 
         public static ServiceLocation CreateServiceLocation()
@@ -71,7 +71,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
                 .With(sl => sl.Longitude, (decimal) Randomm.Longitude())
                 .With(sl => sl.Service, Randomm.Build<Service>()
                     .Without(s => s.Id)
-                    .With(s => s.Organization, CreateOrganization())
+                    .With(s => s.Organisation, CreateOrganisation())
                     .With(s => s.Image, CreateFile)
                     .Create()
                 )
@@ -96,14 +96,14 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return taxonomy;
         }
 
-        public static UserOrganization CreateUserOrganization()
+        public static UserOrganisation CreateUserOrganisation()
         {
-            var userOrganization = Randomm.Build<UserOrganization>()
+            var userOrganisation = Randomm.Build<UserOrganisation>()
                 .Without(uo => uo.Id)
                 .With(uo => uo.User, CreateUser())
-                .With(uo => uo.Organization, CreateOrganization())
+                .With(uo => uo.Organisation, CreateOrganisation())
                 .Create();
-            return userOrganization;
+            return userOrganisation;
         }
 
         public static ServiceTaxonomy CreateServiceTaxonomy()
@@ -111,7 +111,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             var serviceTaxonomy = Randomm.Build<ServiceTaxonomy>()
                 .Without(st => st.Id)
                 .With(st => st.Service, Randomm.Build<Service>().Without(s => s.Id)
-                    .With(s => s.Organization, CreateOrganization())
+                    .With(s => s.Organisation, CreateOrganisation())
                     .With(s => s.Image, CreateFile)
                     .Create())
                 .With(st => st.Taxonomy, Randomm.Build<Taxonomy>().Without(t => t.Id).Create())
@@ -160,14 +160,14 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return serviceLocations;
         }
 
-        public static ICollection<Organization> CreateOrganizations(int count = _count)
+        public static ICollection<Organisation> Createorganisations(int count = _count)
         {
-            var organizations = new List<Organization>();
+            var organisations = new List<Organisation>();
             for (var a = 0; a < count; a++)
             {
-                organizations.Add(CreateOrganization());
+                organisations.Add(CreateOrganisation());
             }
-            return organizations;
+            return organisations;
         }
 
         public static SynonymGroup CreateSynonymGroupWithWords(int count = 3)

@@ -17,11 +17,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             _mapper = new MappingHelper();
         }
-        public OrganizationDomain CreateOrganisation(Organization request)
+        public OrganisationDomain CreateOrganisation(Organisation request)
         {
             try
             {
-                Context.Organizations.Add(request);
+                Context.Organisations.Add(request);
                 Context.SaveChanges();
             }
             catch (Exception e)
@@ -32,12 +32,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return _mapper.ToDomain(request);
         }
 
-        public OrganizationDomain GetOrganisation(int id)
+        public OrganisationDomain GetOrganisation(int id)
         {
             try
             {
-                var organization = Context.Organizations.Find(id);
-                return _mapper.ToDomain(organization);
+                var organisation = Context.Organisations.Find(id);
+                return _mapper.ToDomain(organisation);
             }
             catch (Exception e)
             {
@@ -50,10 +50,10 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                var organization = Context.Organizations.Find(id);
-                if (organization == null)
+                var organisation = Context.Organisations.Find(id);
+                if (organisation == null)
                     throw new InvalidOperationException("Organisation does not exist");
-                Context.Organizations.Remove(organization);
+                Context.Organisations.Remove(organisation);
                 Context.SaveChanges();
             }
             catch (Exception e)
@@ -63,11 +63,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public OrganizationDomain PatchOrganisation(OrganizationDomain organisationDomain)
+        public OrganisationDomain PatchOrganisation(OrganisationDomain organisationDomain)
         {
             try
             {
-                var org = Context.Organizations.Find(organisationDomain.Id);
+                var org = Context.Organisations.Find(organisationDomain.Id);
                 org.Name = organisationDomain.Name;
                 org.CreatedAt = organisationDomain.CreatedAt;
                 org.UpdatedAt = organisationDomain.UpdatedAt;
