@@ -61,11 +61,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 matchingUsers.OrderByDescending(u => EF.Property<User>(u, entityPropName));
 
             // handle pagination options
-            if (userQueryParam.Limit.HasValue)
-                matchingUsers = matchingUsers.Take(userQueryParam.Limit.Value);
-
             if (userQueryParam.Offset.HasValue)
                 matchingUsers = matchingUsers.Skip(userQueryParam.Offset.Value);
+
+            if (userQueryParam.Limit.HasValue)
+                matchingUsers = matchingUsers.Take(userQueryParam.Limit.Value);
 
             try
             {

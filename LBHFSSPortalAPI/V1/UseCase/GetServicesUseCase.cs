@@ -20,15 +20,15 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public async Task<ServiceResponse> Execute(int serviceId)
         {
-            var servicesDomain = await _servicesGateway.GetServiceAsync(serviceId).ConfigureAwait(false);
+            var serviceDomain = await _servicesGateway.GetServiceAsync(serviceId).ConfigureAwait(false);
 
-            if (servicesDomain == null)
+            if (serviceDomain == null)
                 throw new UseCaseException()
                 {
-                    UserErrorMessage = $"Could not retrieve service with an ID of '{serviceId}'",
+                    UserErrorMessage = $"Could not retrieve the service with an ID of '{serviceId}'",
                 };
 
-            return servicesDomain.ToResponse();
+            return serviceDomain.ToResponse();
         }
 
         public async Task<List<ServiceResponse>> Execute(ServicesQueryParam servicesQuery)
