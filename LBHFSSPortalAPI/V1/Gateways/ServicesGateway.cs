@@ -1,5 +1,4 @@
 using LBHFSSPortalAPI.V1.Boundary.Requests;
-using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
@@ -87,33 +86,31 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 service.Name = organisation.Name;
             }
 
-            // TODO (MJC): Implement the below next week to associate service with categories & demographics.
+            // Add the category taxonomies if provided
 
-            //var taxonomies = new List<ServiceTaxonomy>();
+            var allTaxonomies = new List<ServiceTaxonomy>();
 
-            //if (request.Categories != null && request.Categories.Any())
-            //{
-            //    taxonomies.AddRange(
-            //        request.Categories
-            //            .Select(c => new ServiceTaxonomy()
-            //            {
-            //                TaxonomyId = c.Id,
-            //                //D
+            if (request.Categories != null)
+            {
+                var newCategories = await CreateCategories(request.Categories, service).ConfigureAwait(false);
 
-            //            })
-            //            .ToList());
-            //}
+                if (newCategories.Any())
+                    allTaxonomies.AddRange(newCategories);
+            }
 
-            //if (request.Demographics != null && request.Demographics.Any())
-            //{
-            //    taxonomies.AddRange(
-            //        request.Demographics
-            //            .Select(c => new ServiceTaxonomy()
-            //            {
-            //                TaxonomyId = c.Id
-            //            })
-            //            .ToList());
-            //}
+            // Add the demographic taxonomies if provided
+
+            if (request.Demographics != null)
+            {
+                var newDemographics = await CreateDemographics(request.Demographics, service).ConfigureAwait(false);
+
+                if (newDemographics.Any())
+                    allTaxonomies.AddRange(newDemographics);
+            }
+
+            // associate new service with any provided categories & demographics
+            if (allTaxonomies.Any())
+                service.ServiceTaxonomies = allTaxonomies;
 
             try
             {
@@ -131,22 +128,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             return serviceDomain;
         }
-
-        public async Task DeleteService(int serviceId)
-        {
-            try
-            {
-                var service = await GetServiceById(serviceId).ConfigureAwait(false);
-                service.Status = ServiceStatus.Deleted;
-                Context.Update(service);
-                await Context.SaveChangesAsync().ConfigureAwait(false);
-            }
-            catch (DbUpdateException e)
-            {
-                HandleDbUpdateException(e);
-            }
-        }
-
         public async Task<ServiceDomain> GetServiceAsync(int serviceId)
         {
             var service = await GetServiceById(serviceId).ConfigureAwait(false);
@@ -195,11 +176,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 matchingServices.OrderByDescending(s => EF.Property<Service>(s, entityPropName));
 
             // handle pagination options
-            if (servicesQuery.Limit.HasValue)
-                matchingServices = matchingServices.Take(servicesQuery.Limit.Value);
-
             if (servicesQuery.Offset.HasValue)
                 matchingServices = matchingServices.Skip(servicesQuery.Offset.Value);
+
+            if (servicesQuery.Limit.HasValue)
+                matchingServices = matchingServices.Take(servicesQuery.Limit.Value);
 
             try
             {
@@ -229,7 +210,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             return response;
         }
-
         public async Task<ServiceDomain> UpdateService(ServiceRequest request, int serviceId)
         {
             if (request == null)
@@ -254,7 +234,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     UserErrorMessage = $"Could not find organisation ID {request.OrganisationId}"
                 };
 
-            var service = await GetServiceById(serviceId).ConfigureAwait(false);
+            var service = await GetServiceByIdWithTracking(serviceId).ConfigureAwait(false);
 
             if (service == null)
                 throw new UseCaseException()
@@ -304,37 +284,41 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 service.Name = organisation.Name;
             }
 
-            // TODO (MJC): Implement the below next week to associate service with categories & demographics.
+            // Add the category taxonomies if provided
 
-            //var taxonomies = new List<ServiceTaxonomy>();
+            var currentTaxonomies = service.ServiceTaxonomies.ToList();
+            
+            if (request.Categories != null)
+            {
+                // Clear existing categories. Note: if an empty list of categories is sent, this is a valid
+                // request to clear the current categories
+                currentTaxonomies.RemoveAll(st => st.Taxonomy != null && st.Taxonomy.Vocabulary == TaxonomyVocabulary.Category);
 
-            //if (request.Categories != null && request.Categories.Any())
-            //{
-            //    taxonomies.AddRange(
-            //        request.Categories
-            //            .Select(c => new ServiceTaxonomy()
-            //            {
-            //                TaxonomyId = c.Id,
-            //                //D
+                var newCategories = await CreateCategories(request.Categories, service).ConfigureAwait(false);
 
-            //            })
-            //            .ToList());
-            //}
+                if (newCategories.Any())
+                    currentTaxonomies.AddRange(newCategories);
+            }
 
-            //if (request.Demographics != null && request.Demographics.Any())
-            //{
-            //    taxonomies.AddRange(
-            //        request.Demographics
-            //            .Select(c => new ServiceTaxonomy()
-            //            {
-            //                TaxonomyId = c.Id
-            //            })
-            //            .ToList());
-            //}
+            // Add the demographic taxonomies if provided
+
+            if (request.Demographics != null)
+            {
+                // Clear existing demographics. Note: if an empty list of demographics is sent, this is a valid
+                // request to clear the current demographics
+                currentTaxonomies.RemoveAll(st => st.Taxonomy != null && st.Taxonomy.Vocabulary == TaxonomyVocabulary.Demographic);
+
+                var newDemographics = await CreateDemographics(request.Demographics, service).ConfigureAwait(false);
+
+                if (newDemographics.Any())
+                    currentTaxonomies.AddRange(newDemographics);
+            }
+
+            // copy the collection of service taxonomies above (whether mofified or not) back to the service entity
+            service.ServiceTaxonomies = currentTaxonomies;
 
             try
             {
-                Context.Update(service);
                 await Context.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (DbUpdateException e)
@@ -347,6 +331,21 @@ namespace LBHFSSPortalAPI.V1.Gateways
             var serviceDomain = _mapper.ToDomain(service);
 
             return serviceDomain;
+        }
+
+        public async Task DeleteService(int serviceId)
+        {
+            try
+            {
+                var service = await GetServiceById(serviceId).ConfigureAwait(false);
+                service.Status = ServiceStatus.Deleted;
+                Context.Update(service);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e);
+            }
         }
 
         private async Task<Service> GetServiceById(int serviceId)
@@ -365,6 +364,98 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .ConfigureAwait(false);
 
             return service;
+        }
+
+        private async Task<Service> GetServiceByIdWithTracking(int serviceId)
+        {
+            var service = await Context.Services
+                .Where(s => s.Status != ServiceStatus.Deleted)
+                .Include(s => s.Organisation)
+                .ThenInclude(o => o.UserOrganisations)
+                .ThenInclude(uo => uo.User)
+                .Include(s => s.Image)
+                .Include(s => s.ServiceLocations)
+                .Include(s => s.ServiceTaxonomies)
+                .ThenInclude(st => st.Taxonomy)
+                .SingleOrDefaultAsync(u => u.Id == serviceId)
+                .ConfigureAwait(false);
+
+            return service;
+        }
+
+        private async Task<List<ServiceTaxonomy>> CreateCategories(List<TaxonomyRequest> categories, Service service)
+        {
+            var taxonomies = new List<ServiceTaxonomy>();
+
+            if (categories != null && categories.Any())
+            {
+                // Check the provided category taxonomy IDs exist before attempting to add
+
+                var existingCategoryIds = await Context.Taxonomies
+                    .Where(t => t.Vocabulary == TaxonomyVocabulary.Category)
+                    .Select(t => t.Id)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                var requestedCategoryIds = categories.Select(c => c.Id).ToList();
+                var idsNotFound = requestedCategoryIds.Where(i => existingCategoryIds.Contains(i) == false);
+
+                if (idsNotFound.Any())
+                {
+                    var idList = string.Join(",", idsNotFound);
+                    throw new UseCaseException()
+                    {
+                        UserErrorMessage = $"One or more of category IDs could not be found: {idList}"
+                    };
+                }
+
+                taxonomies.AddRange(categories.Select(c => new ServiceTaxonomy()
+                {
+                    TaxonomyId = c.Id,
+                    Service = service,
+                    Description = c.Description
+                })
+                    .ToList());
+            }
+
+            return taxonomies;
+        }
+
+        private async Task<List<ServiceTaxonomy>> CreateDemographics(List<int> demographicIds, Service service)
+        {
+            var taxonomies = new List<ServiceTaxonomy>();
+
+            if (demographicIds != null && demographicIds.Any())
+            {
+                // Check the provided demographic taxonomy IDs exist before attempting to add
+
+                var existingDemographicIds = await Context.Taxonomies
+                    .Where(t => t.Vocabulary == TaxonomyVocabulary.Demographic)
+                    .Select(t => t.Id)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                var idsNotFound = demographicIds.Where(i => existingDemographicIds.Contains(i) == false);
+
+                if (idsNotFound.Any())
+                {
+                    var idList = string.Join(",", idsNotFound);
+                    throw new UseCaseException()
+                    {
+                        UserErrorMessage = $"One or more of the demographic IDs ({idList}) was not valid"
+                    };
+                }
+
+                taxonomies.AddRange(demographicIds
+                    .Select(c => new ServiceTaxonomy()
+                    {
+                        TaxonomyId = c,
+                        Service = service,
+                    })
+                    .ToList());
+            }
+
+            return taxonomies;
         }
     }
 }
