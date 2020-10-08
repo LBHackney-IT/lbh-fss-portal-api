@@ -60,24 +60,26 @@ namespace LBHFSSPortalAPI.V1.Factories
                     Categories = domain.ServiceTaxonomies == null
                     ? null
                     : domain.ServiceTaxonomies
-                        .Where(t => t.Taxonomy != null && t.Taxonomy.Vocabulary == "category")
+                        .Where(t => t.Taxonomy != null && t.Taxonomy.Vocabulary == TaxonomyVocabulary.Category)
                         .Select(t => new TaxonomyResponse
                         {
                             Id = t.Taxonomy.Id,
                             Name = t.Taxonomy.Name,
                             Description = t.Taxonomy.Description,
+                            ServiceDescription = t.Description,
                             Vocabulary = t.Taxonomy.Vocabulary,
                             Weight = t.Taxonomy.Weight
                         }).ToList(),
                     Demographics = domain.ServiceTaxonomies == null
                     ? null
                     : domain.ServiceTaxonomies
-                        .Where(t => t.Taxonomy != null && t.Taxonomy.Vocabulary == "demographic")
+                        .Where(t => t.Taxonomy != null && t.Taxonomy.Vocabulary == TaxonomyVocabulary.Demographic)
                         .Select(t => new TaxonomyResponse()
                         {
                             Id = t.Taxonomy.Id,
                             Name = t.Taxonomy.Name,
                             Description = t.Taxonomy.Description,
+                            ServiceDescription = t.Description,
                             Vocabulary = t.Taxonomy.Vocabulary,
                             Weight = t.Taxonomy.Weight
                         })
