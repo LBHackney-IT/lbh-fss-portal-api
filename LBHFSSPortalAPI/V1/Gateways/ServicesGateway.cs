@@ -287,7 +287,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             // Add the category taxonomies if provided
 
             var currentTaxonomies = service.ServiceTaxonomies.ToList();
-            
+
             if (request.Categories != null)
             {
                 // Clear existing categories. Note: if an empty list of categories is sent, this is a valid
