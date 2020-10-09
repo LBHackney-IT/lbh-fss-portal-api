@@ -13,7 +13,7 @@ provider "aws" {
 }
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-locals { 
+locals {
     application_name = "fss portal api"
     parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
 }
@@ -72,7 +72,7 @@ resource "aws_cognito_user_pool" "fss_pool" {
 resource "aws_cognito_user_pool_client" "fss_pool_client" {
     name = "fss_pool_client"
     user_pool_id = aws_cognito_user_pool.fss_pool.id
-    explicit_auth_flows = ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+    explicit_auth_flows = ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
