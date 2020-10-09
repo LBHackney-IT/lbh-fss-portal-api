@@ -69,7 +69,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     {
                         Latitude = l.Latitude,
                         Longitude = l.Longitude,
-                        Uprn = 0, //l.Uprn, DATABASE CHANGE REQUIRED - NEEDS TO BE A STRING!
+                        Uprn = l.Uprn,
                         Address1 = l.Address1,
                         City = l.City,
                         StateProvince = l.StateProvince,
@@ -268,7 +268,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     {
                         Latitude = l.Latitude,
                         Longitude = l.Longitude,
-                        Uprn = 0, //l.Uprn, DATABASE CHANGE REQUIRED - NEEDS TO BE A STRING!
+                        Uprn = l.Uprn,
                         Address1 = l.Address1,
                         City = l.City,
                         StateProvince = l.StateProvince,
