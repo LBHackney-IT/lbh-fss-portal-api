@@ -8,7 +8,7 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
     {
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
-        public int? Uprn { get; set; }
+        public string Uprn { get; set; }
 
         [JsonPropertyName("address_1")]
         public string Address1 { get; set; }
