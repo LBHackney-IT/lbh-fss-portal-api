@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using LBHFSSPortalAPI.Versioning;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -19,6 +16,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace LBHFSSPortalAPI
 {
@@ -32,7 +34,7 @@ namespace LBHFSSPortalAPI
         public IConfiguration Configuration { get; }
         private static List<ApiVersionDescription> _apiVersions { get; set; }
         //TODO update the below to the name of your API
-        private const string ApiName = "Your API Name";
+        private const string ApiName = "LBH FSS Portal API";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public static void ConfigureServices(IServiceCollection services)
@@ -47,6 +49,7 @@ namespace LBHFSSPortalAPI
                 o.ApiVersionReader = new UrlSegmentApiVersionReader(); // read the version number from the url segment header)
             });
 
+            services.AddCors();
             services.AddSingleton<IApiVersionDescriptionProvider, DefaultApiVersionDescriptionProvider>();
 
             services.AddSwaggerGen(c =>
@@ -74,7 +77,7 @@ namespace LBHFSSPortalAPI
                 //Looks at the APIVersionAttribute [ApiVersion("x")] on controllers and decides whether or not
                 //to include it in that version of the swagger document
                 //Controllers must have this [ApiVersion("x")] to be included in swagger documentation!!
-                c.DocInclusionPredicate((docName, apiDesc) =>
+                c.DocInclusionPredicate((string docName, ApiDescription apiDesc) =>
                 {
                     apiDesc.TryGetMethodInfo(out var methodInfo);
 
@@ -102,7 +105,7 @@ namespace LBHFSSPortalAPI
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                if (File.Exists(xmlPath))
+                if (System.IO.File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
             });
             ConfigureDbContext(services);
@@ -120,18 +123,49 @@ namespace LBHFSSPortalAPI
 
         private static void RegisterGateways(IServiceCollection services)
         {
-            services.AddScoped<IExampleGateway, ExampleGateway>();
+            var connInfo = new ConnectionInfo
+            {
+                AccessKeyId = Environment.GetEnvironmentVariable("COGNITO_USER"),
+                SecretAccessKey = Environment.GetEnvironmentVariable("COGNITO_KEY"),
+                ClientId = Environment.GetEnvironmentVariable("CLIENT_ID"),
+                UserPoolId = Environment.GetEnvironmentVariable("POOL_ID")
+            };
+            services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
+            services.AddScoped<IUsersGateway, UsersGateway>();
+            services.AddScoped<ISessionsGateway, SessionsGateway>();
+            services.AddScoped<IServicesGateway, ServicesGateway>();
+            services.AddScoped<IOrganisationsGateway, OrganisationsGateway>();
         }
 
         private static void RegisterUseCases(IServiceCollection services)
         {
-            services.AddScoped<IGetAllUseCase, GetAllUseCase>();
-            services.AddScoped<IGetByIdUseCase, GetByIdUseCase>();
+            services.AddScoped<IGetAllUsersUseCase, GetAllUsersUseCase>();
+            services.AddScoped<IGetUserUseCase, GetUserUseCase>();
+            services.AddScoped<ICreateUserRequestUseCase, CreateUserRequestUseCase>();
+            services.AddScoped<IConfirmUserUseCase, ConfirmUserUseCase>();
+            services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
+            services.AddScoped<IUpdateUserRequestUseCase, UpdateUserRequestUseCase>();
+            services.AddScoped<IDeleteUserRequestUseCase, DeleteUserRequestUseCase>();
+            services.AddScoped<ICreateServiceUseCase, CreateServiceUseCase>();
+            services.AddScoped<IGetServicesUseCase, GetServicesUseCase>();
+            services.AddScoped<IUpdateServiceUseCase, UpdateServiceUseCase>();
+            services.AddScoped<IDeleteServiceUseCase, DeleteServiceUseCase>();
+            services.AddScoped<IOrganisationsUseCase, OrganisationsUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Set up the cookie requirements
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                // use http only cookies to mitigate XSS attacks
+                HttpOnly = HttpOnlyPolicy.Always,
+
+                // always encrypt cookies with TLS/SSL
+                Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -157,11 +191,23 @@ namespace LBHFSSPortalAPI
             });
             app.UseSwagger();
             app.UseRouting();
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
             app.UseEndpoints(endpoints =>
             {
                 // SwaggerGen won't find controllers that are routed via this technique.
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
+                context.Database.EnsureCreated();
+
+            }
         }
     }
 }

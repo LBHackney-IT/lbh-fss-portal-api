@@ -1,4 +1,4 @@
-using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.UseCase;
 using Moq;
 using NUnit.Framework;
