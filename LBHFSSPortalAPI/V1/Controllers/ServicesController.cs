@@ -114,17 +114,19 @@ namespace LBHFSSPortalAPI.V1.Controllers
         {
             try
             {
+                string stubbedResponse = "NOT_YET_IMPLEMENTED_STUBBED_DATA";
+
                 var response = new AddressLookupResponse()
                 {
                     Longitude = 999,
                     Latitude = 999,
-                    Uprn = 999,
-                    Address1 = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
-                    Address2 = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
-                    City = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
-                    StateProvince = "NOT_YET_IMPLEMENTED_STUBBED_DATA",
-                    PostalCode = postcode ?? "NOT_YET_IMPLEMENTED_STUBBED_DATA",
-                    Country = "NOT_YET_IMPLEMENTED_STUBBED_DATA"
+                    Uprn = "UPRN_" + stubbedResponse,
+                    Address1 = "ADDRESS_1_" + stubbedResponse,
+                    Address2 = "ADDRESS_2_" + stubbedResponse,
+                    City = "CITY_" + stubbedResponse,
+                    StateProvince = "STATE_PROVINCE_" + stubbedResponse,
+                    PostalCode = postcode ?? "POSTCODE_" + stubbedResponse,
+                    Country = "COUNTRY_" + stubbedResponse,
                 };
 
                 return Ok(response);

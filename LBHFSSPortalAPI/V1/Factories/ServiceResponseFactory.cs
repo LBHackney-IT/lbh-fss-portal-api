@@ -41,7 +41,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                         {
                             Latitude = domain.Latitude,
                             Longitude = domain.Longitude,
-                            Uprn = "STUBBED_FIELD_DATABASE_CHANGE_REQUIRED",  //domain.Uprn, DATABASE CHANGE REQUIRED - NEEDS TO BE A STRING!
+                            Uprn = domain.Uprn,
                             Address1 = domain.Address1,
                             City = domain.City,
                             StateProvince = domain.StateProvince,
