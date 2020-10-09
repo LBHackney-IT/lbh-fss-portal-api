@@ -28,7 +28,7 @@ terraform {
 }
 
 resource "aws_cognito_user_pool" "fss_pool" {
-    name = "test_pool"
+    name = "fss_pool"
     username_attributes = ["email"]
 
     email_configuration {
@@ -64,7 +64,7 @@ resource "aws_cognito_user_pool" "fss_pool" {
     }
 
     tags = {
-        Environment = "development"
+        Environment = "production"
         Terraform   = true
     }
 }
