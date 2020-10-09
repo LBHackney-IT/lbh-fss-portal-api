@@ -7,6 +7,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
     [Route("api/v1/healthcheck")]
     [ApiController]
     [Produces("application/json")]
+    [ApiVersion("1.0")]
     public class HealthCheckController : BaseController
     {
         [HttpGet]

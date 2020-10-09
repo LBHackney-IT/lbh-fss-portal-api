@@ -1,6 +1,6 @@
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Factories;
-using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 
 namespace LBHFSSPortalAPI.V1.UseCase
