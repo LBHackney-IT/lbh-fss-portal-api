@@ -28,7 +28,7 @@ terraform {
 }
 
 resource "aws_cognito_user_pool" "fss_pool" {
-    name = "test_pool"
+    name = "fss_pool"
     username_attributes = ["email"]
 
     email_configuration {
