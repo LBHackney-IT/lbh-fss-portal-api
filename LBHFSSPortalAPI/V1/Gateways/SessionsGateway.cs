@@ -1,7 +1,7 @@
+using System.Linq;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
-using Microsoft.EntityFrameworkCore.Internal;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -28,6 +28,16 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 RemoveSessions(user.Id);
             }
+        }
+
+        public Session GetSessionByToken(string token)
+        {
+            var session = _databaseContext.Sessions
+                .Include(s => s.User)
+                .ThenInclude(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefault(s => s.Payload == token);
+            return session;
         }
 
         public void RemoveSessions(int userId)
