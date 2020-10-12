@@ -1,3 +1,4 @@
+using System;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
@@ -10,10 +11,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
     public class GetUserUseCase : IGetUserUseCase
     {
         private readonly IUsersGateway _usersGateway;
+        private readonly IAuthenticateGateway _authenticateGateway;
 
-        public GetUserUseCase(IUsersGateway usersGateway)
+        public GetUserUseCase(IUsersGateway usersGateway, IAuthenticateGateway authenticateGateway)
         {
             _usersGateway = usersGateway;
+            _authenticateGateway = authenticateGateway;
         }
 
         public async Task<UserResponse> Execute(int userId)
@@ -25,17 +28,18 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 {
                     UserErrorMessage = $"Could not retrieve a user with an ID of '{userId}'",
                 };
-
-            return userDomain.ToResponse();
+            var userStatus = _authenticateGateway.GetUserStatus(userDomain.Email);
+            var userResponse = userDomain.ToResponse();
+            userResponse.Status = userStatus;
+            userResponse.SetPasswordRequired = userStatus == null || userStatus == "FORCE_CHANGE_PASSWORD";
+            return userResponse;
         }
 
         public UserResponse Execute(string accessKey)
         {
             var userDomain = _usersGateway.GetUserBySubId(accessKey);
-
             if (userDomain != null)
                 return userDomain.ToResponse();
-
             return null;
         }
     }
