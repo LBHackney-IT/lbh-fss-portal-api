@@ -73,6 +73,25 @@ namespace LBHFSSPortalAPI.V1.Controllers
         }
 
         [HttpPost]
+        [Route("invitation/confirmation")]
+        [ProducesResponseType(typeof(LoginUserResponse), StatusCodes.Status200OK)]
+        public IActionResult ConfirmInvitation([FromBody] ResetPasswordQueryParams userConfirmRequest)
+        {
+            LoginUserResponse response;
+
+            try
+            {
+                response = _authenticateUseCase.ExecuteFirstLogin(userConfirmRequest, HttpContext.Connection.RemoteIpAddress.ToString());
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+
+            return Accepted(response);
+        }
+
+        [HttpPost]
         [Route("registration/confirmation/resend-request")]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
         public IActionResult ResendConfirmationCode([FromBody] ConfirmationResendRequest confirmationResendRequest)

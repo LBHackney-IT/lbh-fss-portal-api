@@ -37,9 +37,29 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 throw new UseCaseException() { UserErrorMessage = "Could not login as the password was invalid" };
 
             var loginResult = _authenticateGateway.LoginUser(loginParams);
+            if(!loginResult.Success)
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the email and/or password was invalid" };
             var user = _usersGateway.GetUserByEmail(loginParams.Email, UserStatus.Active);
             var loginResponse = CreateLoginSession(loginParams, user);
 
+            return loginResponse;
+        }
+
+        public LoginUserResponse ExecuteFirstLogin(ResetPasswordQueryParams loginParams, string ipAddress)
+        {
+            if (string.IsNullOrWhiteSpace(loginParams.Email))
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the email address was invalid" };
+
+            if (string.IsNullOrWhiteSpace(loginParams.Password))
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the password was invalid" };
+            var loginResult = _authenticateGateway.ChangePassword(loginParams);
+            if(loginResult == null)
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the email and/or password was invalid" };
+            loginResult.IpAddress = ipAddress;
+            var user = _usersGateway.GetUserByEmail(loginParams.Email, UserStatus.Invited);
+            user.Status = UserStatus.Active;
+            _usersGateway.UpdateUser(user);
+            var loginResponse = CreateLoginSession(loginResult, user);
             return loginResponse;
         }
 
@@ -47,7 +67,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
-
+            Console.WriteLine(loginParams.IpAddress);
+            Console.WriteLine(user.Id);
             Session session = new Session()
             {
                 IpAddress = loginParams.IpAddress,

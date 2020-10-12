@@ -38,7 +38,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             // gateway every time
             if (updateRequest.Password != null)
             {
-                _authenticateGateway.ChangePassword(new ResetPasswordQueryParams()
+                _authenticateGateway.AdminChangePassword(new ResetPasswordQueryParams()
                 {
                     Email = userDomain.Email,
                     Password = updateRequest.Password
@@ -81,7 +81,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
             else
             {
-                // null value indicates the caller would like to clear the users' organisation association 
+                // null value indicates the caller would like to clear the users' organisation association
                 if (associatedOrg != null)
                 {
                     _usersGateway.RemoveUserOrganisationAssociation(userId);
