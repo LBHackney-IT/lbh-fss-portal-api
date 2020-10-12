@@ -99,7 +99,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             if (string.IsNullOrWhiteSpace(emailAddress))
                 throw new UseCaseException { UserErrorMessage = "Invalid user email address supplied" };
-
             // Perform search for user based on email address and status
             var user = Context.Users
                 .Include(u => u.UserOrganisations)
@@ -110,7 +109,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .AsNoTracking()
                 .SingleOrDefault(u =>
                     u.Email == emailAddress &&
-                    u.Status == userStatus);
+                    u.Status.ToUpper() == userStatus.ToUpper());
 
             if (user != null)
                 userDomain = _mapper.ToDomain(user);

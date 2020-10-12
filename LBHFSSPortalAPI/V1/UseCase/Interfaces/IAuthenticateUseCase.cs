@@ -6,6 +6,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     public interface IAuthenticateUseCase
     {
         LoginUserResponse ExecuteLoginUser(LoginUserQueryParam loginParams);
+        LoginUserResponse ExecuteFirstLogin(ResetPasswordQueryParams loginParams, string ipAddress);
         void ExecuteLogoutUser(LogoutUserQueryParam logoutUserQueryParam);
     }
 }
