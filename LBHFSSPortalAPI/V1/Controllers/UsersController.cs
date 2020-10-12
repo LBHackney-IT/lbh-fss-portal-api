@@ -6,6 +6,7 @@ using LBHFSSPortalAPI.V1.Validations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
@@ -37,6 +38,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         }
 
         [Route("users")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListUsers([FromQuery] UserQueryParam userQueryParam)
