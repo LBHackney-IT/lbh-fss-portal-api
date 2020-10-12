@@ -38,6 +38,7 @@ resource "aws_cognito_user_pool" "fss_pool" {
         source_arn             = "arn:aws:ses:eu-west-1:153306643385:identity/fss@hackney.gov.uk"
     }
 
+    auto_verified_attributes   = ["email"]
     admin_create_user_config {
         allow_admin_create_user_only = false
         invite_message_template {
@@ -75,8 +76,8 @@ resource "aws_cognito_user_pool_client" "fss_pool_client" {
     explicit_auth_flows = ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_SRP_AUTH"]
 }
 
-resource "aws_cognito_user_pool_domain" "main" {
-    domain       = "fss-pool-domain"
+resource "aws_cognito_user_pool_domain" "fss_domain_production" {
+    domain       = "fss-pool-domain-production"
     user_pool_id = aws_cognito_user_pool.fss_pool.id
 }
 
