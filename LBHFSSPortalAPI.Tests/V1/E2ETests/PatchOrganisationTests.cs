@@ -19,6 +19,9 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
         public async Task PatchOrganisationUpdatesOrganisation()
         {
             DatabaseContext.Database.RollbackTransaction();
+            var session = EntityHelpers.CreateSession("Admin");
+            DatabaseContext.Sessions.Add(session);
+            Client.DefaultRequestHeaders.Add("Cookie", $"access_token={session.Payload}");
             var organisation = EntityHelpers.CreateOrganisation();
             DatabaseContext.Organisations.Add(organisation);
             DatabaseContext.SaveChanges();

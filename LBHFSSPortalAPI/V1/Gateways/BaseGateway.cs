@@ -16,6 +16,18 @@ namespace LBHFSSPortalAPI.V1.Gateways
             Context = databaseContext;
         }
 
+        protected void SaveChanges()
+        {
+            try
+            {
+                Context.SaveChanges();
+            }
+            catch (DbUpdateException e)
+            {
+                HandleDbUpdateException(e);
+            }
+        }
+
         protected static void HandleDbUpdateException(DbUpdateException e)
         {
             var uce = new UseCaseException()

@@ -1,8 +1,10 @@
+using LBHFSSPortalAPI.V1.Boundary;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using LBHFSSPortalAPI.V1.Validations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -30,6 +32,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _getUserRequestUseCase = getUserRequestUseCase;
         }
 
+
+        [AllowAnonymous]
         [HttpPost]
         [Route("registration")]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
@@ -43,12 +47,13 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 // TODO: Return user URI instead of 'Created'
                 return Created("Created", response);
             }
-            catch (Exception e)
+            catch (UseCaseException e)
             {
-                throw;
+                return BadRequest(e);
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("registration/confirmation")]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -72,6 +77,27 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Accepted(response);
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("invitation/confirmation")]
+        [ProducesResponseType(typeof(LoginUserResponse), StatusCodes.Status200OK)]
+        public IActionResult ConfirmInvitation([FromBody] ResetPasswordQueryParams userConfirmRequest)
+        {
+            LoginUserResponse response;
+
+            try
+            {
+                response = _authenticateUseCase.ExecuteFirstLogin(userConfirmRequest, HttpContext.Connection.RemoteIpAddress.ToString());
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+
+            return Accepted(response);
+        }
+
+        [AllowAnonymous]
         [HttpPost]
         [Route("registration/confirmation/resend-request")]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
@@ -93,6 +119,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <summary>
         /// Logs the user into API creating a new session
         /// </summary>
+        [AllowAnonymous]
         [Route("session")]
         [HttpPost]
         [ProducesResponseType(typeof(LoginUserResponse), StatusCodes.Status200OK)]
@@ -111,6 +138,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize]
         [Route("account")]
         [HttpGet]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -118,12 +146,10 @@ namespace LBHFSSPortalAPI.V1.Controllers
         {
             try
             {
-                var accessKey = Request.Cookies[Cookies.AccessTokenName];
+                if (string.IsNullOrEmpty(AccessToken))
+                    return BadRequest("no access_token cookie found in the request");
 
-                if (string.IsNullOrEmpty(accessKey))
-                    return BadRequest("no access_token header found in the request");
-
-                return Ok(_getUserRequestUseCase.Execute(accessKey));
+                return Ok(_getUserRequestUseCase.Execute(AccessToken));
             }
             catch (UseCaseException e)
             {
@@ -134,14 +160,18 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <summary>
         /// Logs the user out of the API removing session information
         /// </summary>
+        [Authorize]
         [Route("logout")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult LogoutUser([FromBody] LogoutUserQueryParam queryParams)
+        public IActionResult LogoutUser()
         {
             try
             {
-                _authenticateUseCase.ExecuteLogoutUser(queryParams);
+                if (string.IsNullOrEmpty(AccessToken))
+                    return BadRequest("no access_token cookie found in the request");
+
+                _authenticateUseCase.ExecuteLogoutUser(AccessToken);
             }
             catch (UseCaseException e)
             {
