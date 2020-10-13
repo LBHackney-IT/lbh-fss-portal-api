@@ -59,6 +59,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 SignUpResponse response = _provider.SignUpAsync(signUpRequest).Result;
                 return response.UserSub;
             }
+            catch (AggregateException e)
+            {
+                if (e.InnerException is UsernameExistsException ue)
+                    throw new UseCaseException() { UserErrorMessage = "The supplied email address already exists" };
+
+                throw new UseCaseException() { UserErrorMessage = e.Message, DevErrorMessage = e.ToString() };
+            }
             catch (Exception e)
             {
                 LambdaLogger.Log(e.Message);
@@ -79,6 +86,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 ConfirmSignUpResponse response = _provider.ConfirmSignUpAsync(signUpRequest).Result;
                 return response.HttpStatusCode == HttpStatusCode.OK;
+            }
+            catch (AggregateException e)
+            {
+                if (e.InnerException != null)
+                    throw new UseCaseException() { UserErrorMessage = e.Message };
+
+                throw new UseCaseException() { UserErrorMessage = e.Message, DevErrorMessage = e.ToString() };
             }
             catch (Exception e)
             {
@@ -130,15 +144,15 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (AggregateException e)
             {
-                 e.Handle((x) =>
-                 {
-                     if (x is NotAuthorizedException)  // This we know how to handle.
+                e.Handle((x) =>
+                {
+                    if (x is NotAuthorizedException)  // This we know how to handle.
                      {
-                         Console.WriteLine("Invalid credentials provided.");
-                         authResult.Success = false;
-                         return true;
-                     }
-                     return false; // Let anything else stop the application.
+                        Console.WriteLine("Invalid credentials provided.");
+                        authResult.Success = false;
+                        return true;
+                    }
+                    return false; // Let anything else stop the application.
                  });
             }
             return authResult;
@@ -164,7 +178,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         authResponse =
                             cognitoUser.RespondToNewPasswordRequiredAsync(new RespondToNewPasswordRequiredRequest()
                             {
-                                SessionID = authResponse.SessionID, NewPassword = changePasswordParams.NewPassword,
+                                SessionID = authResponse.SessionID,
+                                NewPassword = changePasswordParams.NewPassword,
                             }).Result;
                     }
                 }
@@ -183,19 +198,19 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (AggregateException e)
             {
-                 e.Handle((x) =>
-                 {
-                     if (x is NotAuthorizedException)  // This we know how to handle.
+                e.Handle((x) =>
+                {
+                    if (x is NotAuthorizedException)  // This we know how to handle.
                      {
-                         Console.WriteLine("Authentication Gateway:  Invalid credentials provided.");
-                         return true;
-                     }
-                     if (x is UserNotFoundException)  // This we know how to handle.
+                        Console.WriteLine("Authentication Gateway:  Invalid credentials provided.");
+                        return true;
+                    }
+                    if (x is UserNotFoundException)  // This we know how to handle.
                      {
-                         Console.WriteLine("Authentication Gateway:  User not found.");
-                         return true;
-                     }
-                     return false; // Let anything else stop the application.
+                        Console.WriteLine("Authentication Gateway:  User not found.");
+                        return true;
+                    }
+                    return false; // Let anything else stop the application.
                  });
             }
             return null;

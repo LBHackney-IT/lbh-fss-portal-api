@@ -269,7 +269,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return null;
         }
 
-        public void UpdateUser(UserDomain userDomain)
+        public void UpdateUserAndRoles(UserDomain userDomain)
         {
             // PATCH /users
 
@@ -454,6 +454,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     }
                 }
             }
+        }
+
+        public void SetUserStatus(int userId, string status)
+        {
+            var userEntity = Context.Users.FirstOrDefault(u => u.Id == userId);
+
+            if (userEntity == null)
+                throw new UseCaseException { UserErrorMessage = $"User with ID '{userId}' could not be found" };
+
+            userEntity.Status = status;
+            SaveChanges();
         }
     }
 }

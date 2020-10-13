@@ -1,3 +1,4 @@
+using LBHFSSPortalAPI.V1.Boundary;
 using LBHFSSPortalAPI.V1.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -12,6 +13,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
         {
             ConfigureJsonSerializer();
         }
+
+        protected string AccessToken => Request.Cookies[Cookies.AccessTokenName];
 
         public static void ConfigureJsonSerializer()
         {

@@ -50,9 +50,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
             userDomain.CreatedAt = updateRequest.CreatedAt ?? userDomain.CreatedAt;
             userDomain.Name = updateRequest.Name ?? userDomain.Name;
             userDomain.Status = updateRequest.Status ?? userDomain.Status;
-            userDomain = PopulateDomainWithUserRoles(userDomain, updateRequest.Roles);
 
-            _usersGateway.UpdateUser(userDomain);
+            // Set up the user roles provided
+            userDomain = PopulateDomainWithUserRoles(userDomain, updateRequest.Roles);
+            _usersGateway.UpdateUserAndRoles(userDomain);
 
             var associatedOrg = _usersGateway.GetAssociatedOrganisation(userId);
 
