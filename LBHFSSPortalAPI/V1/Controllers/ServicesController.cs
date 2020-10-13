@@ -31,7 +31,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _updateServiceUseCase = updateServiceUseCase;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, VCSO, Viewer")]
         [Route("services/{serviceId}")]
         [HttpGet]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
@@ -47,7 +47,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Viewer, Admin")]
         [Route("services")]
         [HttpGet]
         [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
@@ -63,7 +63,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, VCSO")]
         [Route("services")]
         [HttpPost]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
@@ -80,7 +80,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, VCSO")]
         [Route("services/{serviceId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
@@ -113,7 +113,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, VCSO, Viewer")]
         [Route("address-lookup")]
         [HttpGet]
         [ProducesResponseType(typeof(List<AddressLookupResponse>), StatusCodes.Status200OK)]
@@ -144,6 +144,5 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 return BadRequest(e);
             }
         }
-
     }
 }
