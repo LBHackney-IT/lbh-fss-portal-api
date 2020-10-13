@@ -37,7 +37,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _confirmUserUseCase = confirmUserUseCase;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Viewer, Admin")]
         [Route("users")]
         [HttpGet]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
@@ -53,8 +53,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, VCSO, Viewer")]
         [Route("users/{userId}")]
         [HttpGet]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -89,8 +88,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, VCSO, Viewer")]
         [Route("users/{userId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
