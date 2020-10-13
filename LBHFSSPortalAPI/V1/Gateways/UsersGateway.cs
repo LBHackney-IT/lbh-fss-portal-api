@@ -180,9 +180,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 var defaultRole = Context.Roles.FirstOrDefault(x => x.Name.ToUpper() == "VCSO");
-                if(defaultRole == null)
+                if (defaultRole == null)
                     throw new InvalidOperationException("The role specified does not exist.");
-                var userRole = new UserRole{RoleId = defaultRole.Id, UserId = user.Id, Role = defaultRole, CreatedAt = DateTime.Now};
+                var userRole = new UserRole { RoleId = defaultRole.Id, UserId = user.Id, Role = defaultRole, CreatedAt = DateTime.Now };
                 Context.UserRoles.Add(userRole);
                 Context.SaveChanges();
                 var domainUser = Context.Users

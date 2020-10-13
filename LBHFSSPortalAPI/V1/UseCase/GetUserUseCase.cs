@@ -43,7 +43,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             var session = _sessionsGateway.GetSessionByToken(accessKey);
             if (session != null)
-                return session.User == null ? null :  _mapper.ToDomain(session.User).ToResponse();
+                return session.User == null ? null : _mapper.ToDomain(session.User).ToResponse();
             return null;
         }
     }
