@@ -63,6 +63,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
             if (!userConfirmRequest.IsValid())
                 return BadRequest("Invalid details provided");
+
             try
             {
                 userConfirmRequest.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
