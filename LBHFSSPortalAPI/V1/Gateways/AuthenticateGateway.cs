@@ -146,10 +146,18 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 e.Handle((x) =>
                 {
+                    if (x is UserNotConfirmedException)  // This we know how to handle.
+                    {
+                        Console.WriteLine("User not confirmed.");
+                        authResult.Success = false;
+                        authResult.ResponseMessage = "User not confirmed";
+                        return true;
+                    }
                     if (x is NotAuthorizedException)  // This we know how to handle.
                     {
                         Console.WriteLine("Invalid credentials provided.");
                         authResult.Success = false;
+                        authResult.ResponseMessage = "Invalid credentials provided.";
                         return true;
                     }
                     return false; // Let anything else stop the application.

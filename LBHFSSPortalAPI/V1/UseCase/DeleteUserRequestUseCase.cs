@@ -30,7 +30,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             if (_authenticateGateway.DeleteUser(user.Email))
             {
                 _sessionsGateway.RemoveSessions(user.Id);
-                _usersGateway.SetUserStatus(user.Id, UserStatus.Deleted);
+                _usersGateway.SetUserStatus(user, UserStatus.Deleted);
             }
         }
     }
