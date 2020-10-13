@@ -12,6 +12,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
     [ApiVersion("1.0")]
     public class HealthCheckController : BaseController
     {
+        [AllowAnonymous]
         [HttpGet]
         [Route("ping")]
         [ProducesResponseType(typeof(Dictionary<string, bool>), 200)]
@@ -22,6 +23,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("error")]
         public void ThrowError()
