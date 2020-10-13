@@ -54,7 +54,7 @@ namespace LBHFSSPortalAPI
             });
 
             services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthorisationHandler>("BasicAuthentication",null);
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthorisationHandler>("BasicAuthentication", null);
 
             services.AddAuthorization(config =>
             {
