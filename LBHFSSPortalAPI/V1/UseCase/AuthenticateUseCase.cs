@@ -38,7 +38,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
             var loginResult = _authenticateGateway.LoginUser(loginParams);
             if (!loginResult.Success)
-                throw new UseCaseException() { UserErrorMessage = "Could not login as the email and/or password was invalid" };
+                throw new UseCaseException() { UserErrorMessage = loginResult.ResponseMessage == null ? "Could not login as the email and/or password was invalid" : loginResult.ResponseMessage };
             var user = _usersGateway.GetUserByEmail(loginParams.Email, UserStatus.Active);
             var loginResponse = CreateLoginSession(loginParams, user);
 
@@ -57,7 +57,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 throw new UseCaseException() { UserErrorMessage = "Could not login as the email and/or password was invalid" };
             loginResult.IpAddress = ipAddress;
             var user = _usersGateway.GetUserByEmail(loginParams.Email, UserStatus.Invited);
-            _usersGateway.SetUserStatus(user.Id, UserStatus.Active);
+            _usersGateway.SetUserStatus(user, UserStatus.Active);
             var loginResponse = CreateLoginSession(loginResult, user);
             return loginResponse;
         }

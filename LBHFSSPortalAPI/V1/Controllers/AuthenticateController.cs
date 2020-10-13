@@ -63,7 +63,6 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
             if (!userConfirmRequest.IsValid())
                 return BadRequest("Invalid details provided");
-
             try
             {
                 userConfirmRequest.IpAddress = HttpContext.Connection.RemoteIpAddress.ToString();
@@ -138,7 +137,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [Route("account")]
         [HttpGet]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -160,7 +159,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <summary>
         /// Logs the user out of the API removing session information
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [Route("logout")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]

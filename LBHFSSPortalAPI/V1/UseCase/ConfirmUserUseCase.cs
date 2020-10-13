@@ -47,8 +47,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
                         };
                     }
                 }
-
-                _usersGateway.SetUserStatus(user.Id, UserStatus.Active);
+                _usersGateway.SetDefaultRole(user);
+                _usersGateway.SetUserStatus(user, UserStatus.Active);
                 response = user.ToResponse();
             }
             else

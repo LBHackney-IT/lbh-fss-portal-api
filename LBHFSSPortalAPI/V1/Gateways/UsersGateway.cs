@@ -175,6 +175,30 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return null;
         }
 
+        public UserDomain SetDefaultRole(UserDomain user)
+        {
+            try
+            {
+                var defaultRole = Context.Roles.FirstOrDefault(x => x.Name.ToUpper() == "VCSO");
+                if(defaultRole == null)
+                    throw new InvalidOperationException("The role specified does not exist.");
+                var userRole = new UserRole{RoleId = defaultRole.Id, UserId = user.Id, Role = defaultRole, CreatedAt = DateTime.Now};
+                Context.UserRoles.Add(userRole);
+                Context.SaveChanges();
+                var domainUser = Context.Users
+                    .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                    .FirstOrDefault(u => u.Id == user.Id);
+                return _mapper.ToDomain(domainUser);
+            }
+            catch (Exception e)
+            {
+                LambdaLogger.Log(e.Message);
+                LambdaLogger.Log(e.StackTrace);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Returns the list of role names associated to the user with the given user ID
         /// </summary>
@@ -456,15 +480,16 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public void SetUserStatus(int userId, string status)
+        public void SetUserStatus(UserDomain user, string status)
         {
-            var userEntity = Context.Users.FirstOrDefault(u => u.Id == userId);
+            var userEntity = Context.Users.FirstOrDefault(u => u.Id == user.Id);
 
             if (userEntity == null)
-                throw new UseCaseException { UserErrorMessage = $"User with ID '{userId}' could not be found" };
+                throw new UseCaseException { UserErrorMessage = $"User with ID '{user.Id}' could not be found" };
 
             userEntity.Status = status;
             SaveChanges();
+            user.Status = userEntity.Status;
         }
     }
 }
