@@ -7,7 +7,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 {
     public class SessionsGateway : BaseGateway, ISessionsGateway
     {
-        public SessionsGateway(DatabaseContext databaseContext) : base (databaseContext)
+        public SessionsGateway(DatabaseContext databaseContext) : base(databaseContext)
         {
         }
 
@@ -34,7 +34,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             var sessions = Context.Sessions.Where(s => s.Payload == accessToken);
 
             if (sessions.Any())
-            { 
+            {
                 Context.Sessions.RemoveRange(sessions);
                 SaveChanges();
             }

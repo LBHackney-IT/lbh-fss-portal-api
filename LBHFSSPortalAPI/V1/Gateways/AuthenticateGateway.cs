@@ -147,13 +147,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 e.Handle((x) =>
                 {
                     if (x is NotAuthorizedException)  // This we know how to handle.
-                     {
+                    {
                         Console.WriteLine("Invalid credentials provided.");
                         authResult.Success = false;
                         return true;
                     }
                     return false; // Let anything else stop the application.
-                 });
+                });
             }
             return authResult;
         }
@@ -201,17 +201,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 e.Handle((x) =>
                 {
                     if (x is NotAuthorizedException)  // This we know how to handle.
-                     {
+                    {
                         Console.WriteLine("Authentication Gateway:  Invalid credentials provided.");
                         return true;
                     }
                     if (x is UserNotFoundException)  // This we know how to handle.
-                     {
+                    {
                         Console.WriteLine("Authentication Gateway:  User not found.");
                         return true;
                     }
                     return false; // Let anything else stop the application.
-                 });
+                });
             }
             return null;
         }
