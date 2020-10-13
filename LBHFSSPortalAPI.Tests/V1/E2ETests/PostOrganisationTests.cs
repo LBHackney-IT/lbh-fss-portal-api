@@ -19,6 +19,10 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
         public async Task PostOrganisationCreatesOrganisation()
         {
             DatabaseContext.Database.RollbackTransaction();
+            var session = EntityHelpers.CreateSession("Admin");
+            DatabaseContext.Sessions.Add(session);
+            Client.DefaultRequestHeaders.Add("Cookie", $"access_token={session.Payload}");
+            DatabaseContext.SaveChanges();
             var organisation = EntityHelpers.CreatePostOrganisation();
             var organisationString = JsonConvert.SerializeObject(organisation);
             HttpContent postContent = new StringContent(organisationString, Encoding.UTF8, "application/json");
