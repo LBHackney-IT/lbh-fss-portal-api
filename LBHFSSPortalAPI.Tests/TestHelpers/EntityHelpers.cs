@@ -32,11 +32,17 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return Randomm.Build<File>().Without(f => f.Id).Create();
         }
 
-        public static Role CreateRole()
+        public static Role CreateRole(string roleName)
         {
-            return Randomm.Build<Role>()
+            var role = Randomm.Build<Role>()
                 .Without(r => r.Id)
                 .Create();
+            if (!string.IsNullOrWhiteSpace(roleName))
+            {
+                role.Name = roleName;
+            }
+
+            return role;
         }
 
         public static SynonymGroup CreateSynonymGroup()
@@ -88,11 +94,17 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return serviceLocation;
         }
 
-        public static Session CreateSession()
+        public static Session CreateSession(string role)
         {
+            var user = Randomm.Build<User>()
+                .Without(u => u.Id)
+                .Without(u => u.UserRoles)
+                .Create();
+            user.UserRoles = new List<UserRole>();
+            user.UserRoles.Add(CreateUserRole(user, role));
             var session = Randomm.Build<Session>()
                 .Without(o => o.Id)
-                .With(o => o.User, CreateUser())
+                .With(o => o.User, user)
                 .Create();
             return session;
         }
@@ -191,14 +203,14 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
         }
 
 
-        // public static UserRole CreateUserRole()
-        // {
-        //     var userRole = Randomm.Build<UserRole>()
-        //         .Without(ur => ur.Id)
-        //         .With(ur => ur.IdNavigation, CreateUser())
-        //         .With(ur => ur.Role, CreateRole())
-        //         .Create();
-        //     return userRole;
-        // }
+        public static UserRole CreateUserRole(User user, string role)
+        {
+            var userRole = Randomm.Build<UserRole>()
+                .Without(ur => ur.Id)
+                .With(ur => ur.User, user)
+                .With(ur => ur.Role, CreateRole(role))
+                .Create();
+            return userRole;
+        }
     }
 }
