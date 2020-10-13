@@ -37,8 +37,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _confirmUserUseCase = confirmUserUseCase;
         }
 
-        [Route("users")]
         [Authorize(Roles = "Admin")]
+        [Route("users")]
         [HttpGet]
         [ProducesResponseType(typeof(UsersResponseList), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListUsers([FromQuery] UserQueryParam userQueryParam)
@@ -53,6 +53,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [Route("users/{userId}")]
         [HttpGet]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -68,6 +70,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("users")]
         [HttpPost]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
@@ -86,6 +89,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        //[Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [Route("users/{userId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -101,6 +106,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("users/{userId}")]
         [HttpDelete]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -108,17 +114,16 @@ namespace LBHFSSPortalAPI.V1.Controllers
         {
             try
             {
-                if (_deleteUserRequestUseCase.Execute(userId))
-                    return Ok();
+                _deleteUserRequestUseCase.Execute(userId);
+                return Ok();
             }
             catch (UseCaseException e)
             {
                 return BadRequest(e);
             }
-
-            return BadRequest("Could not delete the user");
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("users/{userId}/resend")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]

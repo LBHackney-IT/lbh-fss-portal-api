@@ -11,7 +11,7 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         Task<List<UserDomain>> GetAllUsers(UserQueryParam userQueryParam);
         UserDomain AddUser(UserDomain user);
         UserDomain AddUser(AdminCreateUserRequest createRequestData, string subId);
-        void UpdateUser(UserDomain user);
+        void UpdateUserAndRoles(UserDomain user);
         UserDomain GetUserBySubId(string subId);
         UserDomain GetUserById(int userId);
         Task<UserDomain> GetUserByIdAsync(int userId);
@@ -19,5 +19,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         OrganisationDomain AssociateUserWithOrganisation(int userId, int organisationId);
         void RemoveUserOrganisationAssociation(int userId);
         List<string> GetUserRoleList(int userId);
+        void SetUserStatus(int userId, string active);
     }
 }

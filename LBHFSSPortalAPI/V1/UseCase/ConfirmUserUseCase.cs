@@ -1,7 +1,9 @@
+using Amazon.CognitoIdentityProvider.Model.Internal.MarshallTransformations;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
+using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
@@ -46,9 +48,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     }
                 }
 
-                user.Status = UserStatus.Active;
-                _usersGateway.UpdateUser(user);
-                response = CreateSession(confirmRequest, user);
+                _usersGateway.SetUserStatus(user.Id, UserStatus.Active);
+                response = user.ToResponse();
             }
             else
             {
@@ -59,36 +60,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
 
             return response;
-        }
-
-        UserResponse CreateSession(UserConfirmRequest queryParam, UserDomain user)
-        {
-            var timestamp = DateTime.UtcNow;
-            var sessionId = Guid.NewGuid().ToString();
-
-            Session session = new Session()
-            {
-                IpAddress = queryParam.IpAddress,
-                CreatedAt = timestamp,
-                LastAccessAt = timestamp,
-                UserId = user.Id,
-                //Payload = (?) // TODO (MJC) - acquire from http request header
-                //UserAgent = (?) // TODO (MJC) - acquire from http request header
-            };
-
-            var savedSession = _sessionsGateway.AddSession(session);
-
-            var res = new UserResponse
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Name = user.Name,
-                CreatedAt = user.CreatedAt,
-                Status = user.Status,
-                SubId = user.SubId
-            };
-
-            return res;
         }
 
         public void Resend(ConfirmationResendRequest confirmationResendRequest)

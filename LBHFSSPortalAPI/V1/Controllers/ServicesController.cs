@@ -6,6 +6,7 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
@@ -30,6 +31,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _updateServiceUseCase = updateServiceUseCase;
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("services/{serviceId}")]
         [HttpGet]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
@@ -45,6 +47,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("services")]
         [HttpGet]
         [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
@@ -60,6 +63,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("services")]
         [HttpPost]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status201Created)]
@@ -76,6 +80,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("services/{serviceId}")]
         [HttpPatch]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
@@ -91,6 +96,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("services/{serviceId}")]
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -107,6 +113,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("address-lookup")]
         [HttpGet]
         [ProducesResponseType(typeof(List<AddressLookupResponse>), StatusCodes.Status200OK)]

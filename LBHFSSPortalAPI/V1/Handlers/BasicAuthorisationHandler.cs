@@ -1,14 +1,10 @@
 using System;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using LBHFSSPortalAPI.V1.Boundary.Requests;
-using LBHFSSPortalAPI.V1.Gateways;
+using LBHFSSPortalAPI.V1.Boundary;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
-using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,35 +38,35 @@ namespace LBHFSSPortalAPI.V1.Handlers
             if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
                 return AuthenticateResult.NoResult();
 
-            if (!Request.Headers.ContainsKey("AccessToken"))
-                return AuthenticateResult.Fail("Missing Authorisation Header");
+            var accessToken = Request.Cookies[Cookies.AccessTokenName];
 
-            User user = null;
+            if (accessToken == null)
+                return AuthenticateResult.Fail("Missing 'access_token' cookie");
 
-            try
-            {
-                var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["AccessToken"]).ToString();
-                var session = _sessionsGateway.GetSessionByToken(authHeader);
-                if (session.User == null)
-                    return AuthenticateResult.Fail("User not currently logged in");
-                user = session.User;
-            }
-             catch
-             {
-                 return AuthenticateResult.Fail("Error identifying user session");
-             }
-            if (user == null)
-                return AuthenticateResult.Fail("Invalid Username or Password");
-            if (!user.UserRoles.Any())
-                return AuthenticateResult.Fail("No roles specified for user");
-            var claims = new[] {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.UserRoles.FirstOrDefault().Role.Name),
-            };
+            var session = _sessionsGateway.GetSessionByToken(accessToken);
+
+            if (session?.User == null)
+                return AuthenticateResult.Fail("Invalid session key");
+
+            if (session.User.UserRoles == null || !session.User.UserRoles.Any())
+                return AuthenticateResult.Fail("No roles have been assigned to the user");
+
+            var userRoleNames = session.User.UserRoles
+                .Where(ur => ur.Role != null)
+                .Select(ur => ur.Role.Name)
+                .ToList();
+
+            var claims = userRoleNames.SelectMany(r => new[] {
+                new Claim(ClaimTypes.NameIdentifier, $"{session.User.Id}"),
+                new Claim(ClaimTypes.Role, r)
+            })
+            .ToArray();
+
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
             Console.WriteLine("Authentication Success!!!!");
+
             return AuthenticateResult.Success(ticket);
         }
     }
