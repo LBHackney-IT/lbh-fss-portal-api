@@ -138,7 +138,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [Route("account")]
         [HttpGet]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
@@ -160,7 +160,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <summary>
         /// Logs the user out of the API removing session information
         /// </summary>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "VCSO, Admin, Viewer")]
         [Route("logout")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
