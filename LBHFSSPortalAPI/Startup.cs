@@ -21,6 +21,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
+using LBHFSSPortalAPI.V1.Handlers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LBHFSSPortalAPI
 {
@@ -47,6 +51,18 @@ namespace LBHFSSPortalAPI
                 o.DefaultApiVersion = new ApiVersion(1, 0);
                 o.AssumeDefaultVersionWhenUnspecified = true; // assume that the caller wants the default version if they don't specify
                 o.ApiVersionReader = new UrlSegmentApiVersionReader(); // read the version number from the url segment header)
+            });
+
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthorisationHandler>("BasicAuthentication", null);
+
+            services.AddAuthorization(config =>
+            {
+                var userAuthPolicyBuilder = new AuthorizationPolicyBuilder();
+                config.DefaultPolicy = userAuthPolicyBuilder
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(ClaimTypes.Role)
+                    .Build();
             });
 
             services.AddCors();
@@ -191,6 +207,8 @@ namespace LBHFSSPortalAPI
             });
             app.UseSwagger();
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseCors(x => x
                 .AllowAnyMethod()
                 .AllowAnyHeader()
