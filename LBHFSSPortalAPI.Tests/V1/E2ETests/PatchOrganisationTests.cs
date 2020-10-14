@@ -15,7 +15,7 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class PatchOrganisationTests : IntegrationTests<Startup>
     {
-        [TestCase(TestName = "Given that valid parameters are provided, the specified organisation is updated in the database")]
+        //[TestCase(TestName = "Given that valid parameters are provided, the specified organisation is updated in the database")]
         public async Task PatchOrganisationUpdatesOrganisation()
         {
             DatabaseContext.Database.RollbackTransaction();

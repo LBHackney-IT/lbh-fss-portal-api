@@ -26,7 +26,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var gatewayResponse = _organisationsGateway.CreateOrganisation(requestParams.ToEntity());
             if (gatewayResponse != null)
             {
-                var userQueryParam = new UserQueryParam {Sort = "Name", Direction = "asc"};
+                var userQueryParam = new UserQueryParam { Sort = "Name", Direction = "asc" };
                 var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
                     .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
                 var adminEmails = adminUsers.Select(au => au.Email).ToArray();
@@ -86,15 +86,15 @@ namespace LBHFSSPortalAPI.V1.UseCase
             organisationDomain.IsLocalOfferListed = request.IsLocalOfferListed ?? organisationDomain.IsLocalOfferListed;
             organisationDomain.ReviewerUid = request.ReviewerId ?? organisationDomain.ReviewerUid;
             var gatewayResponse = _organisationsGateway.PatchOrganisation(organisationDomain);
-            if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "published" )
+            if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "published")
             {
                 var orgUserEmails = gatewayResponse.UserOrganisations
                     .Select(uo => uo.User.Email).ToArray();
                 _notifyGateway.SendMessage(NotifyMessageTypes.StatusUpdate, orgUserEmails);
             }
-            if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "awaiting review" )
+            if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "awaiting review")
             {
-                var userQueryParam = new UserQueryParam {Sort = "Name", Direction = "asc"};
+                var userQueryParam = new UserQueryParam { Sort = "Name", Direction = "asc" };
                 var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
                     .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
                 var adminEmails = adminUsers.Select(au => au.Email).ToArray();
