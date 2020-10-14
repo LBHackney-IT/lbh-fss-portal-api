@@ -117,6 +117,46 @@ namespace LBHFSSPortalAPI.V1.Controllers
         }
 
         /// <summary>
+        /// Initiates a password recovery process
+        /// </summary>
+        [AllowAnonymous]
+        [Route("password-recovery")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult ResetPassword([FromBody] ResetPasswordQueryParams queryParam)
+        {
+            try
+            {
+                _authenticateUseCase.ExecutePasswordRecovery(queryParam);
+                return Ok();
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        /// <summary>
+        /// Confirms a password recovery
+        /// </summary>
+        [AllowAnonymous]
+        [Route("password-recovery/confirmation")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult ConfirmResetPassword([FromBody] ResetPasswordQueryParams queryParam)
+        {
+            try
+            {
+                _authenticateUseCase.ExecutePasswordRecoveryConfirmation(queryParam);
+                return Ok();
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        /// <summary>
         /// Logs the user into API creating a new session
         /// </summary>
         [AllowAnonymous]
