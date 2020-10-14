@@ -65,7 +65,7 @@ namespace LBHFSSPortalAPI.V1.Handlers
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            Console.WriteLine("Authentication Success!!!!");
+            LoggingHandler.LogInfo("Authentication Success!!!!");
 
             return AuthenticateResult.Success(ticket);
         }

@@ -144,9 +144,11 @@ namespace LBHFSSPortalAPI
                 AccessKeyId = Environment.GetEnvironmentVariable("COGNITO_USER"),
                 SecretAccessKey = Environment.GetEnvironmentVariable("COGNITO_KEY"),
                 ClientId = Environment.GetEnvironmentVariable("CLIENT_ID"),
-                UserPoolId = Environment.GetEnvironmentVariable("POOL_ID")
+                UserPoolId = Environment.GetEnvironmentVariable("POOL_ID"),
+                NotifyKey = Environment.GetEnvironmentVariable("NOTIFY_KEY")
             };
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
+            services.AddTransient<INotifyGateway>(x => new NotifyGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
             services.AddScoped<ISessionsGateway, SessionsGateway>();
             services.AddScoped<IServicesGateway, ServicesGateway>();

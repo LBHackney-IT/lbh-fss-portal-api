@@ -20,6 +20,11 @@ functions:
       COGNITO_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/cognito-key}
       CLIENT_ID: ${ssm:/fss-portal-api/${self:provider.stage}/cognito-client-id}
       POOL_ID: ${ssm:/fss-portal-api/${self:provider.stage}/cognito-pool-id}
+      NOTIFY_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/notify-key}
+      REMINDER_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/reminder-template}
+      STATUS_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/status-template}
+      ADMIN_NOTIFICATION_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/admin-notification-template}
+      NOT_REVERIFIED_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/not-reverified-template}
     events:
       - http:
           path: /{proxy+}

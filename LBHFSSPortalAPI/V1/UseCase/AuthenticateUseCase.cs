@@ -7,6 +7,7 @@ using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System;
+using LBHFSSPortalAPI.V1.Handlers;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -67,8 +68,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
 
-            Console.WriteLine(loginParams.IpAddress);
-            Console.WriteLine(user.Id);
+            LoggingHandler.LogInfo(loginParams.IpAddress);
+            LoggingHandler.LogInfo(user.Id.ToString());
 
             Session session = new Session()
             {
