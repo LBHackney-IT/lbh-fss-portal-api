@@ -1,6 +1,8 @@
+using System.Linq;
 using System.Threading.Tasks;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Enums;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -10,20 +12,38 @@ namespace LBHFSSPortalAPI.V1.UseCase
     public class OrganisationsUseCase : IOrganisationsUseCase
     {
         private readonly IOrganisationsGateway _organisationsGateway;
+        private readonly INotifyGateway _notifyGateway;
+        private readonly IUsersGateway _usersGateway;
 
-        public OrganisationsUseCase(IOrganisationsGateway organisationsGateway)
+        public OrganisationsUseCase(IOrganisationsGateway organisationsGateway, INotifyGateway notifyGateway, IUsersGateway usersGateway)
         {
+            _usersGateway = usersGateway;
             _organisationsGateway = organisationsGateway;
+            _notifyGateway = notifyGateway;
         }
         public OrganisationResponse ExecuteCreate(OrganisationRequest requestParams)
         {
             var gatewayResponse = _organisationsGateway.CreateOrganisation(requestParams.ToEntity());
+            if (gatewayResponse != null)
+            {
+                var userQueryParam = new UserQueryParam {Sort = "Name", Direction = "asc"};
+                var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
+                    .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
+                var adminEmails = adminUsers.Select(au => au.Email).ToArray();
+                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, adminEmails);
+            }
             return gatewayResponse == null ? new OrganisationResponse() : gatewayResponse.ToResponse();
         }
 
         public OrganisationResponse ExecuteGet(int id)
         {
             var gatewayResponse = _organisationsGateway.GetOrganisation(id);
+            if (gatewayResponse != null)
+            {
+                var orgUserEmails = gatewayResponse.UserOrganisations
+                    .Select(uo => uo.User.Email).ToArray();
+                _notifyGateway.SendMessage(NotifyMessageTypes.StatusUpdate, orgUserEmails);
+            }
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
@@ -72,6 +92,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
             organisationDomain.IsLocalOfferListed = request.IsLocalOfferListed ?? organisationDomain.IsLocalOfferListed;
             organisationDomain.ReviewerUid = request.ReviewerId ?? organisationDomain.ReviewerUid;
             var gatewayResponse = _organisationsGateway.PatchOrganisation(organisationDomain);
+            if (gatewayResponse != null)
+            {
+                var orgUserEmails = gatewayResponse.UserOrganisations
+                    .Select(uo => uo.User.Email).ToArray();
+                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, orgUserEmails);
+            }
             return gatewayResponse.ToResponse();
         }
 
