@@ -55,10 +55,10 @@ namespace LBHFSSPortalAPI.V1.Handlers
                     return AuthenticateResult.Fail("User not currently logged in");
                 user = session.User;
             }
-             catch
-             {
-                 return AuthenticateResult.Fail("Error identifying user session");
-             }
+            catch
+            {
+                return AuthenticateResult.Fail("Error identifying user session");
+            }
             if (user == null)
                 return AuthenticateResult.Fail("Invalid Username or Password");
             if (!user.UserRoles.Any())
