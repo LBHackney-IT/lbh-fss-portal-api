@@ -8,6 +8,7 @@ using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
+using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +31,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
             return _mapper.ToDomain(request);
@@ -42,12 +44,15 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 var organisation = Context.Organisations
                     .Include(o => o.ReviewerU)
+                    .Include(o => o.UserOrganisations)
+                    .ThenInclude(uo => uo.User)
                     .FirstOrDefault(o => o.Id == id);
                 return _mapper.ToDomain(organisation);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -130,7 +135,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -184,8 +190,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }

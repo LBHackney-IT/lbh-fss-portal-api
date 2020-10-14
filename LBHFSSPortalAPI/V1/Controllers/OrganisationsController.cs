@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -101,7 +102,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (InvalidOperationException e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 return BadRequest(
                     new ErrorResponse($"Item doesn't exist") { Status = "Bad request", Errors = new List<string> { $"An organisation with id {id} does not exist" } });
             }

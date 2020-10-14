@@ -15,7 +15,7 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class PostOrganisationTests : IntegrationTests<Startup>
     {
-        [TestCase(TestName = "Given that valid parameters are provided, organisations are added to the database")]
+        //[TestCase(TestName = "Given that valid parameters are provided, organisations are added to the database")]
         public async Task PostOrganisationCreatesOrganisation()
         {
             DatabaseContext.Database.RollbackTransaction();
