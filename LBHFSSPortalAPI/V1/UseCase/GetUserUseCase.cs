@@ -12,11 +12,15 @@ namespace LBHFSSPortalAPI.V1.UseCase
     {
         private readonly IUsersGateway _usersGateway;
         private readonly IAuthenticateGateway _authenticateGateway;
+        private readonly ISessionsGateway _sessionsGateway;
+        private readonly MappingHelper _mapper;
 
-        public GetUserUseCase(IUsersGateway usersGateway, IAuthenticateGateway authenticateGateway)
+        public GetUserUseCase(IUsersGateway usersGateway, IAuthenticateGateway authenticateGateway, ISessionsGateway sessionsGateway)
         {
             _usersGateway = usersGateway;
             _authenticateGateway = authenticateGateway;
+            _sessionsGateway = sessionsGateway;
+            _mapper = new MappingHelper();
         }
 
         public async Task<UserResponse> Execute(int userId)
@@ -37,9 +41,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public UserResponse Execute(string accessKey)
         {
-            var userDomain = _usersGateway.GetUserBySubId(accessKey);
-            if (userDomain != null)
-                return userDomain.ToResponse();
+            var session = _sessionsGateway.GetSessionByToken(accessKey);
+            if (session != null)
+                return session.User == null ? null : _mapper.ToDomain(session.User).ToResponse();
             return null;
         }
     }

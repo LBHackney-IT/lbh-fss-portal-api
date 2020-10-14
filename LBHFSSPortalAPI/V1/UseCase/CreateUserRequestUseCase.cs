@@ -10,6 +10,7 @@ using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System;
+using LBHFSSPortalAPI.V1.Handlers;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -33,8 +34,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
             catch (AmazonCognitoIdentityProviderException e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 return null;
             }
 
@@ -75,8 +76,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
             catch (AmazonCognitoIdentityProviderException e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 return null;
             }
 

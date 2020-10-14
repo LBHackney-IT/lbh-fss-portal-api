@@ -1,5 +1,4 @@
-
-namespace LBHFSSPortalAPI.V1.Boundary.Response
+namespace LBHFSSPortalAPI.V1.Boundary
 {
     public sealed class Cookies
     {

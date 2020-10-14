@@ -11,6 +11,7 @@ using LBHFSSPortalAPI.V1.Infrastructure;
 using AdminCreateUserRequest = Amazon.CognitoIdentityProvider.Model.AdminCreateUserRequest;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
+using LBHFSSPortalAPI.V1.Handlers;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -41,8 +42,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -59,10 +60,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 SignUpResponse response = _provider.SignUpAsync(signUpRequest).Result;
                 return response.UserSub;
             }
+            catch (AggregateException e)
+            {
+                if (e.InnerException is UsernameExistsException ue)
+                    throw new UseCaseException() { UserErrorMessage = "The supplied email address already exists" };
+
+                throw new UseCaseException() { UserErrorMessage = e.Message, DevErrorMessage = e.ToString() };
+            }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -80,10 +88,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 ConfirmSignUpResponse response = _provider.ConfirmSignUpAsync(signUpRequest).Result;
                 return response.HttpStatusCode == HttpStatusCode.OK;
             }
+            catch (AggregateException e)
+            {
+                if (e.InnerException != null)
+                    throw new UseCaseException() { UserErrorMessage = e.Message };
+
+                throw new UseCaseException() { UserErrorMessage = e.Message, DevErrorMessage = e.ToString() };
+            }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -101,8 +116,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -132,10 +147,18 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 e.Handle((x) =>
                 {
+                    if (x is UserNotConfirmedException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogInfo("User not confirmed.");
+                        authResult.Success = false;
+                        authResult.ResponseMessage = "User not confirmed";
+                        return true;
+                    }
                     if (x is NotAuthorizedException)  // This we know how to handle.
                     {
-                        Console.WriteLine("Invalid credentials provided.");
+                        LoggingHandler.LogInfo("Invalid credentials provided.");
                         authResult.Success = false;
+                        authResult.ResponseMessage = "Invalid credentials provided.";
                         return true;
                     }
                     return false; // Let anything else stop the application.
@@ -171,7 +194,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 }
                 if (authResponse.AuthenticationResult != null)
                 {
-                    Console.WriteLine("User successfully authenticated.");
+                    LoggingHandler.LogInfo("User successfully authenticated.");
                     var loginParams = new LoginUserQueryParam();
                     loginParams.Email = changePasswordParams.Email;
                     loginParams.Password = changePasswordParams.NewPassword;
@@ -179,7 +202,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 }
                 else
                 {
-                    Console.WriteLine("Error in authentication process.");
+                    LoggingHandler.LogError("Error in authentication process.");
                 }
             }
             catch (AggregateException e)
@@ -188,12 +211,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 {
                     if (x is NotAuthorizedException)  // This we know how to handle.
                     {
-                        Console.WriteLine("Authentication Gateway:  Invalid credentials provided.");
+                        LoggingHandler.LogInfo("Authentication Gateway:  Invalid credentials provided.");
                         return true;
                     }
                     if (x is UserNotFoundException)  // This we know how to handle.
                     {
-                        Console.WriteLine("Authentication Gateway:  User not found.");
+                        LoggingHandler.LogInfo("Authentication Gateway:  User not found.");
                         return true;
                     }
                     return false; // Let anything else stop the application.
@@ -262,7 +285,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
             return authResult;
@@ -289,7 +313,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -311,7 +336,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
             return null;

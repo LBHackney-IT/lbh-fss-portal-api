@@ -8,5 +8,6 @@ namespace LBHFSSPortalAPI.V1.Domain
         public string RefreshToken { get; set; }
         public string TokenType { get; set; }
         public int ExpiresIn { get; set; }
+        public string ResponseMessage { get; set; }
     }
 }

@@ -5,34 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
-    public class SessionsGateway : ISessionsGateway
+    public class SessionsGateway : BaseGateway, ISessionsGateway
     {
-        private readonly DatabaseContext _databaseContext;
-
-        public SessionsGateway(DatabaseContext databaseContext)
+        public SessionsGateway(DatabaseContext databaseContext) : base(databaseContext)
         {
-            _databaseContext = databaseContext;
         }
+
         public Session AddSession(Session session)
         {
-            var savedSession = _databaseContext.Sessions.Add(session);
-            _databaseContext.SaveChanges();
+            var savedSession = Context.Sessions.Add(session);
+            SaveChanges();
             return savedSession.Entity;
-        }
-
-        public void RemoveSessions(string accessToken)
-        {
-            var user = _databaseContext.Users.FirstOrDefault(u => u.SubId == accessToken);
-
-            if (user != null)
-            {
-                RemoveSessions(user.Id);
-            }
         }
 
         public Session GetSessionByToken(string token)
         {
-            var session = _databaseContext.Sessions
+            var session = Context.Sessions
                 .Include(s => s.User)
                 .ThenInclude(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
@@ -40,18 +28,25 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return session;
         }
 
-        public void RemoveSessions(int userId)
+        public void RemoveSessions(string accessToken)
         {
-            var sessions = _databaseContext.Sessions.Where(s => s.UserId == userId);
-            RemoveAllSessions(sessions);
-        }
+            var sessions = Context.Sessions.Where(s => s.Payload == accessToken);
 
-        private void RemoveAllSessions(IQueryable<Session> sessions)
-        {
             if (sessions.Any())
             {
-                _databaseContext.Sessions.RemoveRange(sessions);
-                _databaseContext.SaveChanges();
+                Context.Sessions.RemoveRange(sessions);
+                SaveChanges();
+            }
+        }
+
+        public void RemoveSessions(int userId)
+        {
+            var sessions = Context.Sessions.Where(s => s.UserId == userId);
+
+            if (sessions.Any())
+            {
+                Context.Sessions.RemoveRange(sessions);
+                SaveChanges();
             }
         }
     }

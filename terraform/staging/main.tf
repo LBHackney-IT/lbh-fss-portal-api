@@ -32,7 +32,7 @@ resource "aws_cognito_user_pool" "fss_pool" {
     username_attributes = ["email"]
 
     email_configuration {
-        from_email_address = "fss@hackney.gov.uk"
+        from_email_address = "Find Support Services <fss@hackney.gov.uk>"
         reply_to_email_address = "fss@hackney.gov.uk"
         email_sending_account  = "DEVELOPER"
         source_arn             = "arn:aws:ses:eu-west-1:715003523189:identity/fss@hackney.gov.uk"
