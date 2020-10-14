@@ -7,6 +7,7 @@ using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using System;
+using LBHFSSPortalAPI.V1.Handlers;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -37,9 +38,28 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 throw new UseCaseException() { UserErrorMessage = "Could not login as the password was invalid" };
 
             var loginResult = _authenticateGateway.LoginUser(loginParams);
+            if (!loginResult.Success)
+                throw new UseCaseException() { UserErrorMessage = loginResult.ResponseMessage == null ? "Could not login as the email and/or password was invalid" : loginResult.ResponseMessage };
             var user = _usersGateway.GetUserByEmail(loginParams.Email, UserStatus.Active);
             var loginResponse = CreateLoginSession(loginParams, user);
 
+            return loginResponse;
+        }
+
+        public LoginUserResponse ExecuteFirstLogin(ResetPasswordQueryParams loginParams, string ipAddress)
+        {
+            if (string.IsNullOrWhiteSpace(loginParams.Email))
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the email address was invalid" };
+
+            if (string.IsNullOrWhiteSpace(loginParams.Password))
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the password was invalid" };
+            var loginResult = _authenticateGateway.ChangePassword(loginParams);
+            if (loginResult == null)
+                throw new UseCaseException() { UserErrorMessage = "Could not login as the email and/or password was invalid" };
+            loginResult.IpAddress = ipAddress;
+            var user = _usersGateway.GetUserByEmail(loginParams.Email, UserStatus.Invited);
+            _usersGateway.SetUserStatus(user, UserStatus.Active);
+            var loginResponse = CreateLoginSession(loginResult, user);
             return loginResponse;
         }
 
@@ -48,35 +68,29 @@ namespace LBHFSSPortalAPI.V1.UseCase
             var timestamp = DateTime.UtcNow;
             var sessionId = Guid.NewGuid().ToString();
 
+            LoggingHandler.LogInfo(loginParams.IpAddress);
+            LoggingHandler.LogInfo(user.Id.ToString());
+
             Session session = new Session()
             {
                 IpAddress = loginParams.IpAddress,
                 CreatedAt = timestamp,
                 LastAccessAt = timestamp,
                 UserId = user.Id,
-                //Payload = (?)
-                //UserAgent = (?)
+                Payload = sessionId,
             };
 
-            var savedSession = _sessionsGateway.AddSession(session);
+            _sessionsGateway.AddSession(session);
 
-            var res = new LoginUserResponse
-            {
-                AccessToken = user.SubId,
-            };
-
-            return res;
+            return new LoginUserResponse() { AccessToken = sessionId };
         }
 
         /// <summary>
         /// Logs the user out of the API
         /// </summary>
-        public void ExecuteLogoutUser(LogoutUserQueryParam queryParam)
+        public void ExecuteLogoutUser(string accessToken)
         {
-            if (string.IsNullOrWhiteSpace(queryParam.AccessToken))
-                throw new UseCaseException() { UserErrorMessage = "the access_token parameter was empty or not supplied" };
-
-            _sessionsGateway.RemoveSessions(queryParam.AccessToken);
+            _sessionsGateway.RemoveSessions(accessToken);
         }
     }
 }

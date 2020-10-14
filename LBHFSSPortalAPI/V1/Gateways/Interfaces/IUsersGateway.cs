@@ -11,13 +11,15 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         Task<List<UserDomain>> GetAllUsers(UserQueryParam userQueryParam);
         UserDomain AddUser(UserDomain user);
         UserDomain AddUser(AdminCreateUserRequest createRequestData, string subId);
-        void UpdateUser(UserDomain user);
+        void UpdateUserAndRoles(UserDomain user);
         UserDomain GetUserBySubId(string subId);
         UserDomain GetUserById(int userId);
         Task<UserDomain> GetUserByIdAsync(int userId);
         OrganisationDomain GetAssociatedOrganisation(int userId);
         OrganisationDomain AssociateUserWithOrganisation(int userId, int organisationId);
         void RemoveUserOrganisationAssociation(int userId);
+        UserDomain SetDefaultRole(UserDomain user);
         List<string> GetUserRoleList(int userId);
+        void SetUserStatus(UserDomain user, string status);
     }
 }

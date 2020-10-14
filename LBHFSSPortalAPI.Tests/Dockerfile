@@ -6,6 +6,7 @@ ENV DOTNET_CLI_TELEMETRY_OPTOUT='true'
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
+COPY *.config ./
 COPY ./LBHFSSPortalAPI.sln ./
 COPY ./LBHFSSPortalAPI/LBHFSSPortalAPI.csproj ./LBHFSSPortalAPI/
 COPY ./LBHFSSPortalAPI.Tests/LBHFSSPortalAPI.Tests.csproj ./LBHFSSPortalAPI.Tests/

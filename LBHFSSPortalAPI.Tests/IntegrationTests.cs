@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using LBHFSSPortalAPI.Tests.TestHelpers;
+using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -54,7 +55,8 @@ namespace LBHFSSPortalAPI.Tests
             }
             catch (InvalidOperationException e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
             }
             _transaction.Dispose();
         }
