@@ -42,8 +42,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -69,8 +69,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -97,8 +97,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -116,8 +116,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
