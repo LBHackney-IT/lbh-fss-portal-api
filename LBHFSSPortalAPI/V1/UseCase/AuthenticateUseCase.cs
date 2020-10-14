@@ -46,6 +46,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return loginResponse;
         }
 
+
+
         public LoginUserResponse ExecuteFirstLogin(ResetPasswordQueryParams loginParams, string ipAddress)
         {
             if (string.IsNullOrWhiteSpace(loginParams.Email))
@@ -91,6 +93,34 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public void ExecuteLogoutUser(string accessToken)
         {
             _sessionsGateway.RemoveSessions(accessToken);
+        }
+
+        public void ExecutePasswordRecovery(ResetPasswordQueryParams queryParams)
+        {
+            try
+            {
+                _authenticateGateway.ResetPassword(queryParams);
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw new UseCaseException() { UserErrorMessage = "Unable to execute password recovery" };
+            }
+        }
+
+        public void ExecutePasswordRecoveryConfirmation(ResetPasswordQueryParams queryParams)
+        {
+            try
+            {
+                _authenticateGateway.ConfirmResetPassword(queryParams);
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw new UseCaseException() { UserErrorMessage = "Unable to execute password recovery confirmation" };
+            }
         }
     }
 }
