@@ -46,7 +46,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var requestParams = Randomm.Create<OrganisationRequest>();
             var domainData = requestParams.ToDomain();
-            var users = new List<UserDomain> {Randomm.Create<UserDomain>()};
+            var users = new List<UserDomain> { Randomm.Create<UserDomain>() };
             _mockOrganisationsGateway.Setup(g => g.CreateOrganisation(It.IsAny<Organisation>())).Returns(domainData);
             _mockUsersGateway.Setup(ug => ug.GetAllUsers(It.IsAny<UserQueryParam>())).ReturnsAsync(users);
             var expectedResponse = domainData.ToResponse();
