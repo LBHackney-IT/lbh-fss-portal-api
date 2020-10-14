@@ -38,7 +38,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             // gateway every time
             if (updateRequest.Password != null)
             {
-                _authenticateGateway.ChangePassword(new ResetPasswordQueryParams()
+                _authenticateGateway.AdminChangePassword(new ResetPasswordQueryParams()
                 {
                     Email = userDomain.Email,
                     Password = updateRequest.Password
@@ -50,9 +50,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
             userDomain.CreatedAt = updateRequest.CreatedAt ?? userDomain.CreatedAt;
             userDomain.Name = updateRequest.Name ?? userDomain.Name;
             userDomain.Status = updateRequest.Status ?? userDomain.Status;
-            userDomain = PopulateDomainWithUserRoles(userDomain, updateRequest.Roles);
 
-            _usersGateway.UpdateUser(userDomain);
+            // Set up the user roles provided
+            userDomain = PopulateDomainWithUserRoles(userDomain, updateRequest.Roles);
+            _usersGateway.UpdateUserAndRoles(userDomain);
 
             var associatedOrg = _usersGateway.GetAssociatedOrganisation(userId);
 
@@ -81,7 +82,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             }
             else
             {
-                // null value indicates the caller would like to clear the users' organisation association 
+                // null value indicates the caller would like to clear the users' organisation association
                 if (associatedOrg != null)
                 {
                     _usersGateway.RemoveUserOrganisationAssociation(userId);
@@ -118,7 +119,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         private static void ValidateRequestParams(UserUpdateRequest updateRequest)
         {
-            const string EmptyFieldMessage =
+            const string emptyFieldMessage =
                 "Send a (null) value for this if no change is required on this field";
 
             // The rather strange logic below is to account for the fact clients can send
@@ -129,21 +130,21 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 throw new UseCaseException()
                 {
                     UserErrorMessage = "The provided user name was empty",
-                    DevErrorMessage = EmptyFieldMessage
+                    DevErrorMessage = emptyFieldMessage
                 };
 
             if (updateRequest.Password != null && string.IsNullOrWhiteSpace(updateRequest.Password))
                 throw new UseCaseException()
                 {
                     UserErrorMessage = "The provided user password was empty",
-                    DevErrorMessage = EmptyFieldMessage
+                    DevErrorMessage = emptyFieldMessage
                 };
 
             if (updateRequest.Status != null && string.IsNullOrWhiteSpace(updateRequest.Status))
                 throw new UseCaseException()
                 {
                     UserErrorMessage = "The provided user status was empty",
-                    DevErrorMessage = EmptyFieldMessage
+                    DevErrorMessage = emptyFieldMessage
                 };
         }
     }

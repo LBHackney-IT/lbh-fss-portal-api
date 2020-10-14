@@ -5,11 +5,13 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
+using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using AdminCreateUserRequest = Amazon.CognitoIdentityProvider.Model.AdminCreateUserRequest;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
+using LBHFSSPortalAPI.V1.Handlers;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -40,8 +42,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -58,10 +60,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 SignUpResponse response = _provider.SignUpAsync(signUpRequest).Result;
                 return response.UserSub;
             }
+            catch (AggregateException e)
+            {
+                if (e.InnerException is UsernameExistsException ue)
+                    throw new UseCaseException() { UserErrorMessage = "The supplied email address already exists" };
+
+                throw new UseCaseException() { UserErrorMessage = e.Message, DevErrorMessage = e.ToString() };
+            }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -79,10 +88,17 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 ConfirmSignUpResponse response = _provider.ConfirmSignUpAsync(signUpRequest).Result;
                 return response.HttpStatusCode == HttpStatusCode.OK;
             }
+            catch (AggregateException e)
+            {
+                if (e.InnerException != null)
+                    throw new UseCaseException() { UserErrorMessage = e.Message };
+
+                throw new UseCaseException() { UserErrorMessage = e.Message, DevErrorMessage = e.ToString() };
+            }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -100,8 +116,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LambdaLogger.Log(e.Message);
-                LambdaLogger.Log(e.StackTrace);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
         }
@@ -131,16 +147,82 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 e.Handle((x) =>
                 {
+                    if (x is UserNotConfirmedException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogInfo("User not confirmed.");
+                        authResult.Success = false;
+                        authResult.ResponseMessage = "User not confirmed";
+                        return true;
+                    }
                     if (x is NotAuthorizedException)  // This we know how to handle.
                     {
-                        Console.WriteLine("Invalid credentials provided.");
+                        LoggingHandler.LogInfo("Invalid credentials provided.");
                         authResult.Success = false;
+                        authResult.ResponseMessage = "Invalid credentials provided.";
                         return true;
                     }
                     return false; // Let anything else stop the application.
                 });
             }
             return authResult;
+        }
+
+        public LoginUserQueryParam ChangePassword(ResetPasswordQueryParams changePasswordParams)
+        {
+            var userPool = new CognitoUserPool(_connectionInfo.UserPoolId, _connectionInfo.ClientId, _provider);
+            var cognitoUser = new CognitoUser(changePasswordParams.Email, _connectionInfo.ClientId, userPool, _provider);
+            try
+            {
+                AuthFlowResponse authResponse = null;
+
+                authResponse = cognitoUser.StartWithSrpAuthAsync(new InitiateSrpAuthRequest()
+                {
+                    Password = changePasswordParams.Password
+                }).Result;
+
+                while (authResponse.AuthenticationResult == null)
+                {
+                    if (authResponse.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED)
+                    {
+                        authResponse =
+                            cognitoUser.RespondToNewPasswordRequiredAsync(new RespondToNewPasswordRequiredRequest()
+                            {
+                                SessionID = authResponse.SessionID,
+                                NewPassword = changePasswordParams.NewPassword,
+                            }).Result;
+                    }
+                }
+                if (authResponse.AuthenticationResult != null)
+                {
+                    LoggingHandler.LogInfo("User successfully authenticated.");
+                    var loginParams = new LoginUserQueryParam();
+                    loginParams.Email = changePasswordParams.Email;
+                    loginParams.Password = changePasswordParams.NewPassword;
+                    return loginParams;
+                }
+                else
+                {
+                    LoggingHandler.LogError("Error in authentication process.");
+                }
+            }
+            catch (AggregateException e)
+            {
+                e.Handle((x) =>
+                {
+                    if (x is NotAuthorizedException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogInfo("Authentication Gateway:  Invalid credentials provided.");
+                        return true;
+                    }
+                    if (x is UserNotFoundException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogInfo("Authentication Gateway:  User not found.");
+                        return true;
+                    }
+                    return false; // Let anything else stop the application.
+                });
+            }
+            return null;
         }
 
         public void ResetPassword(ResetPasswordQueryParams resetPasswordQueryParams)
@@ -165,7 +247,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             _provider.ConfirmForgotPasswordAsync(cfpRequest).Wait();
         }
 
-        public void ChangePassword(ResetPasswordQueryParams resetPasswordQueryParams)
+        public void AdminChangePassword(ResetPasswordQueryParams resetPasswordQueryParams)
         {
             AdminSetUserPasswordRequest adminSetUserPasswordRequest = new AdminSetUserPasswordRequest
             {
@@ -203,7 +285,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
             return authResult;
@@ -230,9 +313,34 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
+        }
+
+        public string GetUserStatus(string email)
+        {
+            AdminGetUserRequest adminGetUserRequest = new AdminGetUserRequest
+            {
+                Username = email,
+                UserPoolId = _connectionInfo.UserPoolId
+            };
+            try
+            {
+                var response = _provider.AdminGetUserAsync(adminGetUserRequest).Result;
+                if (response.HttpStatusCode == HttpStatusCode.OK)
+                {
+                    return response.UserStatus;
+                }
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
+            return null;
         }
     }
 }

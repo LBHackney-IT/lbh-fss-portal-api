@@ -1,3 +1,4 @@
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -19,20 +20,18 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _authenticateGateway = authenticateGateway;
         }
 
-        public bool Execute(int userId)
+        public void Execute(int userId)
         {
-            bool success = false;
-
             var user = _usersGateway.GetUserById(userId);
+
+            if (user == null)
+                throw new UseCaseException() { UserErrorMessage = $"A user with the provided ID={userId} does not exist" };
 
             if (_authenticateGateway.DeleteUser(user.Email))
             {
-                user.Status = UserStatus.Deleted;
                 _sessionsGateway.RemoveSessions(user.Id);
-                _usersGateway.UpdateUser(user);
-                success = true;
+                _usersGateway.SetUserStatus(user, UserStatus.Deleted);
             }
-            return success;
         }
     }
 }

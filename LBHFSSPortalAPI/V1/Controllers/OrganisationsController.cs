@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LBHFSSPortalAPI.V1.Controllers
@@ -20,6 +22,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _organisationsUseCase = organisationsUseCase;
         }
 
+        [Authorize(Roles = "Admin, VCSO")]
         [HttpPost]
         [ProducesResponseType(typeof(OrganisationResponse), 201)]
         public IActionResult CreateOrganisation(OrganisationRequest organisationRequest)
@@ -34,6 +37,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = new List<string> { "Unable to create organisation." } });
         }
 
+        [Authorize(Roles = "Admin, VCSO, Viewer")]
         [HttpGet]
         [Route("{Id}")]
         [ProducesResponseType(typeof(OrganisationResponse), 200)]
@@ -49,6 +53,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 new ErrorResponse($"Item not found") { Status = "Not found", Errors = new List<string> { $"Organisation with id {id} not found" } });
         }
 
+        [Authorize(Roles = "Admin, Viewer")]
         [HttpGet]
         [ProducesResponseType(typeof(OrganisationResponseList), 200)]
         public IActionResult SearchOrganisations([FromQuery] OrganisationSearchRequest requestParams)
@@ -67,6 +72,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             // }
         }
 
+        [Authorize(Roles = "Admin, VCSO")]
         [HttpPatch]
         [Route("{Id}")]
         [ProducesResponseType(typeof(OrganisationResponse), 200)]
@@ -82,6 +88,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = new List<string> { "Unable to create organisation." } });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("{Id}")]
         public IActionResult DeleteOrganisation([FromRoute] int id)
@@ -95,7 +102,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (InvalidOperationException e)
             {
-                Console.WriteLine(e);
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
                 return BadRequest(
                     new ErrorResponse($"Item doesn't exist") { Status = "Bad request", Errors = new List<string> { $"An organisation with id {id} does not exist" } });
             }

@@ -18,6 +18,11 @@ namespace LBHFSSPortalAPI.V1.Factories
             };
         }
 
+        public static UserRoleDomain ToDomain(this UserRole userRole)
+        {
+            return new UserRoleDomain { Id = userRole.Id, RoleId = userRole.RoleId, UserId = userRole.UserId };
+        }
+
         public static Organisation ToEntity(this OrganisationDomain domain)
         {
             return new Organisation

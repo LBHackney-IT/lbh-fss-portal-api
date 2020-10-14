@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using LBHFSSPortalAPI.V1.UseCase;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
+    [AllowAnonymous]
     [Route("api/v1/healthcheck")]
     [ApiController]
     [Produces("application/json")]
     [ApiVersion("1.0")]
     public class HealthCheckController : BaseController
     {
+        [AllowAnonymous]
         [HttpGet]
         [Route("ping")]
         [ProducesResponseType(typeof(Dictionary<string, bool>), 200)]
@@ -20,12 +23,12 @@ namespace LBHFSSPortalAPI.V1.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("error")]
         public void ThrowError()
         {
             ThrowOpsErrorUsecase.Execute();
         }
-
     }
 }
