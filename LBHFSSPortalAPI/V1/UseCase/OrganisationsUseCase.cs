@@ -38,12 +38,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public OrganisationResponse ExecuteGet(int id)
         {
             var gatewayResponse = _organisationsGateway.GetOrganisation(id);
-            if (gatewayResponse != null)
-            {
-                var orgUserEmails = gatewayResponse.UserOrganisations
-                    .Select(uo => uo.User.Email).ToArray();
-                _notifyGateway.SendMessage(NotifyMessageTypes.StatusUpdate, orgUserEmails);
-            }
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
@@ -92,11 +86,19 @@ namespace LBHFSSPortalAPI.V1.UseCase
             organisationDomain.IsLocalOfferListed = request.IsLocalOfferListed ?? organisationDomain.IsLocalOfferListed;
             organisationDomain.ReviewerUid = request.ReviewerId ?? organisationDomain.ReviewerUid;
             var gatewayResponse = _organisationsGateway.PatchOrganisation(organisationDomain);
-            if (gatewayResponse != null)
+            if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "published" )
             {
                 var orgUserEmails = gatewayResponse.UserOrganisations
                     .Select(uo => uo.User.Email).ToArray();
-                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, orgUserEmails);
+                _notifyGateway.SendMessage(NotifyMessageTypes.StatusUpdate, orgUserEmails);
+            }
+            if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "awaiting review" )
+            {
+                var userQueryParam = new UserQueryParam {Sort = "Name", Direction = "asc"};
+                var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
+                    .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
+                var adminEmails = adminUsers.Select(au => au.Email).ToArray();
+                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, adminEmails);
             }
             return gatewayResponse.ToResponse();
         }
