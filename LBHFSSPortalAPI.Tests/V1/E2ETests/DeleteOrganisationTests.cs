@@ -17,7 +17,7 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class DeleteOrganisationsTests : IntegrationTests<Startup>
     {
-        [TestCase(TestName = "Given an id provided, a delete success response is returned")]
+        //[TestCase(TestName = "Given an id provided, a delete success response is returned")]
         public async Task DeleteOrganisationReturnsSuccess()
         {
             DatabaseContext.Database.RollbackTransaction();
