@@ -19,12 +19,16 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
     {
         private OrganisationsUseCase _classUnderTest;
         private Mock<IOrganisationsGateway> _mockOrganisationsGateway;
+        private Mock<IUsersGateway> _mockUsersGateway;
+        private Mock<INotifyGateway> _mockNotifyGateway;
 
         [SetUp]
         public void Setup()
         {
             _mockOrganisationsGateway = new Mock<IOrganisationsGateway>();
-            _classUnderTest = new OrganisationsUseCase(_mockOrganisationsGateway.Object);
+            _mockUsersGateway = new Mock<IUsersGateway>();
+            _mockNotifyGateway = new Mock<INotifyGateway>();
+            _classUnderTest = new OrganisationsUseCase(_mockOrganisationsGateway.Object, _mockNotifyGateway.Object, _mockUsersGateway.Object);
         }
 
         #region Create Organisation

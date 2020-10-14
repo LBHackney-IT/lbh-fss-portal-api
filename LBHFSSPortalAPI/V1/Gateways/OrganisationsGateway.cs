@@ -44,6 +44,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 var organisation = Context.Organisations
                     .Include(o => o.ReviewerU)
+                    .Include(o => o.UserOrganisations)
+                    .ThenInclude(uo => uo.User)
                     .FirstOrDefault(o => o.Id == id);
                 return _mapper.ToDomain(organisation);
             }

@@ -26,6 +26,12 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public async Task SendMessage(NotifyMessageTypes messageType, string[] addresses)
         {
+            if (messageType == null || addresses == null)
+            {
+                LoggingHandler.LogError("Notify request with invalid arguments");
+                throw new ArgumentException("Notify request with invalid arguments");
+            }
+
             var template = string.Empty;
             switch (messageType)
             {
