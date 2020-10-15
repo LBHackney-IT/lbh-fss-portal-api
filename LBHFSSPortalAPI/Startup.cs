@@ -222,8 +222,8 @@ namespace LBHFSSPortalAPI
                 .WithOrigins(Environment.GetEnvironmentVariable("ALLOWED_ORIGINS").Split(',')));
             app.UseEndpoints(endpoints =>
         {
-                // SwaggerGen won't find controllers that are routed via this technique.
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            // SwaggerGen won't find controllers that are routed via this technique.
+            endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
         });
 
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
