@@ -25,6 +25,8 @@ using System.Security.Claims;
 using LBHFSSPortalAPI.V1.Handlers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using ConnectionInfo = LBHFSSPortalAPI.V1.Infrastructure.ConnectionInfo;
 
 namespace LBHFSSPortalAPI
 {
@@ -181,7 +183,9 @@ namespace LBHFSSPortalAPI
                 HttpOnly = HttpOnlyPolicy.Always,
 
                 // always encrypt cookies with TLS/SSL
-                Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
+                //Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
+
+                MinimumSameSitePolicy = SameSiteMode.None
             });
 
             if (env.IsDevelopment())
@@ -214,9 +218,9 @@ namespace LBHFSSPortalAPI
             app.UseCors(x => x
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true)
-                .AllowCredentials());
-            app.UseEndpoints(endpoints =>
+                .AllowCredentials()
+                .WithOrigins(Environment.GetEnvironmentVariable("ALLOWED_ORIGINS").Split(',')));
+                app.UseEndpoints(endpoints =>
             {
                 // SwaggerGen won't find controllers that are routed via this technique.
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
