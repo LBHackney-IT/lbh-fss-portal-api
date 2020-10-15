@@ -33,6 +33,11 @@ namespace LBHFSSPortalAPI.V1.Handlers
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            // skip authentication if request method is OPTIONS
+            if (Context.Request.Method == "OPTIONS")
+            {
+                return AuthenticateResult.NoResult();
+            }
             // skip authentication if endpoint has [AllowAnonymous] attribute
             var endpoint = Context.GetEndpoint();
             if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
@@ -66,7 +71,6 @@ namespace LBHFSSPortalAPI.V1.Handlers
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
             LoggingHandler.LogInfo("Authentication Success!!!!");
-
             return AuthenticateResult.Success(ticket);
         }
     }
