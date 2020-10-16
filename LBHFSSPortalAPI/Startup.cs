@@ -183,7 +183,7 @@ namespace LBHFSSPortalAPI
                 HttpOnly = HttpOnlyPolicy.Always,
 
                 // always encrypt cookies with TLS/SSL
-                //Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always
+                Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always,
 
                 MinimumSameSitePolicy = SameSiteMode.None
             });
