@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -34,7 +35,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _serviceImageUseCase = serviceImageUseCase;
         }
 
-        [Authorize(Roles = "Admin, VCSO, Viewer")]
+        //[Authorize(Roles = "Admin, VCSO, Viewer")]
+        [AllowAnonymous]
         [Route("services/{serviceId}")]
         [HttpGet]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
@@ -149,8 +151,10 @@ namespace LBHFSSPortalAPI.V1.Controllers
         }
 
         //[Authorize(Roles = "Admin, VCSO")]
+        [AllowAnonymous]
         [Route("services/{serviceId}/image")]
         [HttpPost]
+        [RequestSizeLimit(5000000)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AddServiceImage([FromForm] ServiceImageRequest request)
         {
