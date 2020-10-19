@@ -151,6 +151,7 @@ namespace LBHFSSPortalAPI
             };
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
             services.AddTransient<INotifyGateway>(x => new NotifyGateway(connInfo));
+            services.AddTransient<IRepositoryGateway>(x => new RepositoryGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
             services.AddScoped<ISessionsGateway, SessionsGateway>();
             services.AddScoped<IServicesGateway, ServicesGateway>();
