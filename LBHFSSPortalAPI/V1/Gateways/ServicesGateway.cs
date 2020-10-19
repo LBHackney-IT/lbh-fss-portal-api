@@ -342,7 +342,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             if (service == null)
             {
                 LoggingHandler.LogError("The specified service does not exist");
-                throw new UseCaseException() {UserErrorMessage = "The specified service does not exist"};
+                throw new UseCaseException() { UserErrorMessage = "The specified service does not exist" };
             }
             service.ImageId = fileEntity.Id;
             Context.Services.Attach(service);
