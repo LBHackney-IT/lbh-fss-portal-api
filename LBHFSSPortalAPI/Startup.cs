@@ -171,6 +171,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IUpdateServiceUseCase, UpdateServiceUseCase>();
             services.AddScoped<IDeleteServiceUseCase, DeleteServiceUseCase>();
             services.AddScoped<IOrganisationsUseCase, OrganisationsUseCase>();
+            services.AddScoped<IServiceImageUseCase, ServiceImageUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
