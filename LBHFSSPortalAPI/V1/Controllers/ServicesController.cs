@@ -35,8 +35,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _serviceImageUseCase = serviceImageUseCase;
         }
 
-        //[Authorize(Roles = "Admin, VCSO, Viewer")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, VCSO, Viewer")]
         [Route("services/{serviceId}")]
         [HttpGet]
         [ProducesResponseType(typeof(ServiceResponse), StatusCodes.Status200OK)]
@@ -150,8 +149,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin, VCSO")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, VCSO")]
         [Route("services/{serviceId}/image")]
         [HttpPost]
         [RequestSizeLimit(5000000)]
