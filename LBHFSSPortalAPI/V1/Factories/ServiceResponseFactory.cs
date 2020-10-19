@@ -54,7 +54,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                     : new ImageResponse()
                     {
                         Id = domain.Image.Id,
-                        Medium = images.Length > 1 ? images[1] : null ,
+                        Medium = images.Length > 1 ? images[1] : null,
                         Original = images.Length > 0 ? images[0] : null
                     },
                     Categories = domain.ServiceTaxonomies == null
