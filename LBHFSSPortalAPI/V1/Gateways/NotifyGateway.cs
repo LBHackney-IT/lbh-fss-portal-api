@@ -18,6 +18,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         private static string _statusTemplate = Environment.GetEnvironmentVariable("STATUS_TEMPLATE");
         private static string _adminNotificationTemplate = Environment.GetEnvironmentVariable("ADMIN_NOTIFICATION_TEMPLATE");
         private static string _notReverifiedTemplate = Environment.GetEnvironmentVariable("NOT_REVERIFIED_TEMPLATE");
+        private static string _notApprovedTemplate = Environment.GetEnvironmentVariable("NOT_APPROVED_TEMPLATE");
         public NotifyGateway(ConnectionInfo connectionInfo)
         {
             _connectionInfo = connectionInfo;
@@ -46,6 +47,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     break;
                 case NotifyMessageTypes.NotReverified:
                     template = _notReverifiedTemplate;
+                    break;
+                case NotifyMessageTypes.NotApproved:
+                    template = _notApprovedTemplate;
                     break;
             }
 
