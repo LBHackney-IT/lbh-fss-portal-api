@@ -154,6 +154,7 @@ namespace LBHFSSPortalAPI
             };
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
             services.AddTransient<INotifyGateway>(x => new NotifyGateway(connInfo));
+            services.AddTransient<IRepositoryGateway>(x => new RepositoryGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
             services.AddScoped<ISessionsGateway, SessionsGateway>();
             services.AddScoped<IServicesGateway, ServicesGateway>();
@@ -180,6 +181,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IDeleteServiceUseCase, DeleteServiceUseCase>();
             services.AddScoped<IOrganisationsUseCase, OrganisationsUseCase>();
             services.AddScoped<IGetAddressesUseCase, GetAddressesUseCase>();
+            services.AddScoped<IServiceImageUseCase, ServiceImageUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
