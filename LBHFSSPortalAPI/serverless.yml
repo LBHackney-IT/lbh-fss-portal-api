@@ -27,6 +27,8 @@ functions:
       NOT_REVERIFIED_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/not-reverified-template}
       NOT_APPROVED_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/not-approved-template}
       ALLOWED_ORIGINS: ${ssm:/fss-portal-api/${self:provider.stage}/allowed-origins}
+      ADDRESS_URL: ${ssm:/fss-portal-api/${self:provider.stage}/address-url}
+      ADDRESS_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/address-key}
       REPOSITORY_BUCKET: ${ssm:/fss-portal-api/${self:provider.stage}/repository-bucket}
     events:
       - http:
