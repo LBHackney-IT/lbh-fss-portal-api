@@ -92,6 +92,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     .Select(uo => uo.User.Email).ToArray();
                 _notifyGateway.SendMessage(NotifyMessageTypes.StatusUpdate, orgUserEmails);
             }
+            if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "rejected")
+            {
+                var orgUserEmails = gatewayResponse.UserOrganisations
+                    .Select(uo => uo.User.Email).ToArray();
+                _notifyGateway.SendMessage(NotifyMessageTypes.NotApproved, orgUserEmails);
+            }
             if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "awaiting review")
             {
                 var userQueryParam = new UserQueryParam { Sort = "Name", Direction = "asc" };
