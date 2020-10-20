@@ -26,7 +26,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         public ServicesController(ICreateServiceUseCase createServiceUseCase,
                                   IGetServicesUseCase getServicesUseCase,
                                   IDeleteServiceUseCase deleteServiceUseCase,
-                                  IUpdateServiceUseCase updateServiceUseCase, 
+                                  IUpdateServiceUseCase updateServiceUseCase,
                                   IGetAddressesUseCase getAddressesUseCase,
                                   IServiceImageUseCase serviceImageUseCase)
 
