@@ -28,7 +28,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 var response = await _client.GetAsync(new Uri($"addresses/?format=detailed&postcode={postCode}", UriKind.Relative)).ConfigureAwait(true);
-                if(!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
                     throw new Exception(response.ReasonPhrase);
                 }
@@ -48,7 +48,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     UserErrorMessage = "Could not search for addresses",
                     DevErrorMessage = e.Message
                 };
-            }            
+            }
         }
     }
 }
