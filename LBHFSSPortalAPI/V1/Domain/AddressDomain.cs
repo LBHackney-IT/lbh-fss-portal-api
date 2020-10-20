@@ -9,7 +9,7 @@ namespace LBHFSSPortalAPI.V1.Domain
     public class AddressAPIResponse
     {
         public AddressDomain Data { get; set; }
-     
+
         public int StatusCode { get; set; }
     }
 
