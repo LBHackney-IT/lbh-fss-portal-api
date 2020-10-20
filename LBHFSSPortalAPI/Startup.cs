@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using ConnectionInfo = LBHFSSPortalAPI.V1.Infrastructure.ConnectionInfo;
+using LBHFSSPortalAPI.V1.Domain;
 
 namespace LBHFSSPortalAPI
 {
@@ -141,6 +142,8 @@ namespace LBHFSSPortalAPI
 
         private static void RegisterGateways(IServiceCollection services)
         {
+            var addressApiUrl = Environment.GetEnvironmentVariable("ADDRESS_URL");
+            var addressKey = Environment.GetEnvironmentVariable("ADDRESS_KEY");
             var connInfo = new ConnectionInfo
             {
                 AccessKeyId = Environment.GetEnvironmentVariable("COGNITO_USER"),
@@ -155,6 +158,11 @@ namespace LBHFSSPortalAPI
             services.AddScoped<ISessionsGateway, SessionsGateway>();
             services.AddScoped<IServicesGateway, ServicesGateway>();
             services.AddScoped<IOrganisationsGateway, OrganisationsGateway>();
+            services.AddHttpClient<IAddressSearchGateway, AddressSearchGateway>(a =>
+            {
+                a.BaseAddress = new Uri(addressApiUrl);
+                a.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", addressKey);
+            });
         }
 
         private static void RegisterUseCases(IServiceCollection services)
@@ -171,6 +179,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IUpdateServiceUseCase, UpdateServiceUseCase>();
             services.AddScoped<IDeleteServiceUseCase, DeleteServiceUseCase>();
             services.AddScoped<IOrganisationsUseCase, OrganisationsUseCase>();
+            services.AddScoped<IGetAddressesUseCase, GetAddressesUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
