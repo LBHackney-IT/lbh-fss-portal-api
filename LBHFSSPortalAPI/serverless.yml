@@ -25,7 +25,9 @@ functions:
       STATUS_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/status-template}
       ADMIN_NOTIFICATION_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/admin-notification-template}
       NOT_REVERIFIED_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/not-reverified-template}
+      NOT_APPROVED_TEMPLATE: ${ssm:/fss-portal-api/${self:provider.stage}/not-approved-template}
       ALLOWED_ORIGINS: ${ssm:/fss-portal-api/${self:provider.stage}/allowed-origins}
+      REPOSITORY_BUCKET: ${ssm:/fss-portal-api/${self:provider.stage}/repository-bucket}
     events:
       - http:
           path: /{proxy+}
