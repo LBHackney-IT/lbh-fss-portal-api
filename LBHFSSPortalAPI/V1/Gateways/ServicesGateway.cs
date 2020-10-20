@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LBHFSSPortalAPI.V1.Handlers;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -331,6 +332,21 @@ namespace LBHFSSPortalAPI.V1.Gateways
             var serviceDomain = _mapper.ToDomain(service);
 
             return serviceDomain;
+        }
+
+        public void AddFileInfo(int serviceId, File fileEntity)
+        {
+            Context.Files.Add(fileEntity);
+            Context.SaveChanges();
+            var service = Context.Services.FirstOrDefault(s => s.Id == serviceId);
+            if (service == null)
+            {
+                LoggingHandler.LogError("The specified service does not exist");
+                throw new UseCaseException() { UserErrorMessage = "The specified service does not exist" };
+            }
+            service.ImageId = fileEntity.Id;
+            Context.Services.Attach(service);
+            Context.SaveChanges();
         }
 
         public async Task DeleteService(int serviceId)
