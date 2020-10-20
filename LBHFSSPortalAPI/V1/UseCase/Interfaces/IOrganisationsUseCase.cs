@@ -6,7 +6,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
     public interface IOrganisationsUseCase
     {
-        OrganisationResponse ExecuteCreate(OrganisationRequest requestParams);
+        OrganisationResponse ExecuteCreate(string accessToken, OrganisationRequest requestParams);
         OrganisationResponse ExecuteGet(int id);
         Task<OrganisationResponseList> ExecuteGet(OrganisationSearchRequest requestParams);
         OrganisationResponse ExecutePatch(int id, OrganisationRequest requestParams);

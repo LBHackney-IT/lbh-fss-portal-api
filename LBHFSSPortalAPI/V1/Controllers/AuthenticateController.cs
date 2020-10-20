@@ -188,7 +188,6 @@ namespace LBHFSSPortalAPI.V1.Controllers
             {
                 if (string.IsNullOrEmpty(AccessToken))
                     return BadRequest("no access_token cookie found in the request");
-
                 return Ok(_getUserRequestUseCase.Execute(AccessToken));
             }
             catch (UseCaseException e)
