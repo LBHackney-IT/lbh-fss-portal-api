@@ -5,6 +5,7 @@ namespace LBHFSSPortalAPI.V1.Enums
         Reminder,
         StatusUpdate,
         AdminNotification,
-        NotReverified
+        NotReverified,
+        NotApproved
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -19,16 +20,19 @@ namespace LBHFSSPortalAPI.V1.Controllers
         private IGetServicesUseCase _getServicesUseCase;
         private readonly IUpdateServiceUseCase _updateServiceUseCase;
         private readonly IDeleteServiceUseCase _deleteServiceUseCase;
+        private readonly IServiceImageUseCase _serviceImageUseCase;
 
         public ServicesController(ICreateServiceUseCase createServiceUseCase,
                                   IGetServicesUseCase getServicesUseCase,
                                   IDeleteServiceUseCase deleteServiceUseCase,
-                                  IUpdateServiceUseCase updateServiceUseCase)
+                                  IUpdateServiceUseCase updateServiceUseCase,
+                                  IServiceImageUseCase serviceImageUseCase)
         {
             _createServiceUseCase = createServiceUseCase;
             _getServicesUseCase = getServicesUseCase;
             _deleteServiceUseCase = deleteServiceUseCase;
             _updateServiceUseCase = updateServiceUseCase;
+            _serviceImageUseCase = serviceImageUseCase;
         }
 
         [Authorize(Roles = "Admin, VCSO, Viewer")]
@@ -138,6 +142,24 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
                 return Ok(response);
                 //return Ok(await _getServicesUseCase.LookupAddress(queryParam).ConfigureAwait(false));
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [Authorize(Roles = "Admin, VCSO")]
+        [Route("services/{serviceId}/image")]
+        [HttpPost]
+        [RequestSizeLimit(5000000)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddServiceImage([FromForm] ServiceImageRequest request)
+        {
+            try
+            {
+                await _serviceImageUseCase.ExecuteCreate(request).ConfigureAwait(false);
+                return Ok();
             }
             catch (UseCaseException e)
             {
