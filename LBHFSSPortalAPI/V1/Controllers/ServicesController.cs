@@ -19,16 +19,18 @@ namespace LBHFSSPortalAPI.V1.Controllers
         private IGetServicesUseCase _getServicesUseCase;
         private readonly IUpdateServiceUseCase _updateServiceUseCase;
         private readonly IDeleteServiceUseCase _deleteServiceUseCase;
+        private readonly IGetAddressesUseCase _getAddressesUseCase;
 
         public ServicesController(ICreateServiceUseCase createServiceUseCase,
                                   IGetServicesUseCase getServicesUseCase,
                                   IDeleteServiceUseCase deleteServiceUseCase,
-                                  IUpdateServiceUseCase updateServiceUseCase)
+                                  IUpdateServiceUseCase updateServiceUseCase, IGetAddressesUseCase getAddressesUseCase)
         {
             _createServiceUseCase = createServiceUseCase;
             _getServicesUseCase = getServicesUseCase;
             _deleteServiceUseCase = deleteServiceUseCase;
             _updateServiceUseCase = updateServiceUseCase;
+            _getAddressesUseCase = getAddressesUseCase;
         }
 
         [Authorize(Roles = "Admin, VCSO, Viewer")]
@@ -121,23 +123,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         {
             try
             {
-                string stubbedResponse = "NOT_YET_IMPLEMENTED_STUBBED_DATA";
-
-                var response = new AddressLookupResponse()
-                {
-                    Longitude = 999,
-                    Latitude = 999,
-                    Uprn = "UPRN_" + stubbedResponse,
-                    Address1 = "ADDRESS_1_" + stubbedResponse,
-                    Address2 = "ADDRESS_2_" + stubbedResponse,
-                    City = "CITY_" + stubbedResponse,
-                    StateProvince = "STATE_PROVINCE_" + stubbedResponse,
-                    PostalCode = postcode ?? "POSTCODE_" + stubbedResponse,
-                    Country = "COUNTRY_" + stubbedResponse,
-                };
-
-                return Ok(response);
-                //return Ok(await _getServicesUseCase.LookupAddress(queryParam).ConfigureAwait(false));
+                return Ok(await _getAddressesUseCase.Execute(postcode).ConfigureAwait(false));
             }
             catch (UseCaseException e)
             {
