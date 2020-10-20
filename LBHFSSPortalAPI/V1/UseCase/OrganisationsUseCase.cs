@@ -33,7 +33,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             {
                 var session = _sessionsGateway.GetSessionByToken(accessToken);
                 if (session != null)
-                   _organisationsGateway.LinkUserToOrganisation(gatewayResponse.ToEntity(), session.User);
+                    _organisationsGateway.LinkUserToOrganisation(gatewayResponse.ToEntity(), session.User);
                 var userQueryParam = new UserQueryParam { Sort = "Name", Direction = "asc" };
                 var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
                     .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));

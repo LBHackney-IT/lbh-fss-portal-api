@@ -74,11 +74,11 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 var response = _organisationsUseCase.ExecuteGet(requestParams).Result;
                 return Ok(response);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                 Console.WriteLine(e.Message);
-                 return BadRequest(
-                     new ErrorResponse($"An error occurred") { Status = "Error", Errors = new List<string> { $"An error occurred while processing this request.  Please see logs for details." } });
+                Console.WriteLine(e.Message);
+                return BadRequest(
+                    new ErrorResponse($"An error occurred") { Status = "Error", Errors = new List<string> { $"An error occurred while processing this request.  Please see logs for details." } });
             }
         }
 
