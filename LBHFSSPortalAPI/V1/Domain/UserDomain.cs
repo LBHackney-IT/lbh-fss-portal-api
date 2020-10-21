@@ -13,7 +13,7 @@ namespace LBHFSSPortalAPI.V1.Domain
         public string SubId { get; set; }
 
         public List<UserRoleDomain> UserRoles { get; set; }
-
+        public List<UserOrganisationDomain> UserOrganisations { get; set; }
         public List<OrganisationDomain> Organisations { get; set; }
     }
 }
