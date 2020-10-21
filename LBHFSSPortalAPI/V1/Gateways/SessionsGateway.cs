@@ -24,6 +24,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .Include(s => s.User)
                 .ThenInclude(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
+                .Include(s => s.User)
+                .ThenInclude(u => u.UserOrganisations)
+                .ThenInclude(uo => uo.Organisation)
                 .FirstOrDefault(s => s.Payload == token);
             return session;
         }
