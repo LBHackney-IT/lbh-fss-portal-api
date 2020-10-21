@@ -6,17 +6,17 @@ namespace LBHFSSPortalAPI.V1.Handlers
     {
         public static void LogError(string message)
         {
-            LambdaLogger.Log($"ERROR: {message}");
+            LambdaLogger.Log($"[ERROR]: {message}");
         }
 
         public static void LogWarning(string message)
         {
-            LambdaLogger.Log($"WARNING: {message}");
+            LambdaLogger.Log($"[WARNING]: {message}");
         }
 
         public static void LogInfo(string message)
         {
-            LambdaLogger.Log($"INFO: {message}");
+            LambdaLogger.Log($"[INFO]: {message}");
         }
     }
 }

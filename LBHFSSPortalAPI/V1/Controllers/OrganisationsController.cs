@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -28,9 +29,18 @@ namespace LBHFSSPortalAPI.V1.Controllers
         public IActionResult CreateOrganisation(OrganisationRequest organisationRequest)
         {
             //add validation
-            var response = _organisationsUseCase.ExecuteCreate(organisationRequest);
-            if (response != null)
-                return Created(new Uri($"/{response.Id}", UriKind.Relative), response);
+            try
+            {
+                if (string.IsNullOrEmpty(AccessToken))
+                    return BadRequest("no access_token cookie found in the request");
+                var response = _organisationsUseCase.ExecuteCreate(AccessToken, organisationRequest);
+                if (response != null)
+                    return Created(new Uri($"/{response.Id}", UriKind.Relative), response);
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
 
             // Validations
             return BadRequest(
@@ -59,17 +69,17 @@ namespace LBHFSSPortalAPI.V1.Controllers
         public IActionResult SearchOrganisations([FromQuery] OrganisationSearchRequest requestParams)
         {
             //add validation
-            //try
-            //{
-            var response = _organisationsUseCase.ExecuteGet(requestParams).Result;
-            return Ok(response);
-            //}
-            // catch (Exception e)
-            // {
-            //     Console.WriteLine(e.Message);
-            //     return BadRequest(
-            //         new ErrorResponse($"An error occurred") { Status = "Error", Errors = new List<string> { $"An error occurred while processing this request.  Please see logs for details." } });
-            // }
+            try
+            {
+                var response = _organisationsUseCase.ExecuteGet(requestParams).Result;
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(
+                    new ErrorResponse($"An error occurred") { Status = "Error", Errors = new List<string> { $"An error occurred while processing this request.  Please see logs for details." } });
+            }
         }
 
         [Authorize(Roles = "Admin, VCSO")]
@@ -105,7 +115,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 LoggingHandler.LogError(e.Message);
                 LoggingHandler.LogError(e.StackTrace);
                 return BadRequest(
-                    new ErrorResponse($"Item doesn't exist") { Status = "Bad request", Errors = new List<string> { $"An organisation with id {id} does not exist" } });
+                    new ErrorResponse($"Error deleting organisation") { Status = "Bad request", Errors = new List<string> { $"An error occurred attempting to delete organisation {id}: {e.Message}" } });
             }
         }
     }

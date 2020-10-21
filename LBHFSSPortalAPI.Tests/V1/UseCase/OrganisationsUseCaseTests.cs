@@ -4,7 +4,6 @@ using System.Linq;
 using FluentAssertions;
 using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
-using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
@@ -22,6 +21,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         private Mock<IOrganisationsGateway> _mockOrganisationsGateway;
         private Mock<IUsersGateway> _mockUsersGateway;
         private Mock<INotifyGateway> _mockNotifyGateway;
+        private Mock<ISessionsGateway> _mockSessionsGateway;
 
         [SetUp]
         public void Setup()
@@ -29,7 +29,11 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             _mockOrganisationsGateway = new Mock<IOrganisationsGateway>();
             _mockUsersGateway = new Mock<IUsersGateway>();
             _mockNotifyGateway = new Mock<INotifyGateway>();
-            _classUnderTest = new OrganisationsUseCase(_mockOrganisationsGateway.Object, _mockNotifyGateway.Object, _mockUsersGateway.Object);
+            _mockSessionsGateway = new Mock<ISessionsGateway>();
+            _classUnderTest = new OrganisationsUseCase(_mockOrganisationsGateway.Object,
+                _mockNotifyGateway.Object,
+                _mockUsersGateway.Object,
+                _mockSessionsGateway.Object);
         }
 
         #region Create Organisation
@@ -37,7 +41,8 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void CreateOrganisationUseCaseCallsGatewayCreateOrganisation()
         {
             var requestParams = Randomm.Create<OrganisationRequest>();
-            _classUnderTest.ExecuteCreate(requestParams);
+            var accessToken = Randomm.Word();
+            _classUnderTest.ExecuteCreate(accessToken, requestParams);
             _mockOrganisationsGateway.Verify(u => u.CreateOrganisation(It.IsAny<Organisation>()), Times.Once);
         }
 
@@ -46,11 +51,12 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var requestParams = Randomm.Create<OrganisationRequest>();
             var domainData = requestParams.ToDomain();
+            var accessToken = Randomm.Word();
             var users = new List<UserDomain> { Randomm.Create<UserDomain>() };
             _mockOrganisationsGateway.Setup(g => g.CreateOrganisation(It.IsAny<Organisation>())).Returns(domainData);
             _mockUsersGateway.Setup(ug => ug.GetAllUsers(It.IsAny<UserQueryParam>())).ReturnsAsync(users);
             var expectedResponse = domainData.ToResponse();
-            var response = _classUnderTest.ExecuteCreate(requestParams);
+            var response = _classUnderTest.ExecuteCreate(accessToken, requestParams);
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);
         }
