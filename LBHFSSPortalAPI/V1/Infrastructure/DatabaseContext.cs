@@ -457,13 +457,11 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.HasOne(d => d.Organisation)
                     .WithMany(p => p.UserOrganisations)
                     .HasForeignKey(d => d.OrganisationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_organizations_organization_id_fkey");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserOrganisations)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_organizations_user_id_fkey");
             });
 
