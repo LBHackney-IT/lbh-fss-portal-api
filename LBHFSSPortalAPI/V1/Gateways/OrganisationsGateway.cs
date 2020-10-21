@@ -127,7 +127,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                var organisation = Context.Organisations.Find(id);
+                var organisation = Context.Organisations
+                    .Include(o => o.UserOrganisations)
+                    .Include(o => o.Services)
+                    .ThenInclude(s => s.ServiceLocations)
+                    .Include(o => o.Services)
+                    .ThenInclude(s => s.ServiceTaxonomies)
+                    .FirstOrDefault(o => o.Id == id);
                 if (organisation == null)
                     throw new InvalidOperationException("Organisation does not exist");
                 Context.Organisations.Remove(organisation);
@@ -199,7 +205,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         public void LinkUserToOrganisation(Organisation organisation, User user)
         {
             LoggingHandler.LogInfo($"Linking user {user.Name} to organisation {organisation.Name}");
-            var userOrganisation = new UserOrganisation { UserId = user.Id, OrganisationId = organisation.Id };
+            var userOrganisation = new UserOrganisation { UserId = user.Id, OrganisationId = organisation.Id, CreatedAt = DateTime.Now};
             try
             {
                 Context.UserOrganisations.Add(userOrganisation);
