@@ -29,7 +29,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 Status = domain.Status,
                 CreatedAt = domain.CreatedAt,
                 SubId = domain.SubId,
-                Organisation = domain.Organisations?.FirstOrDefault()?.ToResponse(),
+                Organisation = domain.UserOrganisations?.FirstOrDefault()?.Organisation.ToResponse(),
                 Roles = domain.UserRoles?
                     .Select(ur => ur.Role)
                     .Select(r => r.Name)
