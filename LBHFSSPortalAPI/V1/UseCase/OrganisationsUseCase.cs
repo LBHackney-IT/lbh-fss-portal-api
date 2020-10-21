@@ -14,18 +14,26 @@ namespace LBHFSSPortalAPI.V1.UseCase
         private readonly IOrganisationsGateway _organisationsGateway;
         private readonly INotifyGateway _notifyGateway;
         private readonly IUsersGateway _usersGateway;
+        private readonly ISessionsGateway _sessionsGateway;
 
-        public OrganisationsUseCase(IOrganisationsGateway organisationsGateway, INotifyGateway notifyGateway, IUsersGateway usersGateway)
+        public OrganisationsUseCase(IOrganisationsGateway organisationsGateway,
+            INotifyGateway notifyGateway,
+            IUsersGateway usersGateway,
+            ISessionsGateway sessionsGateway)
         {
             _usersGateway = usersGateway;
             _organisationsGateway = organisationsGateway;
             _notifyGateway = notifyGateway;
+            _sessionsGateway = sessionsGateway;
         }
-        public OrganisationResponse ExecuteCreate(OrganisationRequest requestParams)
+        public OrganisationResponse ExecuteCreate(string accessToken, OrganisationRequest requestParams)
         {
             var gatewayResponse = _organisationsGateway.CreateOrganisation(requestParams.ToEntity());
             if (gatewayResponse != null)
             {
+                var session = _sessionsGateway.GetSessionByToken(accessToken);
+                if (session != null)
+                    _organisationsGateway.LinkUserToOrganisation(gatewayResponse.ToEntity(), session.User);
                 var userQueryParam = new UserQueryParam { Sort = "Name", Direction = "asc" };
                 var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
                     .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
