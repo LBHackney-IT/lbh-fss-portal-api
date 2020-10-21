@@ -115,7 +115,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 LoggingHandler.LogError(e.Message);
                 LoggingHandler.LogError(e.StackTrace);
                 return BadRequest(
-                    new ErrorResponse($"Item doesn't exist") { Status = "Bad request", Errors = new List<string> { $"An organisation with id {id} does not exist" } });
+                    new ErrorResponse($"Error deleting organisation") { Status = "Bad request", Errors = new List<string> { $"An error occurred attempting to delete organisation {id}: {e.Message}" } });
             }
         }
     }
