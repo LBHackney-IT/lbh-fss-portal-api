@@ -6,9 +6,9 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
 {
     public class AddressResponse
     {
-        [JsonPropertyName("latitude")]
-        public double Longitude { get; set; }
         [JsonPropertyName("longitude")]
+        public double Longitude { get; set; }
+        [JsonPropertyName("latitude")]
         public double Latitude { get; set; }
         [JsonPropertyName("uprn")]
         public long UPRN { get; set; }
