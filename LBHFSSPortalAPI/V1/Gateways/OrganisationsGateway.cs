@@ -205,7 +205,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         public void LinkUserToOrganisation(Organisation organisation, User user)
         {
             LoggingHandler.LogInfo($"Linking user {user.Name} to organisation {organisation.Name}");
-            var userOrganisation = new UserOrganisation { UserId = user.Id, OrganisationId = organisation.Id, CreatedAt = DateTime.Now};
+            var userOrganisation = new UserOrganisation { UserId = user.Id, OrganisationId = organisation.Id, CreatedAt = DateTime.Now };
             try
             {
                 Context.UserOrganisations.Add(userOrganisation);
