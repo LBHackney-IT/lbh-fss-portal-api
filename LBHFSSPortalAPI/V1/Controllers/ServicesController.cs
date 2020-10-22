@@ -55,7 +55,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Viewer, Admin")]
+        [Authorize(Roles = "Viewer, VCSO, Admin")]
         [Route("services")]
         [HttpGet]
         [ProducesResponseType(typeof(List<ServiceResponse>), StatusCodes.Status200OK)]
