@@ -67,6 +67,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 LotteryFundedProject = domain.LotteryFundedProject,
                 FundingOther = domain.FundingOther,
                 HasChildSupport = domain.HasChildSupport,
+                HasChildSafeguardingLead = domain.HasChildSafeguardingLead,
                 ChildSafeguardingLeadFirstName = domain.ChildSafeguardingLeadFirstName,
                 ChildSafeguardingLeadLastName = domain.ChildSafeguardingLeadLastName,
                 ChildSafeguardingLeadTrainingMonth = domain.ChildSafeguardingLeadTrainingMonth,
