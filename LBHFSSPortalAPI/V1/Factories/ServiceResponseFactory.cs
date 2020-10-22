@@ -11,7 +11,7 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             var org = domain?.Organisation;
             var user = org?.UserOrganisations?.FirstOrDefault()?.User;
-            var images = domain.Image.Url == null ? System.Array.Empty<string>() : domain.Image.Url.Split(';');
+            var images = domain?.Image?.Url == null ? System.Array.Empty<string>() : domain.Image.Url.Split(';');
             var response = domain == null
                 ? null
                 : new ServiceResponse
