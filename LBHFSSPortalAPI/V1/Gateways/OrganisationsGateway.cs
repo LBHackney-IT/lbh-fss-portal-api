@@ -78,7 +78,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             // handle search
             if (!string.IsNullOrWhiteSpace(requestParams.Search))
-                matchingOrganisations = matchingOrganisations.Where(o => EF.Functions.Like(o.Name, $"%{requestParams.Search}%"));
+                matchingOrganisations = matchingOrganisations.Where(o => EF.Functions.ILike(o.Name, $"%{requestParams.Search}%"));
 
             // handle sort by column name and sort direction
             var entityPropName = GetEntityPropertyForColumnName(typeof(Organisation), requestParams.Sort);
