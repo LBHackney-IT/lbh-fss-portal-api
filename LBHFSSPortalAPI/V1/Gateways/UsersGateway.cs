@@ -45,7 +45,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             // handle search
             if (!string.IsNullOrWhiteSpace(userQueryParam.Search))
-                matchingUsers = matchingUsers.Where(u => EF.Functions.Like(u.Name, $"%{userQueryParam.Search}%"));
+                matchingUsers = matchingUsers.Where(u => EF.Functions.ILike(u.Name, $"%{userQueryParam.Search}%")
+                || EF.Functions.ILike(u.Email, $"%{userQueryParam.Search}%"));
 
             // handle sort by column name and sort direction
             var entityPropName = GetEntityPropertyForColumnName(typeof(User), userQueryParam.Sort);
