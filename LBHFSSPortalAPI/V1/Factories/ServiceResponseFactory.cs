@@ -41,7 +41,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                         {
                             Latitude = domain.Latitude,
                             Longitude = domain.Longitude,
-                            Uprn = domain.Uprn,
+                            UPRN = domain.Uprn,
                             Address1 = domain.Address1,
                             City = domain.City,
                             StateProvince = domain.StateProvince,
