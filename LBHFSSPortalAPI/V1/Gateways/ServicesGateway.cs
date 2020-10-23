@@ -160,7 +160,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             // handle search
             if (!string.IsNullOrWhiteSpace(servicesQuery.Search))
-                matchingServices = matchingServices.Where(s => EF.Functions.Like(s.Name, $"%{servicesQuery.Search}%"));
+                matchingServices = matchingServices.Where(s => EF.Functions.ILike(s.Name, $"%{servicesQuery.Search}%"));
 
             // handle sort by column name and sort direction
             var entityPropName = GetEntityPropertyForColumnName(typeof(User), servicesQuery.Sort);
