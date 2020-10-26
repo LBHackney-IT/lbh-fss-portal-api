@@ -38,7 +38,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 var response = _provider.AdminCreateUserAsync(adminCreateUserRequest).Result;
-                return response.User.UserStatus;
+                return response.User.Username;
             }
             catch (Exception e)
             {
