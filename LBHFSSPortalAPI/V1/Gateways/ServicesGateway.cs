@@ -72,6 +72,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         Longitude = l.Longitude,
                         Uprn = l.Uprn,
                         Address1 = l.Address1,
+                        Address2 = l.Address2,
                         City = l.City,
                         StateProvince = l.StateProvince,
                         PostalCode = l.PostalCode,

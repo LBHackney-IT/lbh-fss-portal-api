@@ -7,7 +7,10 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
         public string Uprn { get; set; }
+        [JsonPropertyName("address_1")]
         public string Address1 { get; set; }
+        [JsonPropertyName("address_2")]
+        public string Address2 { get; set; }
         public string City { get; set; }
 
         [JsonPropertyName("state_province")]
