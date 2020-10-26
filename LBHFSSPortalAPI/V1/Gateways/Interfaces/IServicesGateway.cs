@@ -12,7 +12,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         Task<List<ServiceDomain>> GetServicesAsync(ServicesQueryParam servicesQuery);
         Task<ServiceDomain> CreateService(ServiceRequest request);
         Task DeleteService(int serviceId);
-        Task DeleteUserService(int serviceId, int userId);
         Task<ServiceDomain> UpdateService(ServiceRequest request, int serviceId);
         void AddFileInfo(int serviceId, File fileEntity);
     }
