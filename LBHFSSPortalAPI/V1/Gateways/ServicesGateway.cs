@@ -354,7 +354,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                var service = await GetServiceById(serviceId).ConfigureAwait(false);
+                var service = await GetServiceByIdWithTracking(serviceId).ConfigureAwait(false);
                 service.Status = ServiceStatus.Deleted;
                 Context.Update(service);
                 await Context.SaveChangesAsync().ConfigureAwait(false);

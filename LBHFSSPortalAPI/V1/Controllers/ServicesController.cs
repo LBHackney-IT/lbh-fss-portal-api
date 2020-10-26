@@ -7,7 +7,9 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
+using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
@@ -104,7 +106,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, VCSO")]
         [Route("services/{serviceId}")]
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -112,7 +114,13 @@ namespace LBHFSSPortalAPI.V1.Controllers
         {
             try
             {
-                await _deleteServiceUseCase.Execute(serviceId).ConfigureAwait(false);
+                UserClaims userClaims = new UserClaims
+                {
+                    UserId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value),
+                    UserRole = HttpContext.User.FindFirst(ClaimTypes.Role).Value
+                };
+
+                await _deleteServiceUseCase.Execute(serviceId, userClaims).ConfigureAwait(false);
                 return Ok();
             }
             catch (UseCaseException e)
