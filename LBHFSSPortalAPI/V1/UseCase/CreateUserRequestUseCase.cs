@@ -87,6 +87,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
                 if (userDomain != null)
                     response = userDomain.ToResponse();
+                response.SetPasswordRequired = true;
             }
 
             return response;
