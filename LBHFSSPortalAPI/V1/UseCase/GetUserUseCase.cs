@@ -34,7 +34,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 };
             var userStatus = _authenticateGateway.GetUserStatus(userDomain.Email);
             var userResponse = userDomain.ToResponse();
-            userResponse.Status = userStatus;
             userResponse.SetPasswordRequired = userStatus == null || userStatus == "FORCE_CHANGE_PASSWORD";
             return userResponse;
         }
