@@ -260,7 +260,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
             service.ReferralLink = request.ReferralLink ?? service.ReferralLink;
             service.ReferralEmail = request.ReferralEmail ?? service.ReferralEmail;
 
-            service.Organisation = null;
             service.OrganisationId = request.OrganisationId ?? service.OrganisationId;
 
             if (request.Locations != null)
