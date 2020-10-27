@@ -1,3 +1,4 @@
+using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
@@ -21,22 +22,27 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public async Task Execute(int serviceId, UserClaims userClaims)
         {
-            //user is admin, delete away
             if (userClaims.UserRole == "Admin")
+            {
+                LambdaLogger.Log($"User role is admin, delete serviceId {serviceId}");
                 await _servicesGateway.DeleteService(serviceId).ConfigureAwait(false);
+            }
             else
             {
                 var service = await _servicesGateway.GetServiceAsync(serviceId).ConfigureAwait(false);
-                //user is not admin - check they are in the org of the service being deleted
                 var user = await _usersGateway.GetUserByIdAsync(userClaims.UserId).ConfigureAwait(false);
-                var orgs = user.Organisations.Where(x => x.Id == service.OrganisationId).ToList();
+                var orgs = user.UserOrganisations.Where(x => x.OrganisationId == service.OrganisationId).ToList();
                 if (orgs.Count == 0)
+                {
+                    LambdaLogger.Log($"UserId {userClaims.UserId} is not in Organisation {service.OrganisationId} for serviceId {serviceId}");
                     throw new UseCaseException
                     {
                         UserErrorMessage = $"Could not delete service with an ID of '{serviceId}'",
                     };
+                }
                 else
                 {
+                    LambdaLogger.Log($"UserId {userClaims.UserId} is in Organisation {service.OrganisationId} for serviceId {serviceId} so service can be deleted");
                     await _servicesGateway.DeleteService(serviceId).ConfigureAwait(false);
                 }
             }
