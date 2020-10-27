@@ -1,10 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Enums;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
+using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 
 namespace LBHFSSPortalAPI.V1.UseCase
@@ -118,9 +121,31 @@ namespace LBHFSSPortalAPI.V1.UseCase
         }
 
 
-        public void ExecuteDelete(int id)
+        public void ExecuteDelete(int id, UserClaims userClaims)
         {
-            _organisationsGateway.DeleteOrganisation(id);
+            if (userClaims.UserRole == "Admin")
+            {
+                LambdaLogger.Log($"User role is admin, delete orgId {id}");
+                _organisationsGateway.DeleteOrganisation(id);
+            }
+            else
+            {
+                var org = _organisationsGateway.GetOrganisation(id);
+                var orgs = org.UserOrganisations.Where(x => x.UserId == userClaims.UserId).ToList();
+                if (orgs.Count == 0)
+                {
+                    LambdaLogger.Log($"UserId {userClaims.UserId} is not in Organisation {id}");
+                    throw new UseCaseException
+                    {
+                        UserErrorMessage = $"Could not delete organization with an ID of '{id}'",
+                    };
+                }
+                else
+                {
+                    LambdaLogger.Log($"UserId {userClaims.UserId} is in Organisation {id} so organisation can be deleted");
+                    _organisationsGateway.DeleteOrganisation(id);
+                }
+            }
         }
     }
 }

@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Claims;
+using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Handlers;
+using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -98,7 +101,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 new ErrorResponse($"Invalid request. ") { Status = "Bad request", Errors = new List<string> { "Unable to create organisation." } });
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, VCSO")]
         [HttpDelete]
         [Route("{Id}")]
         public IActionResult DeleteOrganisation([FromRoute] int id)
@@ -107,7 +110,13 @@ namespace LBHFSSPortalAPI.V1.Controllers
 
             try
             {
-                _organisationsUseCase.ExecuteDelete(id);
+                UserClaims userClaims = new UserClaims
+                {
+                    UserId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value),
+                    UserRole = HttpContext.User.FindFirst(ClaimTypes.Role).Value
+                };
+                LambdaLogger.Log($"UserID:{userClaims.UserId.ToString()} UserRole:{userClaims.UserRole}");
+                _organisationsUseCase.ExecuteDelete(id, userClaims);
                 return Ok();
             }
             catch (InvalidOperationException e)
@@ -116,6 +125,10 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 LoggingHandler.LogError(e.StackTrace);
                 return BadRequest(
                     new ErrorResponse($"Error deleting organisation") { Status = "Bad request", Errors = new List<string> { $"An error occurred attempting to delete organisation {id}: {e.Message}" } });
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
             }
         }
     }
