@@ -10,6 +10,7 @@ using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Amazon.Lambda.Core;
 
 namespace LBHFSSPortalAPI.V1.Controllers
 {
@@ -119,6 +120,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                     UserId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value),
                     UserRole = HttpContext.User.FindFirst(ClaimTypes.Role).Value
                 };
+                LambdaLogger.Log($"UserID:{userClaims.UserId.ToString()} UserRole:{userClaims.UserRole}");
 
                 await _deleteServiceUseCase.Execute(serviceId, userClaims).ConfigureAwait(false);
                 return Ok();
