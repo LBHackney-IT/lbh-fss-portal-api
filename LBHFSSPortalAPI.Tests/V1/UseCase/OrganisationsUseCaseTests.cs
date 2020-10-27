@@ -89,25 +89,40 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         [TestCase(TestName = "A call to the organisations use case delete method calls the gateway delete action")]
         public void DeleteOrganisationUseCaseCallsGatewayDeleteOrganisation()
         {
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "Admin"
+            };
             var id = Randomm.Create<int>();
-            _classUnderTest.ExecuteDelete(id);
+            _classUnderTest.ExecuteDelete(id, userClaims);
             _mockOrganisationsGateway.Verify(u => u.DeleteOrganisation(It.IsAny<int>()), Times.Once);
         }
 
         [TestCase(TestName = "Given a valid organisation id is provided a if an organisation is deleted then no exception is thrown")]
         public void CallsGatewayDeleteAndDoesNotThrowErrorIfSuccessful()
         {
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "Admin"
+            };
             var id = Randomm.Create<int>();
             _mockOrganisationsGateway.Setup(g => g.DeleteOrganisation(It.IsAny<int>()));
-            _classUnderTest.Invoking(c => c.ExecuteDelete(id)).Should().NotThrow();
+            _classUnderTest.Invoking(c => c.ExecuteDelete(id, userClaims)).Should().NotThrow();
         }
 
         [TestCase(TestName = "Given an organisation id is provided if no organisation is matched then an exception is thrown")]
         public void CallsGatewayDeleteAndThrowsErrorIfNotSuccessful()
         {
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "Admin"
+            };
             var id = Randomm.Create<int>();
             _mockOrganisationsGateway.Setup(g => g.DeleteOrganisation(It.IsAny<int>())).Throws<InvalidOperationException>();
-            _classUnderTest.Invoking(c => c.ExecuteDelete(id)).Should().Throw<InvalidOperationException>();
+            _classUnderTest.Invoking(c => c.ExecuteDelete(id, userClaims)).Should().Throw<InvalidOperationException>();
         }
         #endregion
 

@@ -17,14 +17,14 @@ namespace LBHFSSPortalAPI.V1.Gateways
 {
     public class AuthenticateGateway : IAuthenticateGateway
     {
-        private static Amazon.RegionEndpoint Region = Amazon.RegionEndpoint.EUWest2;
+        private static Amazon.RegionEndpoint _region = Amazon.RegionEndpoint.EUWest2;
         private ConnectionInfo _connectionInfo;
         private AmazonCognitoIdentityProviderClient _provider;
         public AuthenticateGateway(ConnectionInfo connectionInfo)
         {
             _connectionInfo = connectionInfo;
             _provider =
-                new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, Region);
+                new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, _region);
         }
 
         public string AdminCreateUser(Boundary.Requests.AdminCreateUserRequest createRequest)
