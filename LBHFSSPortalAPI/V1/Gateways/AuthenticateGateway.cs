@@ -105,14 +105,16 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest)
         {
-            ResendConfirmationCodeRequest resendConfirmationCodeRequest = new ResendConfirmationCodeRequest()
+            AdminCreateUserRequest adminCreateUserRequest = new AdminCreateUserRequest
             {
-                ClientId = _connectionInfo.ClientId,
-                Username = confirmationResendRequest.Email
+                UserPoolId = _connectionInfo.UserPoolId,
+                Username = confirmationResendRequest.Email,
+                DesiredDeliveryMediums = new List<string> { "EMAIL" },
+                MessageAction = MessageActionType.RESEND
             };
             try
             {
-                _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest).Wait();
+                var response = _provider.AdminCreateUserAsync(adminCreateUserRequest).Result;
             }
             catch (Exception e)
             {
