@@ -105,6 +105,25 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest)
         {
+            ResendConfirmationCodeRequest resendConfirmationCodeRequest = new ResendConfirmationCodeRequest()
+            {
+                ClientId = _connectionInfo.ClientId,
+                Username = confirmationResendRequest.Email
+            };
+            try
+            {
+                _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest).Wait();
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
+        }
+
+        public void ResendVerification(ConfirmationResendRequest confirmationResendRequest)
+        {
             AdminCreateUserRequest adminCreateUserRequest = new AdminCreateUserRequest
             {
                 UserPoolId = _connectionInfo.UserPoolId,
