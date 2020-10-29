@@ -77,7 +77,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     UserErrorMessage = $"A user with the supplied ID of '{userId}' could not be found"
                 };
 
-            _authenticateGateway.ResendConfirmation(new ConfirmationResendRequest { Email = userDomain.Email });
+            _authenticateGateway.ResendVerification(new ConfirmationResendRequest { Email = userDomain.Email });
         }
     }
 }
