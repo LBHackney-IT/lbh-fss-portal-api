@@ -47,6 +47,28 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
         }
+
+        public void ResendVerification(ConfirmationResendRequest confirmationResendRequest)
+        {
+            AdminCreateUserRequest adminCreateUserRequest = new AdminCreateUserRequest
+            {
+                UserPoolId = _connectionInfo.UserPoolId,
+                Username = confirmationResendRequest.Email,
+                DesiredDeliveryMediums = new List<string> { "EMAIL" },
+                MessageAction = MessageActionType.RESEND
+            };
+            try
+            {
+                var response = _provider.AdminCreateUserAsync(adminCreateUserRequest).Result;
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
+        }
+
         public string CreateUser(UserCreateRequest createRequest)
         {
             SignUpRequest signUpRequest = new SignUpRequest
@@ -105,16 +127,14 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
         public void ResendConfirmation(ConfirmationResendRequest confirmationResendRequest)
         {
-            AdminCreateUserRequest adminCreateUserRequest = new AdminCreateUserRequest
+            ResendConfirmationCodeRequest resendConfirmationCodeRequest = new ResendConfirmationCodeRequest()
             {
-                UserPoolId = _connectionInfo.UserPoolId,
-                Username = confirmationResendRequest.Email,
-                DesiredDeliveryMediums = new List<string> { "EMAIL" },
-                MessageAction = MessageActionType.RESEND
+                ClientId = _connectionInfo.ClientId,
+                Username = confirmationResendRequest.Email
             };
             try
             {
-                var response = _provider.AdminCreateUserAsync(adminCreateUserRequest).Result;
+                _provider.ResendConfirmationCodeAsync(resendConfirmationCodeRequest).Wait();
             }
             catch (Exception e)
             {
