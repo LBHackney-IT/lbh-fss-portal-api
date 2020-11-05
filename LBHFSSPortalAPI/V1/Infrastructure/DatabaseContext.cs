@@ -225,6 +225,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.ServiceLocations)
                     .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("service_locations_service_id_fkey");
             });
 
@@ -245,6 +246,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.ServiceTaxonomies)
                     .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("service_taxonomies_service_id_fkey");
 
                 entity.HasOne(d => d.Taxonomy)
@@ -327,6 +329,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.HasOne(d => d.Organisation)
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.OrganisationId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("services_organization_id_fkey");
             });
 
