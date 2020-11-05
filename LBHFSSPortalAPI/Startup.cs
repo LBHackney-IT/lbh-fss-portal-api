@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Claims;
 using LBHFSSPortalAPI.V1.Handlers;
@@ -143,6 +144,7 @@ namespace LBHFSSPortalAPI
         private static void RegisterGateways(IServiceCollection services)
         {
             var addressApiUrl = Environment.GetEnvironmentVariable("ADDRESS_URL");
+            var addressApiToken = Environment.GetEnvironmentVariable("ADDRESS_API_TOKEN");
             var addressKey = Environment.GetEnvironmentVariable("ADDRESS_KEY");
             var connInfo = new ConnectionInfo
             {
@@ -163,6 +165,7 @@ namespace LBHFSSPortalAPI
             {
                 a.BaseAddress = new Uri(addressApiUrl);
                 a.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", addressKey);
+                a.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", addressApiToken);
             });
         }
 
