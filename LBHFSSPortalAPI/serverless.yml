@@ -29,6 +29,7 @@ functions:
       ALLOWED_ORIGINS: ${ssm:/fss-portal-api/${self:provider.stage}/allowed-origins}
       ADDRESS_URL: ${ssm:/fss-portal-api/${self:provider.stage}/address-url}
       ADDRESS_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/address-key}
+      ADDRESS_API_TOKEN: ${ssm:/fss-common-api/${self:provider.stage}/addresses-api-token}
       REPOSITORY_BUCKET: ${ssm:/fss-portal-api/${self:provider.stage}/repository-bucket}
     events:
       - http:
