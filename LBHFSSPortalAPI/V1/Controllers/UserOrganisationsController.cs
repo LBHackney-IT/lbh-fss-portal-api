@@ -39,6 +39,13 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 if (response != null)
                     return Created(new Uri($"/{response.Id}", UriKind.Relative), response);
             }
+            catch (InvalidOperationException e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                return BadRequest(
+                    new ErrorResponse($"Error creating userorganisation") { Status = "Bad request", Errors = new List<string> { $"An error occurred attempting to create userorganisation with userId {requestParams.UserId} and organisationId {requestParams.OrganisationId}: {e.Message}" } });
+            }
             catch (UseCaseException e)
             {
                 return BadRequest(e);
@@ -63,7 +70,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 LoggingHandler.LogError(e.Message);
                 LoggingHandler.LogError(e.StackTrace);
                 return BadRequest(
-                    new ErrorResponse($"Error deleting organisation") { Status = "Bad request", Errors = new List<string> { $"An error occurred attempting to delete user organisation with userId {userId}: {e.Message}" } });
+                    new ErrorResponse($"Error deleting userorganisation") { Status = "Bad request", Errors = new List<string> { $"An error occurred attempting to delete user organisation with userId {userId}: {e.Message}" } });
             }
             catch (UseCaseException e)
             {

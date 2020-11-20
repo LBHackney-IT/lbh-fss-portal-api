@@ -51,6 +51,22 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 Context.UserOrganisations.Add(userOrganisation);
                 Context.SaveChanges();
             }
+            catch (DbUpdateException dbex)
+            {
+                LoggingHandler.LogError("Error linking user to organisation");
+                LoggingHandler.LogError(dbex.Message);
+                LoggingHandler.LogError(dbex.StackTrace);
+                var deverror = dbex.Message;
+                if(dbex.InnerException != null)
+                {
+                    deverror += "-" + dbex.InnerException.Message;
+                }
+                throw new UseCaseException()
+                {
+                    UserErrorMessage = "Error linking user to organisation",
+                    DevErrorMessage = deverror
+                };
+            }
             catch (Exception e)
             {
                 LoggingHandler.LogError("Error linking user to organisation");
