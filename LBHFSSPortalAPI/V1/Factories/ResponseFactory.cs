@@ -94,5 +94,18 @@ namespace LBHFSSPortalAPI.V1.Factories
                 return null;
             return new OrganisationResponseList { Organisations = organisations.Select(o => o.ToResponse()).ToList() };
         }
+
+        public static UserOrganisationLinkResponse ToResponse(this UserOrganisationDomain domain)
+        {
+            var response = new UserOrganisationLinkResponse()
+            {
+                Id = domain.Id,
+                OrganisationId = domain.OrganisationId,
+                UserId = domain.UserId,
+                CreatedAt = domain.CreatedAt
+            };
+            return response;
+        }
+
     }
 }

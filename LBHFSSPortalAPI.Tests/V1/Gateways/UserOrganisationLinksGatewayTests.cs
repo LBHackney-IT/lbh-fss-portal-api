@@ -50,9 +50,9 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
 
         [TestCase(TestName = "Given an organisation and user when the gateway is called the gateway will create the userorganisation")]
         public void GivenOrganisationAndUserUserOrganisationGetsCreated()
-        {            
-            var gatewayResult = _classUnderTest.LinkUserToOrganisationAsync(CreateOrganisation(), CreateUser());
-            var expectedResult = DatabaseContext.UserOrganisations.Where(x => x.UserId  == _user.Id && x.OrganisationId == _organisation.Id).FirstOrDefault();
+        {
+            var gatewayResult = _classUnderTest.LinkUserToOrganisationAsync(CreateOrganisation().Id, CreateUser().Id);
+            var expectedResult = DatabaseContext.UserOrganisations.Where(x => x.UserId == _user.Id && x.OrganisationId == _organisation.Id).FirstOrDefault();
             gatewayResult.Should().NotBeNull();
             gatewayResult.Result.Should().BeEquivalentTo(_mapper.ToDomain(expectedResult), options =>
             {
@@ -66,7 +66,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
         [TestCase(TestName = "Given a userid when the gateway is called with the id the gateway will delete the userorganisation that matches")]
         public void GivenMatchingUserIdUserOrganisationGetsDeleted()
         {
-            var createdLink = _classUnderTest.LinkUserToOrganisationAsync(CreateOrganisation(), CreateUser());
+            var createdLink = _classUnderTest.LinkUserToOrganisationAsync(CreateOrganisation().Id, CreateUser().Id);
             _classUnderTest.DeleteUserOrganisationLink(_user.Id);
             var expectedResult = DatabaseContext.UserOrganisations.Where(x => x.UserId == _user.Id).FirstOrDefault();
             expectedResult.Should().BeNull();
@@ -77,7 +77,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
         {
             _user = EntityHelpers.CreateUser();
             _user.Id = 999999999;
-            _classUnderTest.Invoking(c => c.LinkUserToOrganisationAsync(CreateOrganisation(), _user))
+            _classUnderTest.Invoking(c => c.LinkUserToOrganisationAsync(CreateOrganisation().Id, _user.Id))
                 .Should()
                 .Throw<Exception>();
         }
@@ -87,14 +87,14 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
         {
             _organisation = EntityHelpers.CreateOrganisation();
             _organisation.Id = 999999999;
-            _classUnderTest.Invoking(c => c.LinkUserToOrganisationAsync(_organisation, CreateUser()))
+            _classUnderTest.Invoking(c => c.LinkUserToOrganisationAsync(_organisation.Id, CreateUser().Id))
                 .Should()
                 .Throw<Exception>();
         }
 
         [TestCase(TestName = "Given a User organisation link that does not have the provided UserId when the Gateway is called the gateway will throw an exception on create")]
         public void GivenNoUserOrganisationLinkExistsForProvidedUserIdOnDeleteExceptionWillBeThrown()
-        {            
+        {
             _classUnderTest.Invoking(c => c.DeleteUserOrganisationLink(999999))
                 .Should()
                 .Throw<Exception>()

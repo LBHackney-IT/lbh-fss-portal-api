@@ -10,6 +10,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     public interface IUserOrganisationLinksGateway
     {
         void DeleteUserOrganisationLink(int userId);
-        Task<UserOrganisationDomain> LinkUserToOrganisationAsync(Organisation organisation, User user);
+        Task<UserOrganisationDomain> LinkUserToOrganisationAsync(int organisationId, int userId);
     }
 }
