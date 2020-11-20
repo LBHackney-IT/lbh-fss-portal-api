@@ -21,7 +21,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                 cfg.CreateMap<Service, ServiceDomain>();
                 cfg.CreateMap<File, FileDomain>();
                 cfg.CreateMap<UserOrganisation, UserOrganisationDomain>();
-                cfg.CreateMap<Organisation, OrganisationDomain>();
+                cfg.CreateMap<Organisation, OrganisationDomain>()
+                    .ForMember(x => x.StatusMessage, opt => opt.Ignore());
                 cfg.CreateMap<Taxonomy, TaxonomyDomain>();
                 cfg.CreateMap<ServiceLocation, ServiceLocationDomain>();
                 cfg.CreateMap<ServiceTaxonomy, ServiceTaxonomyDomain>();

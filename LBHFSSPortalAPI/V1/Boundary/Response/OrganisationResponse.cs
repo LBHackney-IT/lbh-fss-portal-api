@@ -18,6 +18,8 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         [JsonPropertyName("reviewer_message")]
         public string ReviewerMessage { get; set; }
         public string Status { get; set; }
+        [JsonPropertyName("status_message")]
+        public string StatusMessage { get; set; }
         [JsonPropertyName("is_hackney_based")]
         public bool? IsHackneyBased { get; set; }
         [JsonPropertyName("is_registered_charity")]

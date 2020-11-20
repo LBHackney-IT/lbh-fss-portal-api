@@ -5,6 +5,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
 {
     public interface INotifyGateway
     {
-        Task SendMessage(NotifyMessageTypes messageType, string[] addresses);
+        Task SendMessage(NotifyMessageTypes messageType, string[] addresses, string message);
     }
 }

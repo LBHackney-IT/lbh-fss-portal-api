@@ -83,6 +83,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
                 options.Excluding(ex => ex.ReviewerU);
                 options.Excluding(ex => ex.Services);
                 options.Excluding(ex => ex.UserOrganisations);
+                options.Excluding(ex => ex.StatusMessage);
                 return options;
             });
         }
