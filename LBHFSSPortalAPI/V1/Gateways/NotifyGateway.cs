@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Enums;
@@ -25,15 +26,15 @@ namespace LBHFSSPortalAPI.V1.Gateways
             _client = new NotificationClient(connectionInfo.NotifyKey);
         }
 
-        public async Task SendMessage(NotifyMessageTypes messageType, string[] addresses)
+        public async Task SendMessage(NotifyMessageTypes messageType, string[] addresses, string message)
         {
             if (messageType == null || addresses == null)
             {
                 LoggingHandler.LogError("Notify request with invalid arguments");
                 throw new ArgumentException("Notify request with invalid arguments");
             }
-
             var template = string.Empty;
+            var personalisation = new Dictionary<string, dynamic>();
             switch (messageType)
             {
                 case NotifyMessageTypes.Reminder:
@@ -50,6 +51,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     break;
                 case NotifyMessageTypes.NotApproved:
                     template = _notApprovedTemplate;
+                    personalisation.Add("status_message", message ?? "");
                     break;
             }
 
@@ -57,7 +59,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 for (int a = 0; a < addresses.Length; a++)
                 {
-                    await _client.SendEmailAsync(addresses[a], template).ConfigureAwait(false);
+                    await _client.SendEmailAsync(addresses[a], template, personalisation).ConfigureAwait(false);
                 }
             }
             catch (NotifyClientException e)
