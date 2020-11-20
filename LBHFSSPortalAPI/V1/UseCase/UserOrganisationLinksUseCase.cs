@@ -23,8 +23,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public UserOrganisationLinkResponse ExecuteCreate(UserOrganisationLinkRequest requestParams)
         {
-            var gatewayResponse = _userOrganisationLinksGateway.LinkUserToOrganisationAsync(requestParams.OrganisationId, requestParams.UserId);
-            return gatewayResponse == null ? new UserOrganisationLinkResponse() : gatewayResponse.Result.ToResponse();
+            var gatewayResponse = _userOrganisationLinksGateway.LinkUserToOrganisation(requestParams.OrganisationId, requestParams.UserId);
+            return gatewayResponse == null ? new UserOrganisationLinkResponse() : gatewayResponse.ToResponse();
         }
 
         public void ExecuteDelete(int userId)

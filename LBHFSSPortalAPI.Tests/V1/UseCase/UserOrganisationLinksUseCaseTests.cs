@@ -33,9 +33,9 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var requestParams = Randomm.Create<UserOrganisationLinkRequest>();
             var domainData = Randomm.Create<UserOrganisationDomain>();
-            _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisationAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(domainData);
+            _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisation(It.IsAny<int>(), It.IsAny<int>())).Returns(domainData);
             _classUnderTest.ExecuteCreate(requestParams);
-            _mockUserOrganisationLinksGateway.Verify(u => u.LinkUserToOrganisationAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            _mockUserOrganisationLinksGateway.Verify(u => u.LinkUserToOrganisation(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
         }
 
         [TestCase(TestName = "Given required request object is provided the created userorganisation is returned")]
@@ -47,7 +47,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
                 OrganisationId = domainData.OrganisationId,
                 UserId = domainData.UserId
             };
-            _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisationAsync(requestParams.OrganisationId, requestParams.UserId)).ReturnsAsync(domainData);
+            _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisation(requestParams.OrganisationId, requestParams.UserId)).Returns(domainData);
             var response = _classUnderTest.ExecuteCreate(requestParams);
             response.Should().NotBeNull();
             response.OrganisationId.Should().Be(requestParams.OrganisationId);
