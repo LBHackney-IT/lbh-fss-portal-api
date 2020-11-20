@@ -21,7 +21,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         public UserOrganisationLinksGateway(DatabaseContext context) : base(context)
         {
             _mapper = new MappingHelper();
-        }        
+        }
 
         public void DeleteUserOrganisationLink(int userId)
         {
@@ -41,11 +41,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
         }
-        
-        public async Task<UserOrganisationDomain> LinkUserToOrganisationAsync(Organisation organisation, User user)
+
+        public async Task<UserOrganisationDomain> LinkUserToOrganisationAsync(int organisationId, int userId)
         {
-            LoggingHandler.LogInfo($"Linking user {user.Name} to organisation {organisation.Name}");
-            var userOrganisation = new UserOrganisation { UserId = user.Id, OrganisationId = organisation.Id, CreatedAt = DateTime.Now };
+            LoggingHandler.LogInfo($"Linking userId {userId} to organisation {organisationId}");
+            var userOrganisation = new UserOrganisation { UserId = userId, OrganisationId = organisationId, CreatedAt = DateTime.Now };
             try
             {
                 Context.UserOrganisations.Add(userOrganisation);
