@@ -42,7 +42,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public async Task<UserOrganisationDomain> LinkUserToOrganisationAsync(int organisationId, int userId)
+        public UserOrganisationDomain LinkUserToOrganisation(int organisationId, int userId)
         {
             LoggingHandler.LogInfo($"Linking userId {userId} to organisation {organisationId}");
             var userOrganisation = new UserOrganisation { UserId = userId, OrganisationId = organisationId, CreatedAt = DateTime.Now };
@@ -58,14 +58,14 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 LoggingHandler.LogError(e.StackTrace);
                 throw;
             }
-            userOrganisation = await GetUserOrganisationById(userOrganisation.Id).ConfigureAwait(false);
+            userOrganisation = GetUserOrganisationById(userOrganisation.Id);
             return _mapper.ToDomain(userOrganisation);
         }
 
-        public async Task<UserOrganisation> GetUserOrganisationById(int id)
+        public UserOrganisation GetUserOrganisationById(int id)
         {
-            var userOrganisation = await Context.UserOrganisations
-                .SingleOrDefaultAsync(x => x.Id == id).ConfigureAwait(false);
+            var userOrganisation = Context.UserOrganisations
+                .SingleOrDefault(x => x.Id == id);
             return userOrganisation;
         }
     }
