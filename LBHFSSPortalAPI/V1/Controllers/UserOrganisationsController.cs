@@ -19,17 +19,17 @@ namespace LBHFSSPortalAPI.V1.Controllers
     [ApiVersion("1.0")]
     public class UserOrganisationsController : BaseController
     {
-        private IUserOrganisationLinksUseCase _userOrganisationLinksUseCase;
+        private IUserOrganisationUseCase _userOrganisationLinksUseCase;
 
-        public UserOrganisationsController(IUserOrganisationLinksUseCase userOrganisationLinksUseCase)
+        public UserOrganisationsController(IUserOrganisationUseCase userOrganisationLinksUseCase)
         {
             _userOrganisationLinksUseCase = userOrganisationLinksUseCase;
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        [ProducesResponseType(typeof(UserOrganisationLinkResponse), 201)]
-        public IActionResult CreateUserOrganisation(UserOrganisationLinkRequest requestParams)
+        [ProducesResponseType(typeof(UserOrganisationResponse), 201)]
+        public IActionResult CreateUserOrganisation(UserOrganisationRequest requestParams)
         {
             try
             {

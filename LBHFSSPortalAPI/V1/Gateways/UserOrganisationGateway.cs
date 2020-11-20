@@ -14,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
-    public class UserOrganisationLinksGateway : BaseGateway, IUserOrganisationLinksGateway
+    public class UserOrganisationGateway : BaseGateway, IUserOrganisationGateway
     {
         private readonly MappingHelper _mapper;
 
-        public UserOrganisationLinksGateway(DatabaseContext context) : base(context)
+        public UserOrganisationGateway(DatabaseContext context) : base(context)
         {
             _mapper = new MappingHelper();
         }
@@ -57,7 +57,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 LoggingHandler.LogError(dbex.Message);
                 LoggingHandler.LogError(dbex.StackTrace);
                 var deverror = dbex.Message;
-                if(dbex.InnerException != null)
+                if (dbex.InnerException != null)
                 {
                     deverror += "-" + dbex.InnerException.Message;
                 }

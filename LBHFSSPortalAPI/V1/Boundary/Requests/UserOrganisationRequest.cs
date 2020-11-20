@@ -1,16 +1,14 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace LBHFSSPortalAPI.V1.Boundary.Response
+namespace LBHFSSPortalAPI.V1.Boundary.Requests
 {
-    public class UserOrganisationLinkResponse
+    public class UserOrganisationRequest
     {
-        public int Id { get; set; }
         [JsonPropertyName("organisation_id")]
         public int OrganisationId { get; set; }
+
         [JsonPropertyName("user_id")]
         public int UserId { get; set; }
-        [JsonPropertyName("created_at")]
-        public DateTime? CreatedAt { get; set; }
     }
 }

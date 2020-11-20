@@ -5,9 +5,9 @@ using LBHFSSPortalAPI.V1.Infrastructure;
 
 namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
-    public interface IUserOrganisationLinksUseCase
+    public interface IUserOrganisationUseCase
     {
-        UserOrganisationLinkResponse ExecuteCreate(UserOrganisationLinkRequest requestParams);
+        UserOrganisationResponse ExecuteCreate(UserOrganisationRequest requestParams);
         void ExecuteDelete(int userId);
     }
 }
