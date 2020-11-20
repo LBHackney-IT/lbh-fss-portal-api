@@ -27,7 +27,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
 
         [SetUp]
         public void SetUp()
-        {            
+        {
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Headers["Cookie"] = $"access_token={Randomm.Word()}";
 
