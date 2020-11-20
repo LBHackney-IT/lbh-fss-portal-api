@@ -201,23 +201,5 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
         }
-
-        public void LinkUserToOrganisation(Organisation organisation, User user)
-        {
-            LoggingHandler.LogInfo($"Linking user {user.Name} to organisation {organisation.Name}");
-            var userOrganisation = new UserOrganisation { UserId = user.Id, OrganisationId = organisation.Id, CreatedAt = DateTime.Now };
-            try
-            {
-                Context.UserOrganisations.Add(userOrganisation);
-                Context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                LoggingHandler.LogError("Error linking user to organisation");
-                LoggingHandler.LogError(e.Message);
-                LoggingHandler.LogError(e.StackTrace);
-                throw;
-            }
-        }
     }
 }

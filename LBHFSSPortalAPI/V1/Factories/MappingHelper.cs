@@ -28,10 +28,32 @@ namespace LBHFSSPortalAPI.V1.Factories
                 cfg.CreateMap<User, UserDomain>();
                 cfg.CreateMap<UserRole, UserRoleDomain>();
                 cfg.CreateMap<Role, RoleDomain>();
+                cfg.CreateMap<OrganisationDomain, Organisation>()
+                    .ForMember(x => x.Services, opt => opt.Ignore())
+                    .ForMember(x => x.UserOrganisations, opt => opt.Ignore());
+                cfg.CreateMap<UserDomain, User>()
+                    .ForMember(x => x.Sessions, opt => opt.Ignore())
+                    .ForMember(x => x.UserOrganisations, opt => opt.Ignore())
+                    .ForMember(x => x.UserRoles, opt => opt.Ignore());
             });
 
             mapperConfig.AssertConfigurationIsValid();
             _mapper = new Mapper(mapperConfig);
+        }
+
+        public Organisation FromDomain(OrganisationDomain organisationDomain)
+        {
+            return _mapper.Map<Organisation>(organisationDomain);
+        }
+
+        public User FromDomain(UserDomain userDomain)
+        {
+            return _mapper.Map<User>(userDomain);
+        }
+
+        public UserOrganisationDomain ToDomain(UserOrganisation userOrganisation)
+        {
+            return _mapper.Map<UserOrganisationDomain>(userOrganisation);
         }
 
         public ServiceDomain ToDomain(Service service)
