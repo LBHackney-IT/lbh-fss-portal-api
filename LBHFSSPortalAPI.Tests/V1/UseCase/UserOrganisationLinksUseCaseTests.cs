@@ -33,9 +33,8 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var requestParams = Randomm.Create<UserOrganisationLinkRequest>();
             var domainData = Randomm.Create<UserOrganisationDomain>();
-            var accessToken = Randomm.Word();
             _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisationAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(domainData);
-            _classUnderTest.ExecuteCreate(accessToken, requestParams);
+            _classUnderTest.ExecuteCreate(requestParams);
             _mockUserOrganisationLinksGateway.Verify(u => u.LinkUserToOrganisationAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
         }
 
@@ -48,9 +47,8 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
                 OrganisationId = domainData.OrganisationId,
                 UserId = domainData.UserId
             };
-            var accessToken = Randomm.Word();
             _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisationAsync(requestParams.OrganisationId, requestParams.UserId)).ReturnsAsync(domainData);
-            var response = _classUnderTest.ExecuteCreate(accessToken, requestParams);
+            var response = _classUnderTest.ExecuteCreate(requestParams);
             response.Should().NotBeNull();
             response.OrganisationId.Should().Be(requestParams.OrganisationId);
             response.UserId.Should().Be(requestParams.UserId);

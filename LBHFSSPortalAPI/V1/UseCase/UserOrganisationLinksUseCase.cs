@@ -21,7 +21,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _userOrganisationLinksGateway = userOrganisationLinksGateway;
         }
 
-        public UserOrganisationLinkResponse ExecuteCreate(string accessToken, UserOrganisationLinkRequest requestParams)
+        public UserOrganisationLinkResponse ExecuteCreate(UserOrganisationLinkRequest requestParams)
         {
             var gatewayResponse = _userOrganisationLinksGateway.LinkUserToOrganisationAsync(requestParams.OrganisationId, requestParams.UserId);
             return gatewayResponse == null ? new UserOrganisationLinkResponse() : gatewayResponse.Result.ToResponse();
