@@ -12,19 +12,19 @@ using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
-    public class UserOrganisationLinksUseCase : IUserOrganisationLinksUseCase
+    public class UserOrganisationLinksUseCase : IUserOrganisationUseCase
     {
-        private readonly IUserOrganisationLinksGateway _userOrganisationLinksGateway;
+        private readonly IUserOrganisationGateway _userOrganisationLinksGateway;
 
-        public UserOrganisationLinksUseCase(IUserOrganisationLinksGateway userOrganisationLinksGateway)
+        public UserOrganisationLinksUseCase(IUserOrganisationGateway userOrganisationLinksGateway)
         {
             _userOrganisationLinksGateway = userOrganisationLinksGateway;
         }
 
-        public UserOrganisationLinkResponse ExecuteCreate(UserOrganisationLinkRequest requestParams)
+        public UserOrganisationResponse ExecuteCreate(UserOrganisationRequest requestParams)
         {
             var gatewayResponse = _userOrganisationLinksGateway.LinkUserToOrganisation(requestParams.OrganisationId, requestParams.UserId);
-            return gatewayResponse == null ? new UserOrganisationLinkResponse() : gatewayResponse.ToResponse();
+            return gatewayResponse == null ? new UserOrganisationResponse() : gatewayResponse.ToResponse();
         }
 
         public void ExecuteDelete(int userId)

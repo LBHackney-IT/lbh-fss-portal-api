@@ -13,9 +13,9 @@ using NUnit.Framework;
 namespace LBHFSSPortalAPI.Tests.V1.Gateways
 {
     [TestFixture]
-    public class UserOrganisationLinksGatewayTests : DatabaseTests
+    public class UserOrganisationGatewayTests : DatabaseTests
     {
-        private UserOrganisationLinksGateway _classUnderTest;
+        private UserOrganisationGateway _classUnderTest;
         private OrganisationsGateway _organisationsGateway;
         private UsersGateway _usersGateway;
         private MappingHelper _mapper = new MappingHelper();
@@ -27,7 +27,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
         [SetUp]
         public void Setup()
         {
-            _classUnderTest = new UserOrganisationLinksGateway(DatabaseContext);
+            _classUnderTest = new UserOrganisationGateway(DatabaseContext);
             _organisationsGateway = new OrganisationsGateway(DatabaseContext);
             _usersGateway = new UsersGateway(DatabaseContext);
         }

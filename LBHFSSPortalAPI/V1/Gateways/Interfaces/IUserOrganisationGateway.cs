@@ -7,7 +7,7 @@ using LBHFSSPortalAPI.V1.Infrastructure;
 
 namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
 {
-    public interface IUserOrganisationLinksGateway
+    public interface IUserOrganisationGateway
     {
         void DeleteUserOrganisationLink(int userId);
         UserOrganisationDomain LinkUserToOrganisation(int organisationId, int userId);

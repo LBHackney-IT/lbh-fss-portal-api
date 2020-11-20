@@ -15,15 +15,15 @@ using NUnit.Framework;
 namespace LBHFSSPortalAPI.Tests.V1.UseCase
 {
     [TestFixture]
-    public class UserOrganisationLinksUseCaseTests
+    public class UserOrganisationUseCaseTests
     {
         private UserOrganisationLinksUseCase _classUnderTest;
-        private Mock<IUserOrganisationLinksGateway> _mockUserOrganisationLinksGateway;
+        private Mock<IUserOrganisationGateway> _mockUserOrganisationLinksGateway;
 
         [SetUp]
         public void Setup()
         {
-            _mockUserOrganisationLinksGateway = new Mock<IUserOrganisationLinksGateway>();
+            _mockUserOrganisationLinksGateway = new Mock<IUserOrganisationGateway>();
             _classUnderTest = new UserOrganisationLinksUseCase(_mockUserOrganisationLinksGateway.Object);
         }
 
@@ -31,7 +31,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         [TestCase(TestName = "A call to the user organisation links use case create method calls the gateway create action")]
         public void CreateUserOrganisationLinksUseCaseCallsGatewayCreateUserOrganisationLink()
         {
-            var requestParams = Randomm.Create<UserOrganisationLinkRequest>();
+            var requestParams = Randomm.Create<UserOrganisationRequest>();
             var domainData = Randomm.Create<UserOrganisationDomain>();
             _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisation(It.IsAny<int>(), It.IsAny<int>())).Returns(domainData);
             _classUnderTest.ExecuteCreate(requestParams);
@@ -42,7 +42,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void ReturnsCreatedUserOrganisation()
         {
             var domainData = Randomm.Create<UserOrganisationDomain>();
-            var requestParams = new UserOrganisationLinkRequest
+            var requestParams = new UserOrganisationRequest
             {
                 OrganisationId = domainData.OrganisationId,
                 UserId = domainData.UserId
