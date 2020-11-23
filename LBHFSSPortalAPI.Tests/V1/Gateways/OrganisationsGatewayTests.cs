@@ -109,5 +109,74 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
                 return options;
             });
         }
+
+        [TestCase(TestName = "Given search parameters with status filter, when the gateway is called with the gateway will return organisations that match")]
+        public void GivenSearchParametersStatusFilterMatchingOrganisationsGetReturned()
+        {
+            var organisations = EntityHelpers.CreateOrganisations(10).ToList();
+            var orgToFind = EntityHelpers.CreateOrganisation();
+            orgToFind.Status = "published";
+            organisations.Add(orgToFind);
+            DatabaseContext.AddRange(organisations);
+            DatabaseContext.SaveChanges();
+            var searchParams = new OrganisationSearchRequest();
+            searchParams.Search = orgToFind.Name;
+            searchParams.Sort = "Name";
+            searchParams.Status = "published";
+            searchParams.Direction = SortDirection.Asc.ToString();
+            var gatewayResult = _classUnderTest.SearchOrganisations(searchParams).Result;
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.First().Should().BeEquivalentTo(orgToFind, options =>
+            {
+                options.Excluding(ex => ex.ReviewerU);
+                options.Excluding(ex => ex.Services);
+                options.Excluding(ex => ex.UserOrganisations);
+                return options;
+            });
+        }
+
+        [TestCase(TestName = "Given search parameters with status filter, when the gateway is called with the gateway will return zero organisations that match")]
+        public void GivenSearchParametersStatusFilterNoMatchingOrganisationsGetReturned()
+        {
+            var organisations = EntityHelpers.CreateOrganisations(10).ToList();
+            var orgToFind = EntityHelpers.CreateOrganisation();
+            orgToFind.Status = "published";
+            organisations.Add(orgToFind);
+            DatabaseContext.AddRange(organisations);
+            DatabaseContext.SaveChanges();
+            var searchParams = new OrganisationSearchRequest();
+            searchParams.Search = orgToFind.Name;
+            searchParams.Sort = "Name";
+            searchParams.Status = "rejected";
+            searchParams.Direction = SortDirection.Asc.ToString();
+            var gatewayResult = _classUnderTest.SearchOrganisations(searchParams).Result;
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.Count.Should().Be(0);
+        }
+
+        [TestCase(TestName = "Given search parameters with UPPERCASE status filter, when the gateway is called with the gateway will return organisations that match")]
+        public void GivenSearchParametersStatusFilterUpperCaseMatchingOrganisationsGetReturned()
+        {
+            var organisations = EntityHelpers.CreateOrganisations(10).ToList();
+            var orgToFind = EntityHelpers.CreateOrganisation();
+            orgToFind.Status = "published";
+            organisations.Add(orgToFind);
+            DatabaseContext.AddRange(organisations);
+            DatabaseContext.SaveChanges();
+            var searchParams = new OrganisationSearchRequest();
+            searchParams.Search = orgToFind.Name;
+            searchParams.Sort = "Name";
+            searchParams.Status = "PUBLISHED";
+            searchParams.Direction = SortDirection.Asc.ToString();
+            var gatewayResult = _classUnderTest.SearchOrganisations(searchParams).Result;
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.First().Should().BeEquivalentTo(orgToFind, options =>
+            {
+                options.Excluding(ex => ex.ReviewerU);
+                options.Excluding(ex => ex.Services);
+                options.Excluding(ex => ex.UserOrganisations);
+                return options;
+            });
+        }
     }
 }
