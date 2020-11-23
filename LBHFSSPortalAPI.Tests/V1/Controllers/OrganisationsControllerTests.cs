@@ -25,8 +25,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         private OrganisationsController _classUnderTest;
         private Mock<IOrganisationsUseCase> _mockUseCase;
 
-        [SetUp]
-        public void SetUp()
+        public OrganisationsControllerTests()
         {
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {
@@ -49,7 +48,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
 
         #region Create Organisation
 
-        //[TestCase(TestName = "When the organisations controller CreateOrganisation action is called the OrganisationsUseCase ExecuteCreate method is called once with data provided")]
+        [TestCase(TestName = "When the organisations controller CreateOrganisation action is called the OrganisationsUseCase ExecuteCreate method is called once with data provided")]
         public void CreateOrganisationControllerActionCallsTheOrganisationsUseCase()
         {
             var requestParams = Randomm.Create<OrganisationRequest>();
@@ -57,7 +56,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
             _mockUseCase.Verify(uc => uc.ExecuteCreate(It.IsAny<string>(), It.Is<OrganisationRequest>(p => p == requestParams)), Times.Once);
         }
 
-        //[TestCase(TestName = "When the organisations controller CreateOrganisation action is called and the organisation gets created it returns a response with a status code")]
+        [TestCase(TestName = "When the organisations controller CreateOrganisation action is called and the organisation gets created it returns a response with a status code")]
         public void ReturnsResponseWithStatus()
         {
             var expected = Randomm.Create<OrganisationResponse>();
