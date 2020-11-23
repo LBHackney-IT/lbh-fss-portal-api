@@ -23,6 +23,16 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public UserOrganisationResponse ExecuteCreate(UserOrganisationRequest requestParams)
         {
+            var checkAlreadyExists = _userOrganisationLinksGateway.GetUserOrganisationByUserAndOrgId(requestParams.UserId, requestParams.OrganisationId);
+            if (checkAlreadyExists != null)
+            {
+                throw new UseCaseException()
+                {
+                    DevErrorMessage = "UserOrganisation link already exists for provided User and Organisation",
+                    UserErrorMessage = "Provided user is already linked to that organisation"
+                };
+            }
+
             var gatewayResponse = _userOrganisationLinksGateway.LinkUserToOrganisation(requestParams.OrganisationId, requestParams.UserId);
             return gatewayResponse == null ? new UserOrganisationResponse() : gatewayResponse.ToResponse();
         }

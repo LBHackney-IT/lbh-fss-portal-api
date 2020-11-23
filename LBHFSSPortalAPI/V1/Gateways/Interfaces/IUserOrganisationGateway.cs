@@ -11,5 +11,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     {
         void DeleteUserOrganisationLink(int userId);
         UserOrganisationDomain LinkUserToOrganisation(int organisationId, int userId);
+        UserOrganisationDomain GetUserOrganisationByUserAndOrgId(int userId, int organisationId);
     }
 }
