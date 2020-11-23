@@ -33,7 +33,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
                     new Claim(ClaimTypes.Role, "Admin"),
                 }, "mock"));
             var httpContext = new DefaultHttpContext();
-            httpContext.Request.Headers["Cookie"] = $"access_token={Randomm.Word()}";
+            httpContext.Request.Headers["Cookie"] = $"access_token=xxxxx";
             httpContext.User = user;
 
             _mockUseCase = new Mock<IOrganisationsUseCase>();
