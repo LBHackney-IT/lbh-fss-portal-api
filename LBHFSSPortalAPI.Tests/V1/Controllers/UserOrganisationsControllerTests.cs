@@ -43,7 +43,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
 
         #region Create UserOrganisation
         [TestCase(TestName = "When the userorganisations controller CreateUserOrganisation action is called the UserOrganisationsUseCase ExecuteCreate method is called once with data provided")]
-        public void CreateOrganisationControllerActionCallsTheOrganisationsUseCase()
+        public void CreateUserOrganisationControllerActionCallsTheUserOrganisationsUseCase()
         {
             var requestParams = Randomm.Create<UserOrganisationRequest>();
             _classUnderTest.CreateUserOrganisation(requestParams);
