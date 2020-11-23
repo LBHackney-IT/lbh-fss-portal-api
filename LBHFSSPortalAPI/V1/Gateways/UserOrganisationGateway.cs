@@ -78,6 +78,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return _mapper.ToDomain(userOrganisation);
         }
 
+        public UserOrganisationDomain GetUserOrganisationByUserAndOrgId(int userId, int organisationId)
+        {
+            var userOrganisation = Context.UserOrganisations
+                .SingleOrDefault(x => x.UserId == userId && x.OrganisationId == organisationId);
+            return _mapper.ToDomain(userOrganisation);
+        }
+
         public UserOrganisation GetUserOrganisationById(int id)
         {
             var userOrganisation = Context.UserOrganisations

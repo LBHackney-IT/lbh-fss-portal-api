@@ -53,6 +53,22 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             response.OrganisationId.Should().Be(requestParams.OrganisationId);
             response.UserId.Should().Be(requestParams.UserId);
         }
+
+        [TestCase(TestName = "Given required request object is provided for a link that already exists error is thrown.")]
+        public void ChecksForExistingRecord()
+        {
+            var domainData = Randomm.Create<UserOrganisationDomain>();
+            var requestParams = new UserOrganisationRequest
+            {
+                OrganisationId = domainData.OrganisationId,
+                UserId = domainData.UserId
+            };
+            _mockUserOrganisationLinksGateway.Setup(x => x.GetUserOrganisationByUserAndOrgId(requestParams.UserId, requestParams.OrganisationId)).Returns(domainData);
+            _classUnderTest.Invoking(c => c.ExecuteCreate(requestParams))
+               .Should()
+               .Throw<Exception>();
+        }
+
         #endregion
 
         #region Delete UserOrganisation
