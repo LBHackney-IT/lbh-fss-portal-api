@@ -155,7 +155,7 @@ namespace LBHFSSPortalAPI
                 NotifyKey = Environment.GetEnvironmentVariable("NOTIFY_KEY")
             };
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
-            services.AddTransient<INotifyGateway>(x => connInfo.NotifyKey == null? null : new NotifyGateway(connInfo));
+            services.AddTransient<INotifyGateway>(x => connInfo.NotifyKey == null ? null : new NotifyGateway(connInfo));
             services.AddTransient<IRepositoryGateway>(x => new RepositoryGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
             services.AddScoped<ISessionsGateway, SessionsGateway>();
