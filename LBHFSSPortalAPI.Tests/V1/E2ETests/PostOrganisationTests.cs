@@ -15,10 +15,17 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class PostOrganisationTests : IntegrationTests<Startup>
     {
+        [SetUp]
+        public void SetUp()
+        {
+            CustomizeAssertions.ApproximationDateTime();
+            DatabaseContext.Database.RollbackTransaction();
+            E2ETestHelpers.ClearTable(DatabaseContext);
+        }
+
         //[TestCase(TestName = "Given that valid parameters are provided, organisations are added to the database")]
         public async Task PostOrganisationCreatesOrganisation()
         {
-            DatabaseContext.Database.RollbackTransaction();
             var session = EntityHelpers.CreateSession("Admin");
             DatabaseContext.Sessions.Add(session);
             Client.DefaultRequestHeaders.Add("Cookie", $"access_token={session.Payload}");
@@ -36,7 +43,6 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
             var organisationId = deserializedBody.Id;
             var dbOrganisation = DatabaseContext.Organisations.Find(organisationId);
             dbOrganisation.Should().NotBeNull();
-            DatabaseContext.Database.BeginTransaction();
         }
     }
 }
