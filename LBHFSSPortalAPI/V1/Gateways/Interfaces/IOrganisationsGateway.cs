@@ -14,6 +14,5 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         Task<List<OrganisationDomain>> SearchOrganisations(OrganisationSearchRequest requestParams);
         void DeleteOrganisation(int id);
         OrganisationDomain PatchOrganisation(OrganisationDomain organisationDomain);
-        void LinkUserToOrganisation(Organisation organisation, User user);
     }
 }

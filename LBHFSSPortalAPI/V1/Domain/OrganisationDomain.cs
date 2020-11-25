@@ -20,6 +20,7 @@ namespace LBHFSSPortalAPI.V1.Domain
         public DateTime? ReviewedAt { get; set; }
         public string ReviewerMessage { get; set; }
         public string Status { get; set; }
+        public string StatusMessage { get; set; }
         public bool? IsHackneyBased { get; set; }
         public bool? IsRegisteredCharity { get; set; }
         public string CharityNumber { get; set; }

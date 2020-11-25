@@ -17,10 +17,17 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class DeleteOrganisationsTests : IntegrationTests<Startup>
     {
-        //[TestCase(TestName = "Given an id provided, a delete success response is returned")]
+        [SetUp]
+        public void SetUp()
+        {
+            CustomizeAssertions.ApproximationDateTime();
+            DatabaseContext.Database.RollbackTransaction();
+            E2ETestHelpers.ClearTable(DatabaseContext);
+        }
+
+        [TestCase(TestName = "Given an id provided, a delete success response is returned")]
         public async Task DeleteOrganisationReturnsSuccess()
         {
-            DatabaseContext.Database.RollbackTransaction();
             var session = EntityHelpers.CreateSession("Admin");
             DatabaseContext.Sessions.Add(session);
             Client.DefaultRequestHeaders.Add("Cookie", $"access_token={session.Payload}");
@@ -34,7 +41,6 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
             var stringResponse = await content.ReadAsStringAsync().ConfigureAwait(true);
             var deserializedBody = JsonConvert.DeserializeObject<OrganisationResponse>(stringResponse);
             deserializedBody.Should().BeNull();
-            DatabaseContext.Database.BeginTransaction();
         }
     }
 }

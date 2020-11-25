@@ -155,12 +155,13 @@ namespace LBHFSSPortalAPI
                 NotifyKey = Environment.GetEnvironmentVariable("NOTIFY_KEY")
             };
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
-            services.AddTransient<INotifyGateway>(x => new NotifyGateway(connInfo));
+            services.AddTransient<INotifyGateway>(x => connInfo.NotifyKey == null ? null : new NotifyGateway(connInfo));
             services.AddTransient<IRepositoryGateway>(x => new RepositoryGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
             services.AddScoped<ISessionsGateway, SessionsGateway>();
             services.AddScoped<IServicesGateway, ServicesGateway>();
             services.AddScoped<IOrganisationsGateway, OrganisationsGateway>();
+            services.AddScoped<IUserOrganisationGateway, UserOrganisationGateway>();
             services.AddHttpClient<IAddressSearchGateway, AddressSearchGateway>(a =>
             {
                 a.BaseAddress = new Uri(addressApiUrl);
@@ -185,6 +186,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IOrganisationsUseCase, OrganisationsUseCase>();
             services.AddScoped<IGetAddressesUseCase, GetAddressesUseCase>();
             services.AddScoped<IServiceImageUseCase, ServiceImageUseCase>();
+            services.AddScoped<IUserOrganisationUseCase, UserOrganisationLinksUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -233,7 +235,8 @@ namespace LBHFSSPortalAPI
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
-                .WithOrigins(Environment.GetEnvironmentVariable("ALLOWED_ORIGINS").Split(',')));
+                .WithOrigins(Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") == null ? "localhost".Split()
+                    : Environment.GetEnvironmentVariable("ALLOWED_ORIGINS").Split(',')));
             app.UseEndpoints(endpoints =>
         {
             // SwaggerGen won't find controllers that are routed via this technique.

@@ -35,13 +35,11 @@ namespace LBHFSSPortalAPI.V1.UseCase
             if (gatewayResponse != null)
             {
                 var session = _sessionsGateway.GetSessionByToken(accessToken);
-                if (session != null)
-                    _organisationsGateway.LinkUserToOrganisation(gatewayResponse.ToEntity(), session.User);
                 var userQueryParam = new UserQueryParam { Sort = "Name", Direction = "asc" };
                 var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
                     .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
                 var adminEmails = adminUsers.Select(au => au.Email).ToArray();
-                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, adminEmails);
+                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, adminEmails, requestParams.StatusMessage);
             }
             return gatewayResponse == null ? new OrganisationResponse() : gatewayResponse.ToResponse();
         }
@@ -101,13 +99,13 @@ namespace LBHFSSPortalAPI.V1.UseCase
             {
                 var orgUserEmails = gatewayResponse.UserOrganisations
                     .Select(uo => uo.User.Email).ToArray();
-                _notifyGateway.SendMessage(NotifyMessageTypes.StatusUpdate, orgUserEmails);
+                _notifyGateway.SendMessage(NotifyMessageTypes.StatusUpdate, orgUserEmails, request.StatusMessage);
             }
             if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "rejected")
             {
                 var orgUserEmails = gatewayResponse.UserOrganisations
                     .Select(uo => uo.User.Email).ToArray();
-                _notifyGateway.SendMessage(NotifyMessageTypes.NotApproved, orgUserEmails);
+                _notifyGateway.SendMessage(NotifyMessageTypes.NotApproved, orgUserEmails, request.StatusMessage);
             }
             if (gatewayResponse != null && gatewayResponse.Status.ToLower() == "awaiting review")
             {
@@ -115,7 +113,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 var adminUsers = _usersGateway.GetAllUsers(userQueryParam).Result
                     .Where(u => u.UserRoles.Any(ur => ur.Role.Name == "Admin"));
                 var adminEmails = adminUsers.Select(au => au.Email).ToArray();
-                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, adminEmails);
+                _notifyGateway.SendMessage(NotifyMessageTypes.AdminNotification, adminEmails, request.StatusMessage);
             }
             return gatewayResponse.ToResponse();
         }
