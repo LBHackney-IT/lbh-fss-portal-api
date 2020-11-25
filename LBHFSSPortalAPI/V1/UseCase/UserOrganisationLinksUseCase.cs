@@ -21,8 +21,21 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _userOrganisationLinksGateway = userOrganisationLinksGateway;
         }
 
-        public UserOrganisationResponse ExecuteCreate(UserOrganisationRequest requestParams)
+        public UserOrganisationResponse ExecuteCreate(UserOrganisationRequest requestParams, UserClaims userClaims)
         {
+            if (userClaims.UserRole == "VCSO")
+            {
+                LambdaLogger.Log($"User role is VCSO, check userId provided ({userClaims.UserId}) is current userId: {requestParams.UserId}");
+                if (userClaims.UserId != requestParams.UserId)
+                {
+                    LambdaLogger.Log($"User {userClaims.UserId} attempted to add a different user (userId: {requestParams.UserId}) to orgId: {requestParams.OrganisationId}. Only admins can do this.");
+                    throw new UseCaseException()
+                    {
+                        DevErrorMessage = "VCSO User attempted to add an organisation for another user",
+                        UserErrorMessage = "This user cannot be added to the organisation"
+                    };
+                }
+            }
             var checkAlreadyExists = _userOrganisationLinksGateway.GetUserOrganisationByUserAndOrgId(requestParams.UserId, requestParams.OrganisationId);
             if (checkAlreadyExists != null)
             {

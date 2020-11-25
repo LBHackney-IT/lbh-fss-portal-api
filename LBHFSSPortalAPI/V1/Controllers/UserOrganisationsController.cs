@@ -26,16 +26,22 @@ namespace LBHFSSPortalAPI.V1.Controllers
             _userOrganisationLinksUseCase = userOrganisationLinksUseCase;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, VCSO")]
         [HttpPost]
         [ProducesResponseType(typeof(UserOrganisationResponse), 201)]
         public IActionResult CreateUserOrganisation(UserOrganisationRequest requestParams)
         {
             try
             {
+                UserClaims userClaims = new UserClaims
+                {
+                    UserId = int.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value),
+                    UserRole = HttpContext.User.FindFirst(ClaimTypes.Role).Value
+                };
+                LambdaLogger.Log($"UserID:{userClaims.UserId.ToString()} UserRole:{userClaims.UserRole}");
                 if (string.IsNullOrEmpty(AccessToken))
                     return BadRequest("no access_token cookie found in the request");
-                var response = _userOrganisationLinksUseCase.ExecuteCreate(requestParams);
+                var response = _userOrganisationLinksUseCase.ExecuteCreate(requestParams, userClaims);
                 if (response != null)
                     return Created(new Uri($"/{response.Id}", UriKind.Relative), response);
             }
