@@ -7,7 +7,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
 {
     public interface IUserOrganisationUseCase
     {
-        UserOrganisationResponse ExecuteCreate(UserOrganisationRequest requestParams);
+        UserOrganisationResponse ExecuteCreate(UserOrganisationRequest requestParams, UserClaims userClaims);
         void ExecuteDelete(int userId);
     }
 }

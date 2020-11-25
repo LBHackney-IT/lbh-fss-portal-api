@@ -31,16 +31,26 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         [TestCase(TestName = "A call to the user organisation links use case create method calls the gateway create action")]
         public void CreateUserOrganisationLinksUseCaseCallsGatewayCreateUserOrganisationLink()
         {
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "Admin"
+            };
             var requestParams = Randomm.Create<UserOrganisationRequest>();
             var domainData = Randomm.Create<UserOrganisationDomain>();
             _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisation(It.IsAny<int>(), It.IsAny<int>())).Returns(domainData);
-            _classUnderTest.ExecuteCreate(requestParams);
+            _classUnderTest.ExecuteCreate(requestParams, userClaims);
             _mockUserOrganisationLinksGateway.Verify(u => u.LinkUserToOrganisation(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
         }
 
         [TestCase(TestName = "Given required request object is provided the created userorganisation is returned")]
         public void ReturnsCreatedUserOrganisation()
         {
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "Admin"
+            };
             var domainData = Randomm.Create<UserOrganisationDomain>();
             var requestParams = new UserOrganisationRequest
             {
@@ -48,7 +58,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
                 UserId = domainData.UserId
             };
             _mockUserOrganisationLinksGateway.Setup(x => x.LinkUserToOrganisation(requestParams.OrganisationId, requestParams.UserId)).Returns(domainData);
-            var response = _classUnderTest.ExecuteCreate(requestParams);
+            var response = _classUnderTest.ExecuteCreate(requestParams, userClaims);
             response.Should().NotBeNull();
             response.OrganisationId.Should().Be(requestParams.OrganisationId);
             response.UserId.Should().Be(requestParams.UserId);
@@ -57,6 +67,11 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         [TestCase(TestName = "Given required request object is provided for a link that already exists error is thrown.")]
         public void ChecksForExistingRecord()
         {
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "Admin"
+            };
             var domainData = Randomm.Create<UserOrganisationDomain>();
             var requestParams = new UserOrganisationRequest
             {
@@ -64,7 +79,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
                 UserId = domainData.UserId
             };
             _mockUserOrganisationLinksGateway.Setup(x => x.GetUserOrganisationByUserAndOrgId(requestParams.UserId, requestParams.OrganisationId)).Returns(domainData);
-            _classUnderTest.Invoking(c => c.ExecuteCreate(requestParams))
+            _classUnderTest.Invoking(c => c.ExecuteCreate(requestParams, userClaims))
                .Should()
                .Throw<Exception>();
         }

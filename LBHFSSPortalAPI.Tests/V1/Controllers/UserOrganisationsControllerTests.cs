@@ -27,10 +27,16 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
 
         public UserOrganisationsControllerTests()
         {
-            _mockUseCase = new Mock<IUserOrganisationUseCase>();
-            _classUnderTest = new UserOrganisationsController(_mockUseCase.Object);
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "1"),
+                    new Claim(ClaimTypes.Role, "Admin"),
+                }, "mock"));
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Headers["Cookie"] = $"access_token=xxxxx";
+            httpContext.User = user;
+
+            _mockUseCase = new Mock<IUserOrganisationUseCase>();
             _classUnderTest = new UserOrganisationsController(_mockUseCase.Object)
             {
                 ControllerContext = new ControllerContext
@@ -44,20 +50,28 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         [TestCase(TestName = "When the userorganisations controller CreateUserOrganisation action is called the UserOrganisationsUseCase ExecuteCreate method is called once with data provided")]
         public void CreateUserOrganisationControllerActionCallsTheUserOrganisationsUseCase()
         {
-            var expected = Randomm.Create<UserOrganisationResponse>();
-            _mockUseCase.Setup(u => u.ExecuteCreate(It.IsAny<UserOrganisationRequest>()))
-                .Returns(expected);
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "VCSO"
+            };
             var requestParams = Randomm.Create<UserOrganisationRequest>();
+            var expected = Randomm.Create<UserOrganisationResponse>();
             _classUnderTest.CreateUserOrganisation(requestParams);
-            _mockUseCase.Verify(uc => uc.ExecuteCreate(requestParams), Times.Once);
+            _mockUseCase.Verify(u => u.ExecuteCreate(It.IsAny<UserOrganisationRequest>(), It.IsAny<UserClaims>()), Times.Once);
         }
 
         //[TestCase(TestName = "When the userorganisations controller CreateUserOrganisation action is called and the UserOrganisationsUseCase gets created it returns a response with a status code")]
         public void ReturnsResponseWithStatus()
         {
+            UserClaims userClaims = new UserClaims
+            {
+                UserId = 1,
+                UserRole = "Admin"
+            };
             var expected = Randomm.Create<UserOrganisationResponse>();
             var requestParams = Randomm.Create<UserOrganisationRequest>();
-            _mockUseCase.Setup(u => u.ExecuteCreate(requestParams)).Returns(expected);
+            _mockUseCase.Setup(u => u.ExecuteCreate(requestParams, userClaims)).Returns(expected);
             var response = _classUnderTest.CreateUserOrganisation(requestParams) as CreatedResult;
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(201);
