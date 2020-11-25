@@ -15,10 +15,17 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class PatchOrganisationTests : IntegrationTests<Startup>
     {
-        //[TestCase(TestName = "Given that valid parameters are provided, the specified organisation is updated in the database")]
+        [SetUp]
+        public void SetUp()
+        {
+            CustomizeAssertions.ApproximationDateTime();
+            DatabaseContext.Database.RollbackTransaction();
+            E2ETestHelpers.ClearTable(DatabaseContext);
+        }
+
+        [TestCase(TestName = "Given that valid parameters are provided, the specified organisation is updated in the database")]
         public async Task PatchOrganisationUpdatesOrganisation()
         {
-            DatabaseContext.Database.RollbackTransaction();
             var session = EntityHelpers.CreateSession("Admin");
             DatabaseContext.Sessions.Add(session);
             Client.DefaultRequestHeaders.Add("Cookie", $"access_token={session.Payload}");
@@ -42,7 +49,6 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
             dbOrganisation.Should().NotBeNull();
             dbOrganisation.Name.Should().Be(organisation.Name);
             dbOrganisation.ReviewerMessage.Should().Be(organisation.ReviewerMessage);  //should not be set to null if not changed
-            DatabaseContext.Database.BeginTransaction();
         }
     }
 }

@@ -41,7 +41,14 @@ namespace LBHFSSPortalAPI.Tests
             Client = _factory.CreateClient();
             DatabaseContext = new DatabaseContext(_builder.Options);
             DatabaseContext.Database.EnsureCreated();
-            _transaction = DatabaseContext.Database.BeginTransaction();
+            try
+            {
+                _transaction = DatabaseContext.Database.BeginTransaction();
+            }
+            catch (InvalidOperationException e)
+            {
+                Console.WriteLine($"transaction rollback failed: {e}");
+            }
         }
 
         [TearDown]
