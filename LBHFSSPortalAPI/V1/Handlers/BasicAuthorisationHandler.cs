@@ -17,6 +17,7 @@ namespace LBHFSSPortalAPI.V1.Handlers
     {
         private readonly ISessionsGateway _sessionsGateway;
         private readonly IUsersGateway _usersGateway;
+        private readonly int _sessionDuration;
 
         public BasicAuthorisationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -29,6 +30,7 @@ namespace LBHFSSPortalAPI.V1.Handlers
         {
             _sessionsGateway = sessionsGateway;
             _usersGateway = usersGateway;
+            _sessionDuration = Int32.Parse(Environment.GetEnvironmentVariable("SESSION_DURATION") ?? "24");
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -52,6 +54,16 @@ namespace LBHFSSPortalAPI.V1.Handlers
 
             if (session?.User == null)
                 return AuthenticateResult.Fail("Invalid session key");
+
+            if (session.LastAccessAt == null)
+                return AuthenticateResult.Fail("Invalid session");
+            TimeSpan duration = DateTime.Now - session.LastAccessAt.Value;
+            if (duration.TotalHours > _sessionDuration)
+            {
+                _sessionsGateway.RemoveSessions(session.Payload);
+                return AuthenticateResult.Fail("Session expired");
+            }
+            _sessionsGateway.RefreshSessionExpiry(session.Id);
 
             if (session.User.UserRoles == null || !session.User.UserRoles.Any())
                 return AuthenticateResult.Fail("No roles have been assigned to the user");
