@@ -27,7 +27,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 Context.Organisations.Add(request);
-                Context.SaveChanges();
+                SaveChanges();
             }
             catch (Exception e)
             {
@@ -137,7 +137,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 if (organisation == null)
                     throw new InvalidOperationException("Organisation does not exist");
                 Context.Organisations.Remove(organisation);
-                Context.SaveChanges();
+                SaveChanges();
             }
             catch (Exception e)
             {
@@ -186,7 +186,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 org.IsLocalOfferListed = organisationDomain.IsLocalOfferListed;
                 org.ReviewerUid = organisationDomain.ReviewerUid;
                 Context.Organisations.Attach(org);
-                Context.SaveChanges();
+                SaveChanges();
                 return _mapper.ToDomain(org);
             }
             catch (DbUpdateException dbe)
