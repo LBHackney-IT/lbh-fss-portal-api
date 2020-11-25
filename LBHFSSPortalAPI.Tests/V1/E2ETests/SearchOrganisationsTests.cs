@@ -17,10 +17,17 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
     [TestFixture]
     public class SearchOrganisationsTests : IntegrationTests<Startup>
     {
-        //[TestCase(TestName = "Given valid search parameters provided, organisations that match are returned")]
+        [SetUp]
+        public void SetUp()
+        {
+            CustomizeAssertions.ApproximationDateTime();
+            DatabaseContext.Database.RollbackTransaction();
+            E2ETestHelpers.ClearTable(DatabaseContext);
+        }
+
+        [TestCase(TestName = "Given valid search parameters provided, organisations that match are returned")]
         public async Task SearchOrganisationBySearchParamsReturnsOrganisations()
         {
-            DatabaseContext.Database.RollbackTransaction();
             var session = EntityHelpers.CreateSession("Admin");
             DatabaseContext.Sessions.Add(session);
             Client.DefaultRequestHeaders.Add("Cookie", $"access_token={session.Payload}");
@@ -38,10 +45,9 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
             deserializedBody.Organisations.First().Name.Should().BeEquivalentTo(organisations.First().Name);
         }
 
-        //[TestCase(TestName = "Given valid search parameters and a specified sort order, organisations that match are returned in the order specified")]
+        [TestCase(TestName = "Given valid search parameters and a specified sort order, organisations that match are returned in the order specified")]
         public async Task SearchOrganisationBySearchParamsReturnsOrganisationsInTheSortOrderSpecified()
         {
-            DatabaseContext.Database.RollbackTransaction();
             var session = EntityHelpers.CreateSession("Admin");
             DatabaseContext.Sessions.Add(session);
             Client.DefaultRequestHeaders.Add("Cookie", $"access_token={session.Payload}");
@@ -63,7 +69,6 @@ namespace LBHFSSPortalAPI.Tests.V1.E2ETests
             deserializedBody.Should().NotBeNull();
             deserializedBody.Organisations[0].Name.Should().BeEquivalentTo(organisations[5].Name);
             deserializedBody.Organisations[1].Name.Should().BeEquivalentTo(organisations[3].Name);
-            DatabaseContext.Database.BeginTransaction();
         }
     }
 }

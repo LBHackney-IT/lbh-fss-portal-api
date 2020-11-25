@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +107,7 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
                 .Without(o => o.Id)
                 .With(o => o.User, user)
                 .Create();
+            session.LastAccessAt = DateTime.Now;
             return session;
         }
 

@@ -155,7 +155,7 @@ namespace LBHFSSPortalAPI
                 NotifyKey = Environment.GetEnvironmentVariable("NOTIFY_KEY")
             };
             services.AddTransient<IAuthenticateGateway>(x => new AuthenticateGateway(connInfo));
-            services.AddTransient<INotifyGateway>(x => new NotifyGateway(connInfo));
+            services.AddTransient<INotifyGateway>(x => connInfo.NotifyKey == null ? null : new NotifyGateway(connInfo));
             services.AddTransient<IRepositoryGateway>(x => new RepositoryGateway(connInfo));
             services.AddScoped<IUsersGateway, UsersGateway>();
             services.AddScoped<ISessionsGateway, SessionsGateway>();
@@ -235,7 +235,8 @@ namespace LBHFSSPortalAPI
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
-                .WithOrigins(Environment.GetEnvironmentVariable("ALLOWED_ORIGINS").Split(',')));
+                .WithOrigins(Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") == null ? "localhost".Split()
+                    : Environment.GetEnvironmentVariable("ALLOWED_ORIGINS").Split(',')));
             app.UseEndpoints(endpoints =>
         {
             // SwaggerGen won't find controllers that are routed via this technique.
