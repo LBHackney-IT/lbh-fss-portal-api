@@ -27,7 +27,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 Context.Organisations.Add(request);
-                Context.SaveChanges();
+                SaveChanges();
             }
             catch (Exception e)
             {
@@ -79,6 +79,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
             // handle search
             if (!string.IsNullOrWhiteSpace(requestParams.Search))
                 matchingOrganisations = matchingOrganisations.Where(o => EF.Functions.ILike(o.Name, $"%{requestParams.Search}%"));
+
+            if (!string.IsNullOrWhiteSpace(requestParams.Status))
+                matchingOrganisations = matchingOrganisations.Where(o => o.Status == requestParams.Status.ToLower());
 
             // handle sort by column name and sort direction
             var entityPropName = GetEntityPropertyForColumnName(typeof(Organisation), requestParams.Sort);
@@ -137,7 +140,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 if (organisation == null)
                     throw new InvalidOperationException("Organisation does not exist");
                 Context.Organisations.Remove(organisation);
-                Context.SaveChanges();
+                SaveChanges();
             }
             catch (Exception e)
             {
@@ -186,7 +189,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 org.IsLocalOfferListed = organisationDomain.IsLocalOfferListed;
                 org.ReviewerUid = organisationDomain.ReviewerUid;
                 Context.Organisations.Attach(org);
-                Context.SaveChanges();
+                SaveChanges();
                 return _mapper.ToDomain(org);
             }
             catch (DbUpdateException dbe)
@@ -196,24 +199,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             catch (Exception e)
             {
-                LoggingHandler.LogError(e.Message);
-                LoggingHandler.LogError(e.StackTrace);
-                throw;
-            }
-        }
-
-        public void LinkUserToOrganisation(Organisation organisation, User user)
-        {
-            LoggingHandler.LogInfo($"Linking user {user.Name} to organisation {organisation.Name}");
-            var userOrganisation = new UserOrganisation { UserId = user.Id, OrganisationId = organisation.Id, CreatedAt = DateTime.Now };
-            try
-            {
-                Context.UserOrganisations.Add(userOrganisation);
-                Context.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                LoggingHandler.LogError("Error linking user to organisation");
                 LoggingHandler.LogError(e.Message);
                 LoggingHandler.LogError(e.StackTrace);
                 throw;
