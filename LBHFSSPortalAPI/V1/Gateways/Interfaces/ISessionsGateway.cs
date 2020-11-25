@@ -8,5 +8,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         void RemoveSessions(string accessToken);
         void RemoveSessions(int userId);
         Session GetSessionByToken(string token);
+        void RefreshSessionExpiry(int sessionId);
     }
 }
