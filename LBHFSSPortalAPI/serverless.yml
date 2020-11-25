@@ -31,6 +31,7 @@ functions:
       ADDRESS_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/address-key}
       ADDRESS_API_TOKEN: ${ssm:/fss-common-api/${self:provider.stage}/addresses-api-token}
       REPOSITORY_BUCKET: ${ssm:/fss-portal-api/${self:provider.stage}/repository-bucket}
+      SESSION_DURATION: ${ssm:/fss-portal-api/${self:provider.stage}/session-duration}
     events:
       - http:
           path: /{proxy+}
