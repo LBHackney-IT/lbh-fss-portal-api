@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
@@ -29,6 +30,16 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 .ThenInclude(uo => uo.Organisation)
                 .FirstOrDefault(s => s.Payload == token);
             return session;
+        }
+
+        public void RefreshSessionExpiry(int sessionId)
+        {
+            var session = Context.Sessions.Find(sessionId);
+            if (session != null)
+            {
+                session.LastAccessAt = DateTime.Now;
+                SaveChanges();
+            }
         }
 
         public void RemoveSessions(string accessToken)
