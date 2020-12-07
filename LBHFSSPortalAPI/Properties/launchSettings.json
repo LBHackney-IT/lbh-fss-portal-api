@@ -1,5 +1,4 @@
 ﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -8,15 +7,31 @@
       "sslPort": 44394
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "lbh-fss-portal-api": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/v1/healthcheck/ping",
-      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
+        "CONNECTION_STRING": "Host=localhost;Port=5432;Database=fss;Username=fss;Password=fss",
+        "ADDRESS_URL": "https://6kb2p9kgb0.execute-api.eu-west-2.amazonaws.com/production/api/v1/",
+        "ADDRESS_KEY": "eC30xhtgip6inPYjHsuxZ1DIh9P5mOfc3hizehaw",
+        "ADMIN_NOTIFICATION_TEMPLATE": "380e98a9-91e6-4bcb-86bd-62946199e950",
+        "ALLOWED_ORIGINS": "https://find-support-services-staging-admin.hackney.gov.uk,http://127.0.0.1:5500,http://find-support-services-staging-admin.hackney.gov.uk.s3-website.eu-west-2.amazonaws.com,http://find-support-services-staging.s3-website.eu-west-2.amazonaws.com",
+        "CLIENT_ID": "f5bgjm7g0q3kictpa7b34opfa",
+        "COGNITO_KEY": "6A6FaihW8IacklqknG35HtMBbICk404utng6NnMl",
+        "COGNITO_USER": "AKIA2M6MH6B2S2IGHMPZ",
+        "NOTIFY_KEY": "fssapitest-d70be037-e907-4cb3-8146-3b5465738aef-6074eaf0-02f7-471e-ab6a-538a845d9557",
+        "NOT_APPROVED_TEMPLATE": "4d1315f2-985c-4c68-ba11-4346d7dca210",
+        "NOT_REVERIFIED_TEMPLATE": "a6d8e8af-1942-4c50-a20d-edc00008599e",
+        "POOL_ID": "eu-west-2_PUw75oLaz",
+        "REMINDER_TEMPLATE": "926c15ab-22af-4327-885d-9b13d1260549",
+        "REPOSITORY_BUCKET": "fss-imagestore-staging",
+        "STATUS_TEMPLATE": "dd7e7e5e-b7ec-4794-8624-9203388b57d9",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5000"
     }
   }
 }
