@@ -21,6 +21,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         private AmazonS3Client _s3Client;
         private AWSCredentials _credentials;
         private static string _repositoryBucket = Environment.GetEnvironmentVariable("REPOSITORY_BUCKET");
+        private static string _imagesBaseUrl = Environment.GetEnvironmentVariable("IMAGES_BASE_URL");
 
         public RepositoryGateway(ConnectionInfo connectionInfo)
         {
@@ -84,7 +85,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 }
             } // Dispose - releasing memory into a memory pool ready for the next image you wish to process.
             var fileEntity = new Infrastructure.File();
-            fileEntity.Url = $"https://{_repositoryBucket}.s3.eu-west-2.amazonaws.com/{originalFileName};https://{_repositoryBucket}.s3.eu-west-2.amazonaws.com/{resizedFileName}";
+            fileEntity.Url = $"{_imagesBaseUrl}/{originalFileName};{_imagesBaseUrl}/{resizedFileName}";
             fileEntity.CreatedAt = DateTime.Now;
             return fileEntity;
         }

@@ -31,6 +31,7 @@ functions:
       ADDRESS_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/address-key}
       ADDRESS_API_TOKEN: ${ssm:/fss-common-api/${self:provider.stage}/addresses-api-token}
       REPOSITORY_BUCKET: ${ssm:/fss-portal-api/${self:provider.stage}/repository-bucket}
+      IMAGES_BASE_URL: ${ssm:/fss-common-api/${self:provider.stage}/images-base-url}
       SESSION_DURATION: ${ssm:/fss-portal-api/${self:provider.stage}/session-duration}
     events:
       - http:
@@ -104,7 +105,7 @@ custom:
         - subnet-0ed7d7713d1127656
     production:
       securityGroupIds:
-        - sg-060458cddaaa2742a 
+        - sg-060458cddaaa2742a
       subnetIds:
         - subnet-01d3657f97a243261
         - subnet-0b7b8fea07efabf34
