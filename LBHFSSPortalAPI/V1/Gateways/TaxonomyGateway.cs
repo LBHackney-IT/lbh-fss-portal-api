@@ -102,6 +102,36 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
             return null;
-        }        
+        }
+
+        public List<TaxonomyDomain> GetAllTaxonomies()
+        {
+            try
+            {
+                var taxonomies = Context.Taxonomies.AsQueryable();
+                return _mapper.ToDomain(taxonomies);
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
+        }
+
+        public List<TaxonomyDomain> GetTaxonomiesByVocabulary(string vocabulary)
+        {
+            try
+            {
+                var taxonomies = Context.Taxonomies.Where(x => x.Vocabulary == vocabulary);
+                return _mapper.ToDomain(taxonomies);
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
+        }
     }
 }
