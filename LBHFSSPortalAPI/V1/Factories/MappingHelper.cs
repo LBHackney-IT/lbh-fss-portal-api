@@ -121,5 +121,10 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             return users.Select(s => ToDomain(s)).ToList();
         }
+
+        public List<TaxonomyDomain> ToDomain(IEnumerable<Taxonomy> taxonomies)
+        {
+            return taxonomies.Select(s => ToDomain(s)).ToList();
+        }
     }
 }

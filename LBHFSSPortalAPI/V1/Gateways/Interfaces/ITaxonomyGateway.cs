@@ -13,5 +13,7 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         TaxonomyDomain GetTaxonomy(int id);
         void DeleteTaxonomy(int id);
         TaxonomyDomain PatchTaxonomy(Taxonomy taxonomy);
+        List<TaxonomyDomain> GetAllTaxonomies();
+        List<TaxonomyDomain> GetTaxonomiesByVocabulary(string vocabulary);
     }
 }

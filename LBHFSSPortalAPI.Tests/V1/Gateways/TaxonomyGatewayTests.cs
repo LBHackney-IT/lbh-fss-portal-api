@@ -97,5 +97,42 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
                 return options;
             });
         }
+
+        [TestCase(TestName = "Given no taxonomy id when the gateway is called the gateway will return all taxonomies that exist")]
+        public void GivenNoTaxonomyVocabularyIdAllTaxonomiesAreReturned()
+        {
+            var taxonomies = EntityHelpers.CreateTaxonomies(3).ToList();
+            DatabaseContext.AddRange(taxonomies);
+            DatabaseContext.SaveChanges();
+
+            var gatewayResult = _classUnderTest.GetAllTaxonomies();
+            var expectedResult = DatabaseContext.Taxonomies.AsQueryable();
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.Should().BeEquivalentTo(expectedResult, options =>
+            {
+                options.Excluding(ex => ex.ServiceTaxonomies);
+                return options;
+            });
+        }
+
+        [TestCase(TestName = "Given a taxonomy vocabulary when the gateway is called the gateway will return all matching taxonomies")]
+        public void GivenATaxonomyVocabularyIdMatchingTaxonomiesAreReturned()
+        {
+            var taxonomies = EntityHelpers.CreateTaxonomies(3).ToList();
+            taxonomies[0].Vocabulary = "category";
+            taxonomies[1].Vocabulary = "demographic";
+            taxonomies[2].Vocabulary = "demographic";
+            DatabaseContext.AddRange(taxonomies);
+            DatabaseContext.SaveChanges();
+
+            var gatewayResult = _classUnderTest.GetTaxonomiesByVocabulary("demographic");
+            var expectedResult = DatabaseContext.Taxonomies.Where(v => v.Vocabulary == "demographic");
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.Should().BeEquivalentTo(expectedResult, options =>
+            {
+                options.Excluding(ex => ex.ServiceTaxonomies);
+                return options;
+            });
+        }
     }
 }
