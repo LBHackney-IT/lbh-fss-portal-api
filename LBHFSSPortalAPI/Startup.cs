@@ -162,6 +162,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IServicesGateway, ServicesGateway>();
             services.AddScoped<IOrganisationsGateway, OrganisationsGateway>();
             services.AddScoped<IUserOrganisationGateway, UserOrganisationGateway>();
+            services.AddScoped<ITaxonomyGateway, TaxonomyGateway>();
             services.AddHttpClient<IAddressSearchGateway, AddressSearchGateway>(a =>
             {
                 a.BaseAddress = new Uri(addressApiUrl);
