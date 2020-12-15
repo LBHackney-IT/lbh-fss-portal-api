@@ -12,7 +12,7 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         TaxonomyDomain CreateTaxonomy(Taxonomy taxonomy);
         TaxonomyDomain GetTaxonomy(int id);
         void DeleteTaxonomy(int id);
-        TaxonomyDomain PatchTaxonomy(Taxonomy taxonomy);
+        TaxonomyDomain PatchTaxonomy(int id, Taxonomy taxonomy);
         List<TaxonomyDomain> GetAllTaxonomies();
         List<TaxonomyDomain> GetTaxonomiesByVocabulary(string vocabulary);
     }
