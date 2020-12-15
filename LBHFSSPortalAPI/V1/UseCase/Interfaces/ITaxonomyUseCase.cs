@@ -10,8 +10,7 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     {
         TaxonomyResponse ExecuteCreate(TaxonomyRequest requestParams);
         TaxonomyResponse ExecuteGetById(int id);
-        List<TaxonomyResponse> ExecuteGetAll();
-        List<TaxonomyResponse> ExecuteGetByVocabulary(int vocabularyId);
+        List<TaxonomyResponse> ExecuteGet(int? vocabularyId);
         TaxonomyResponse ExecutePatch(int id, TaxonomyRequest requestParams);
         void ExecuteDelete(int id);
     }
