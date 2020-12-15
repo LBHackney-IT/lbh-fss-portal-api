@@ -34,19 +34,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return gatewayResponse == null ? new TaxonomyResponse() : gatewayResponse.ToResponse();
         }
 
-        public List<TaxonomyResponse> ExecuteGetAll()
-        {
-            var gatewayResponse = _taxonomyGateway.GetAllTaxonomies();
-            return gatewayResponse == null ? new List<TaxonomyResponse>() : gatewayResponse.ToResponse().ToList();
-        }
-
-        public List<TaxonomyResponse> ExecuteGetByVocabulary(int vocabularyId)
-        {
-            string vocabulary = vocabularyId == 1 ? "category" : "demographic";
-            var gatewayResponse = _taxonomyGateway.GetTaxonomiesByVocabulary(vocabulary);
-            return gatewayResponse == null ? new List<TaxonomyResponse>() : gatewayResponse.ToResponse().ToList();
-        }
-
         public void ExecuteDelete(int id)
         {
             LambdaLogger.Log($"Delete taxonomy {id}");
@@ -57,6 +44,21 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             var gatewayResponse = _taxonomyGateway.PatchTaxonomy(id, requestParams.ToEntity());
             return gatewayResponse == null ? new TaxonomyResponse() : gatewayResponse.ToResponse();
+        }
+
+        public List<TaxonomyResponse> ExecuteGet(int? vocabularyId)
+        {
+            if(vocabularyId!=null)
+            {
+                string vocabulary = vocabularyId == 1 ? "category" : "demographic";
+                var gatewayResponse = _taxonomyGateway.GetTaxonomiesByVocabulary(vocabulary);
+                return gatewayResponse == null ? new List<TaxonomyResponse>() : gatewayResponse.ToResponse().ToList();
+            }
+            else
+            {
+                var gatewayResponse = _taxonomyGateway.GetAllTaxonomies();
+                return gatewayResponse == null ? new List<TaxonomyResponse>() : gatewayResponse.ToResponse().ToList();
+            }
         }
     }
 }

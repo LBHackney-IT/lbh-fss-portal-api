@@ -76,7 +76,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         [TestCase(TestName = "A call to the taxonomies use case get all method calls the gateway get action")]
         public void GetTaxonomiesUseCaseCallsGatewayGetTaxonomies()
         {
-            _classUnderTest.ExecuteGetAll();
+            _classUnderTest.ExecuteGet(null);
             _mockTaxonomyGateway.Verify(u => u.GetAllTaxonomies(), Times.Once);
         }
 
@@ -86,7 +86,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             var taxonomies = Randomm.CreateMany<TaxonomyDomain>().ToList();
             _mockTaxonomyGateway.Setup(g => g.GetAllTaxonomies()).Returns(taxonomies);
             var expectedResponse = taxonomies.ToResponse();
-            var response = _classUnderTest.ExecuteGetAll();
+            var response = _classUnderTest.ExecuteGet(null);
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);
         }
@@ -98,7 +98,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void GetTaxonomiesByVocabUseCaseCallsGatewayGetTaxonomiesByVocab()
         {
             var vocabularyId = Randomm.Create<int>();
-            _classUnderTest.ExecuteGetByVocabulary(vocabularyId);
+            _classUnderTest.ExecuteGet(vocabularyId);
             _mockTaxonomyGateway.Verify(u => u.GetTaxonomiesByVocabulary(It.IsAny<string>()), Times.Once);
         }
 
@@ -108,7 +108,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             var taxonomies = Randomm.CreateMany<TaxonomyDomain>().ToList();
             _mockTaxonomyGateway.Setup(g => g.GetTaxonomiesByVocabulary(It.IsAny<string>())).Returns(taxonomies);
             var expectedResponse = taxonomies.ToResponse();
-            var response = _classUnderTest.ExecuteGetByVocabulary(1);
+            var response = _classUnderTest.ExecuteGet(1);
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);
         }
