@@ -7,6 +7,7 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
 {
     public class TaxonomyResponseList
     {
-        public List<TaxonomyResponse> Taxonomies { get; set; }
+        public List<TaxonomyResponse> Categories { get; set; }
+        public List<TaxonomyResponse> Demographics { get; set; }
     }
 }

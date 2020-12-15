@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -14,7 +14,7 @@
       "launchBrowser": true,
       "launchUrl": "api/v1/healthcheck/ping",
       "environmentVariables": {
-        "CONNECTION_STRING": "Host=localhost;Port=5432;Database=fss;Username=fss;Password=fss",
+        ***REMOVED***
 ***REMOVED***
 ***REMOVED***
 ***REMOVED***
