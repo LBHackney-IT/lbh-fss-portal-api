@@ -3,6 +3,7 @@ using System.Linq;
 using AutoMapper;
 using Bogus;
 using FluentAssertions;
+using FluentAssertions.Common;
 using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Domain;
@@ -89,7 +90,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
             DatabaseContext.SaveChanges();
             var newTaxonomy = taxonomy;
             newTaxonomy.Description = Randomm.Text();
-            _classUnderTest.PatchTaxonomy(newTaxonomy);
+            _classUnderTest.PatchTaxonomy(taxonomy.Id, newTaxonomy);
             var gatewayResult = DatabaseContext.Taxonomies.Find(taxonomy.Id);
             gatewayResult.Should().NotBeNull();
             gatewayResult.Should().BeEquivalentTo(_mapper.ToDomain(newTaxonomy), options =>

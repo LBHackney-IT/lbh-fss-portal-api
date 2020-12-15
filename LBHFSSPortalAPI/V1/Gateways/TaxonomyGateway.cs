@@ -75,13 +75,13 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public TaxonomyDomain PatchTaxonomy(Taxonomy taxonomy)
+        public TaxonomyDomain PatchTaxonomy(int id, Taxonomy taxonomy)
         {
             try
             {
                 var taxonomyEntity = Context.Taxonomies
                     .Include(o => o.ServiceTaxonomies)
-                    .FirstOrDefault(o => o.Id == taxonomy.Id);
+                    .FirstOrDefault(o => o.Id == id);
                 if (taxonomy == null)
                     throw new InvalidOperationException("Taxonomy does not exist");
                 taxonomyEntity.Name = taxonomy.Name;
