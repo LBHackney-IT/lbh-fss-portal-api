@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
+using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Enums;
 using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
@@ -25,13 +26,13 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public TaxonomyResponse ExecuteGetById(int id)
         {
             var gatewayResponse = _taxonomyGateway.GetTaxonomy(id);
-            return gatewayResponse == null ? new TaxonomyResponse() : gatewayResponse.ToResponse();
+            return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
         public TaxonomyResponse ExecuteCreate(TaxonomyRequest requestParams)
         {
             var gatewayResponse = _taxonomyGateway.CreateTaxonomy(requestParams.ToEntity());
-            return gatewayResponse == null ? new TaxonomyResponse() : gatewayResponse.ToResponse();
+            return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
         public void ExecuteDelete(int id)
@@ -43,22 +44,26 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public TaxonomyResponse ExecutePatch(int id, TaxonomyRequest requestParams)
         {
             var gatewayResponse = _taxonomyGateway.PatchTaxonomy(id, requestParams.ToEntity());
-            return gatewayResponse == null ? new TaxonomyResponse() : gatewayResponse.ToResponse();
+            return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
-        public List<TaxonomyResponse> ExecuteGet(int? vocabularyId)
+        public TaxonomyResponseList ExecuteGet(int? vocabularyId)
         {
+            List<TaxonomyDomain> gatewayResponse;
             if(vocabularyId!=null)
             {
                 string vocabulary = vocabularyId == 1 ? "category" : "demographic";
-                var gatewayResponse = _taxonomyGateway.GetTaxonomiesByVocabulary(vocabulary);
-                return gatewayResponse == null ? new List<TaxonomyResponse>() : gatewayResponse.ToResponse().ToList();
+                gatewayResponse = _taxonomyGateway.GetTaxonomiesByVocabulary(vocabulary);                
             }
             else
             {
-                var gatewayResponse = _taxonomyGateway.GetAllTaxonomies();
-                return gatewayResponse == null ? new List<TaxonomyResponse>() : gatewayResponse.ToResponse().ToList();
+                gatewayResponse = _taxonomyGateway.GetAllTaxonomies();
             }
+            return new TaxonomyResponseList
+            {
+                Categories = gatewayResponse?.Where(x => x.Vocabulary == "category").ToList().ToResponse(),
+                Demographics = gatewayResponse?.Where(x => x.Vocabulary == "demographic").ToList().ToResponse()
+            };
         }
     }
 }

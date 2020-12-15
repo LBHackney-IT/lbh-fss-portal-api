@@ -4,6 +4,7 @@ using System.Linq;
 using FluentAssertions;
 using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
+using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
@@ -84,8 +85,15 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void ReturnsTaxonomies()
         {
             var taxonomies = Randomm.CreateMany<TaxonomyDomain>().ToList();
+            taxonomies[0].Vocabulary = "category";
+            taxonomies[0].Vocabulary = "demographic";
+            taxonomies[0].Vocabulary = "category";
             _mockTaxonomyGateway.Setup(g => g.GetAllTaxonomies()).Returns(taxonomies);
-            var expectedResponse = taxonomies.ToResponse();
+            var expectedResponse = new TaxonomyResponseList()
+            {
+                Categories = taxonomies.Where(x => x.Vocabulary == "category").ToList().ToResponse(),
+                Demographics = taxonomies.Where(x => x.Vocabulary == "demographic").ToList().ToResponse()
+            }; 
             var response = _classUnderTest.ExecuteGet(null);
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);
@@ -106,8 +114,15 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void ReturnsTaxonomiesByVocab()
         {
             var taxonomies = Randomm.CreateMany<TaxonomyDomain>().ToList();
+            taxonomies[0].Vocabulary = "category";
+            taxonomies[0].Vocabulary = "demographic";
+            taxonomies[0].Vocabulary = "category";
             _mockTaxonomyGateway.Setup(g => g.GetTaxonomiesByVocabulary(It.IsAny<string>())).Returns(taxonomies);
-            var expectedResponse = taxonomies.ToResponse();
+            var expectedResponse = new TaxonomyResponseList()
+            {
+                Categories = taxonomies.Where(x => x.Vocabulary == "category").ToList().ToResponse(),
+                Demographics = new List<TaxonomyResponse>()
+            };
             var response = _classUnderTest.ExecuteGet(1);
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);

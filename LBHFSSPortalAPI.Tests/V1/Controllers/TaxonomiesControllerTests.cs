@@ -116,7 +116,12 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         [TestCase(TestName = "When the taxonomy controller ListTaxonomies action is called with a vocabulary id, if matched an List of taxonomies with a 200 status code is returned")]
         public void ReturnsListResponseWith200Status()
         {
-            var expected = Randomm.CreateMany<TaxonomyResponse>().ToList();
+            var expected = new TaxonomyResponseList()
+            {
+                Categories = Randomm.CreateMany<TaxonomyResponse>().ToList(),
+                Demographics = Randomm.CreateMany<TaxonomyResponse>().ToList()
+            };
+            Randomm.CreateMany<TaxonomyResponse>().ToList();
             var requestParam = Randomm.Create<int>();
             _mockUseCase.Setup(u => u.ExecuteGet(It.Is<int?>(p => p == requestParam))).Returns(expected);
             var response = _classUnderTest.ListTaxonomies(requestParam) as OkObjectResult;
@@ -128,7 +133,11 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
         [TestCase(TestName = "When the taxonomy controller ListTaxonomies action is called with no vocabulary id, if matched an List of taxonomies with a 200 status code is returned")]
         public void ReturnsListAllResponseWith200Status()
         {
-            var expected = Randomm.CreateMany<TaxonomyResponse>().ToList();
+            var expected = new TaxonomyResponseList()
+            {
+                Categories = Randomm.CreateMany<TaxonomyResponse>().ToList(),
+                Demographics = Randomm.CreateMany<TaxonomyResponse>().ToList()
+            };
             _mockUseCase.Setup(u => u.ExecuteGet(It.Is<int?>(p => p == null))).Returns(expected);
             var response = _classUnderTest.ListTaxonomies(null) as OkObjectResult;
             response.Should().NotBeNull();

@@ -66,7 +66,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
                 new ErrorResponse($"Item not found") { Status = "Not found", Errors = new List<string> { $"Taxonomy with id {id} not found" } });
         }
 
-        [Authorize(Roles = "Viewer, Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(typeof(TaxonomyResponseList), 200)]
         public IActionResult ListTaxonomies([FromQuery] int? vocabularyId)

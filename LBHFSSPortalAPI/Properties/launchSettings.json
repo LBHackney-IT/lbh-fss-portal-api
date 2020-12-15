@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -14,7 +14,7 @@
       "launchBrowser": true,
       "launchUrl": "api/v1/healthcheck/ping",
       "environmentVariables": {
-        "CONNECTION_STRING": "Host=localhost;Port=5432;Database=fss;Username=fss;Password=fss",
+        "CONNECTION_STRING": "Host=localhost;Port=6544;Database=testdb;Username=postgres;Password=mypassword",
         "ADDRESS_URL": "https://6kb2p9kgb0.execute-api.eu-west-2.amazonaws.com/production/api/v1/",
         "ADDRESS_KEY": "eC30xhtgip6inPYjHsuxZ1DIh9P5mOfc3hizehaw",
         "ADMIN_NOTIFICATION_TEMPLATE": "380e98a9-91e6-4bcb-86bd-62946199e950",
