@@ -41,7 +41,7 @@ resource "aws_cognito_user_pool" "fss_pool" {
     admin_create_user_config {
         allow_admin_create_user_only = false
         invite_message_template {
-            email_message = "<p>Thank you for registering for Find support services. Here is your temporary password to access the administration system.</p><p>Username: {username}</p><p>Password: {####}</p><p>Note that the password is case sensitive </p>                        <p>Please click the link below to log in and change your password.</p>                        <p><a href=\"https://find-support-services-staging-admin.hackney.gov.uk/invitation\">https://find-support-services-staging-admin.hackney.gov.uk/invitation</a></p><p><b>Questions?</b></p><p>If you have any questions, please contact fss@hackney.gov.uk</p>"
+            email_message = "<p>You have registered to join Find support services https://hackney.gov.uk/find-support-services, which signposts City & Hackney residents for support within the local voluntary and community sector.</p><p>This is your username:<br />{username}<br />This is your temporary password (note, it is case sensitive):<br />{####}</p><p>Please login to the admin interface to add/edit your organisation's listing:<br />https://find-support-services-admin.hackney.gov.uk/invitation</p><p>If you have any questions, please contact fss@hackney.gov.uk</p>"
             email_subject = "Hackney & City Find Support Services - temporary password"
             sms_message   = "Your username is {username} and temporary password is {####}. "
         }
