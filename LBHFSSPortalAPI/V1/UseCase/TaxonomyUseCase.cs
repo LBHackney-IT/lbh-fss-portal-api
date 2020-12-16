@@ -50,10 +50,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public TaxonomyResponseList ExecuteGet(int? vocabularyId)
         {
             List<TaxonomyDomain> gatewayResponse;
-            if(vocabularyId!=null)
+            if (vocabularyId != null)
             {
                 string vocabulary = vocabularyId == 1 ? "category" : "demographic";
-                gatewayResponse = _taxonomyGateway.GetTaxonomiesByVocabulary(vocabulary);                
+                gatewayResponse = _taxonomyGateway.GetTaxonomiesByVocabulary(vocabulary);
             }
             else
             {

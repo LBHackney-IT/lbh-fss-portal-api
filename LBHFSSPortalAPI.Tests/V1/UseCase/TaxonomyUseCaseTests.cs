@@ -93,7 +93,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             {
                 Categories = taxonomies.Where(x => x.Vocabulary == "category").ToList().ToResponse(),
                 Demographics = taxonomies.Where(x => x.Vocabulary == "demographic").ToList().ToResponse()
-            }; 
+            };
             var response = _classUnderTest.ExecuteGet(null);
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);
@@ -161,9 +161,9 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         {
             var taxonomy = Randomm.Create<TaxonomyRequest>();
             var requestId = Randomm.Id();
-            _mockTaxonomyGateway.Setup(gw => gw.PatchTaxonomy(It.IsAny<int>(),It.IsAny<Taxonomy>())).Returns(taxonomy.ToDomain());
+            _mockTaxonomyGateway.Setup(gw => gw.PatchTaxonomy(It.IsAny<int>(), It.IsAny<Taxonomy>())).Returns(taxonomy.ToDomain());
             _classUnderTest.ExecutePatch(requestId, taxonomy);
-            _mockTaxonomyGateway.Verify(u => u.PatchTaxonomy(It.IsAny<int>(),It.IsAny<Taxonomy>()), Times.Once);
+            _mockTaxonomyGateway.Verify(u => u.PatchTaxonomy(It.IsAny<int>(), It.IsAny<Taxonomy>()), Times.Once);
         }
         #endregion
     }
