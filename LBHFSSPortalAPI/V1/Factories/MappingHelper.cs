@@ -52,6 +52,11 @@ namespace LBHFSSPortalAPI.V1.Factories
             return _mapper.Map<User>(userDomain);
         }
 
+        public TaxonomyDomain ToDomain(Taxonomy taxonomy)
+        {
+            return _mapper.Map<TaxonomyDomain>(taxonomy);
+        }
+
         public UserOrganisationDomain ToDomain(UserOrganisation userOrganisation)
         {
             return _mapper.Map<UserOrganisationDomain>(userOrganisation);
@@ -115,6 +120,11 @@ namespace LBHFSSPortalAPI.V1.Factories
         public List<UserDomain> ToDomain(IEnumerable<User> users)
         {
             return users.Select(s => ToDomain(s)).ToList();
+        }
+
+        public List<TaxonomyDomain> ToDomain(IEnumerable<Taxonomy> taxonomies)
+        {
+            return taxonomies.Select(s => ToDomain(s)).ToList();
         }
     }
 }
