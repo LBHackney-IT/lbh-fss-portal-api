@@ -33,6 +33,7 @@ functions:
       REPOSITORY_BUCKET: ${ssm:/fss-portal-api/${self:provider.stage}/repository-bucket}
       IMAGES_BASE_URL: ${ssm:/fss-common-api/${self:provider.stage}/images-base-url}
       SESSION_DURATION: ${ssm:/fss-portal-api/${self:provider.stage}/session-duration}
+      IMAGES_FOLDER: ${ssm:/fss-common-api/${self:provider.stage}/images-folder}
     events:
       - http:
           path: /{proxy+}
@@ -55,6 +56,7 @@ resources:
               Action: sts:AssumeRole
         ManagedPolicyArns:
           - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+          - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
         Policies:
           - PolicyName: manageLogs
             PolicyDocument:
@@ -89,7 +91,30 @@ resources:
                   Action:
                     - "lambda:InvokeFunction"
                   Resource: "*"
+          - PolicyName: fss-imagestore-access
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - s3:PutObject
+                    - s3:GetObject
+                    - s3:ListBucket
+                    - s3:DeleteObject
+                  Resource:
+                    Fn::Join:
+                      - ""
+                      - - "arn:aws:s3:::"
+                        - "Ref": ${self:custom.s3.${opt:stage}}
+                        - "Ref": ${self:custom.s3.${opt:stage}}/*
 custom:
+  s3:
+    development:
+      - fss-imagestore-development
+    staging:
+      - fss-imagestore-staging
+    production:
+      - fss-imagestore-live
   vpc:
     development:
       securityGroupIds:
