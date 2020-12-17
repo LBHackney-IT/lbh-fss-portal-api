@@ -109,12 +109,9 @@ resources:
                         - "Ref": ${self:custom.s3.${opt:stage}}/*
 custom:
   s3:
-    development:
-      - fss-imagestore-development
-    staging:
-      - fss-imagestore-staging
-    production:
-      - fss-imagestore-live
+    development: fss-imagestore-development
+    staging: fss-imagestore-staging
+    production:fss-imagestore-live
   vpc:
     development:
       securityGroupIds:
