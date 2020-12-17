@@ -102,9 +102,9 @@ resources:
                     - s3:ListBucket
                     - s3:DeleteObject
                   Resource:
-                      - "arn:aws:s3:::"${self:custom.s3.${opt:stage}}
-                      - "arn:aws:s3:::"${self:custom.s3.${opt:stage}}/
-                      - "arn:aws:s3:::"${self:custom.s3.${opt:stage}}/*
+                    - "arn:aws:s3:::"${self:custom.s3.${opt:stage}}
+                    - "arn:aws:s3:::"${self:custom.s3.${opt:stage}}/
+                    - "arn:aws:s3:::"${self:custom.s3.${opt:stage}}/*
 custom:
   s3:
     development: fss-imagestore-development
