@@ -24,7 +24,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             _connectionInfo = connectionInfo;
             _provider =
-                new AmazonCognitoIdentityProviderClient(_connectionInfo.AccessKeyId, _connectionInfo.SecretAccessKey, _region);
+                new AmazonCognitoIdentityProviderClient(_region);
         }
 
         public string AdminCreateUser(Boundary.Requests.AdminCreateUserRequest createRequest)
