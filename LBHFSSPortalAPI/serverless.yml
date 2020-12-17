@@ -111,7 +111,7 @@ custom:
   s3:
     development: fss-imagestore-development
     staging: fss-imagestore-staging
-    production:fss-imagestore-live
+    production: fss-imagestore-live
   vpc:
     development:
       securityGroupIds:
