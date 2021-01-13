@@ -84,7 +84,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                 {
                     Id = domain.ReviewerU.Id,
                     Name = domain.ReviewerU.Name
-                }
+                },
+                Users = formatUsers(domain.UserOrganisations)
             };
         }
 
@@ -105,6 +106,16 @@ namespace LBHFSSPortalAPI.V1.Factories
                 CreatedAt = domain.CreatedAt
             };
             return response;
+        }
+
+        public static List<OrgUser> formatUsers(ICollection<UserOrganisationDomain> users)
+        {
+            var orgUsers = users == null ? null : users.Select(u => new OrgUser
+            {
+                Id = u.User.Id,
+                Name = u.User.Name
+            }).ToList();
+            return orgUsers;
         }
 
     }

@@ -18,8 +18,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 {
                     Id = domain.Id,
                     Name = domain.Name,
-                    UserId = user?.Id,
-                    UserName = user?.Name,
+                    Users = ResponseFactory.formatUsers(domain.Organisation.UserOrganisations),
                     OrganisationId = org?.Id,
                     OrganisationName = org?.Name,
                     Status = domain.Status,
