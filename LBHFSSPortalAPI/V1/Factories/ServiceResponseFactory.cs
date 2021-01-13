@@ -18,8 +18,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                 {
                     Id = domain.Id,
                     Name = domain.Name,
-                    UserId = user?.Id,
-                    UserName = user?.Name,
+                    Users = ResponseFactory.formatUsers(domain.Organisation.UserOrganisations),
                     OrganisationId = org?.Id,
                     OrganisationName = org?.Name,
                     Status = domain.Status,
@@ -67,8 +66,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                             Id = t.Taxonomy.Id,
                             Name = t.Taxonomy.Name,
                             Description = t.Taxonomy.Description,
-                            ServiceDescription = t.Description,
                             Vocabulary = t.Taxonomy.Vocabulary,
+                            VocabularyId = 1,
                             Weight = t.Taxonomy.Weight
                         }).ToList(),
                     Demographics = domain.ServiceTaxonomies == null
@@ -80,8 +79,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                             Id = t.Taxonomy.Id,
                             Name = t.Taxonomy.Name,
                             Description = t.Taxonomy.Description,
-                            ServiceDescription = t.Description,
                             Vocabulary = t.Taxonomy.Vocabulary,
+                            VocabularyId = 2,
                             Weight = t.Taxonomy.Weight
                         })
                         .ToList()

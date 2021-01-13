@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace LBHFSSPortalAPI.V1.Boundary.Response
@@ -70,11 +71,21 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         public bool? IsLocalOfferListed { get; set; }
         [JsonPropertyName("reviewer")]
         public OrganisationReviewer Reviewer { get; set; }
+
+        public List<OrgUser> Users { get; set; }
     }
 
     public class OrganisationReviewer
     {
         public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class OrgUser
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+        [JsonPropertyName("name")]
         public string Name { get; set; }
     }
 }

@@ -148,8 +148,6 @@ namespace LBHFSSPortalAPI
             var addressKey = Environment.GetEnvironmentVariable("ADDRESS_KEY");
             var connInfo = new ConnectionInfo
             {
-                AccessKeyId = Environment.GetEnvironmentVariable("COGNITO_USER"),
-                SecretAccessKey = Environment.GetEnvironmentVariable("COGNITO_KEY"),
                 ClientId = Environment.GetEnvironmentVariable("CLIENT_ID"),
                 UserPoolId = Environment.GetEnvironmentVariable("POOL_ID"),
                 NotifyKey = Environment.GetEnvironmentVariable("NOTIFY_KEY")
@@ -162,6 +160,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IServicesGateway, ServicesGateway>();
             services.AddScoped<IOrganisationsGateway, OrganisationsGateway>();
             services.AddScoped<IUserOrganisationGateway, UserOrganisationGateway>();
+            services.AddScoped<ITaxonomyGateway, TaxonomyGateway>();
             services.AddHttpClient<IAddressSearchGateway, AddressSearchGateway>(a =>
             {
                 a.BaseAddress = new Uri(addressApiUrl);
@@ -187,6 +186,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IGetAddressesUseCase, GetAddressesUseCase>();
             services.AddScoped<IServiceImageUseCase, ServiceImageUseCase>();
             services.AddScoped<IUserOrganisationUseCase, UserOrganisationLinksUseCase>();
+            services.AddScoped<ITaxonomyUseCase, TaxonomyUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

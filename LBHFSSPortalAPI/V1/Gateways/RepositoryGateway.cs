@@ -22,11 +22,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
         private AWSCredentials _credentials;
         private static string _repositoryBucket = Environment.GetEnvironmentVariable("REPOSITORY_BUCKET");
         private static string _imagesBaseUrl = Environment.GetEnvironmentVariable("IMAGES_BASE_URL");
+        private static string _imagesFolder = Environment.GetEnvironmentVariable("IMAGES_FOLDER");
 
         public RepositoryGateway(ConnectionInfo connectionInfo)
         {
-            _credentials = new Credentials(connectionInfo.AccessKeyId, connectionInfo.SecretAccessKey, null, DateTime.Now);
-            _s3Client = new AmazonS3Client(_credentials, _region);
+            _s3Client = new AmazonS3Client(_region);
         }
 
         public async Task<Infrastructure.File> UploadImage(ServiceImageRequest request)
@@ -36,7 +36,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             var originalFileName = $"{request.ServiceId.ToString()}-original{fileExtension}";
             var resizedFileName = $"{request.ServiceId.ToString()}-medium{fileExtension}";
             putObjectRequest.BucketName = _repositoryBucket;
-            putObjectRequest.Key = originalFileName;
+            putObjectRequest.Key = _imagesFolder + "/" + originalFileName;
             putObjectRequest.InputStream = request.Image.OpenReadStream();
             try
             {
@@ -71,7 +71,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 // encodes and write the data to disk.
                 // You can optionally set the encoder to choose.
                 image.Save(memoryStream, encoder);
-                putObjectRequest.Key = resizedFileName;
+                putObjectRequest.Key = _imagesFolder + "/" + resizedFileName;
                 putObjectRequest.InputStream = memoryStream;
                 try
                 {
@@ -85,7 +85,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 }
             } // Dispose - releasing memory into a memory pool ready for the next image you wish to process.
             var fileEntity = new Infrastructure.File();
-            fileEntity.Url = $"{_imagesBaseUrl}/{originalFileName};{_imagesBaseUrl}/{resizedFileName}";
+            fileEntity.Url = $"{_imagesBaseUrl}/{_imagesFolder}/{originalFileName};{_imagesBaseUrl}/{_imagesFolder}/{resizedFileName}";
             fileEntity.CreatedAt = DateTime.Now;
             return fileEntity;
         }
