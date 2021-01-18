@@ -17,6 +17,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
     public class AddressXRefGateway : IAddressXRefGateway
     {
         private readonly HttpClient _client;
+        private static string _nhsXrefCode = Environment.GetEnvironmentVariable("ADDRESS_XREF_NHS_CODE");
 
         public AddressXRefGateway(HttpClient client)
         {
@@ -28,7 +29,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             var addressXRefs = GetAddressXrefs(uprn).Result;
             if ((addressXRefs != null) && (addressXRefs.Count > 0))
             {
-                var addressXRef = addressXRefs.Where(x => x.Code == "5360NN").FirstOrDefault();
+                var addressXRef = addressXRefs.Where(x => x.Code == _nhsXrefCode).FirstOrDefault();
                 return addressXRef == null ? string.Empty : addressXRef.Value;
             }
             return string.Empty;

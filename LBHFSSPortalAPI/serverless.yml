@@ -35,6 +35,7 @@ functions:
       SESSION_DURATION: ${ssm:/fss-portal-api/${self:provider.stage}/session-duration}
       ADDRESS_XREF_API_TOKEN: ${ssm:/fss-common-api/${self:provider.stage}/addresses-xref-api-token}
       IMAGES_FOLDER: ${ssm:/fss-common-api/${self:provider.stage}/images-folder}
+      ADDRESS_XREF_NHS_CODE: ${ssm:/fss-common-api/${self:provider.stage}/address-xref-nhs-code}
     events:
       - http:
           path: /{proxy+}
