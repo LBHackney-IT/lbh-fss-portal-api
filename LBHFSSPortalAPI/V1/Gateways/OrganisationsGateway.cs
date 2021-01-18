@@ -108,6 +108,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             {
                 var organisationList = await matchingOrganisations
                     .Include(o => o.ReviewerU)
+                    .Include(o => o.UserOrganisations)
+                    .ThenInclude(uo => uo.User)
                     .AsNoTracking()
                     .ToListAsync()
                     .ConfigureAwait(false);

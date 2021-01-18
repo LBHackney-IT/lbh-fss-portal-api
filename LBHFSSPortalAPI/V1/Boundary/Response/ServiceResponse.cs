@@ -9,12 +9,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         public int Id { get; set; }
         public string Name { get; set; }
 
-        [JsonPropertyName("user_id")]
-        public int? UserId { get; set; }
-
-        [JsonPropertyName("user_name")]
-        public string UserName { get; set; }
-
         [JsonPropertyName("organisation_id")]
         public int? OrganisationId { get; set; }
 
@@ -49,5 +43,6 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         public List<LocationResponse> Locations { get; set; }
         public List<TaxonomyResponse> Categories { get; set; }
         public List<TaxonomyResponse> Demographics { get; set; }
+        public List<OrgUser> Users { get; set; }
     }
 }
