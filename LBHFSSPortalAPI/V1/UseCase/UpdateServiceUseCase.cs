@@ -12,13 +12,21 @@ namespace LBHFSSPortalAPI.V1.UseCase
     {
         private readonly IServicesGateway _servicesGateway;
 
-        public UpdateServiceUseCase(IServicesGateway servicesGateway)
+        private readonly IAddressXRefGateway _addressXRefGateway;
+
+        public UpdateServiceUseCase(IServicesGateway servicesGateway, IAddressXRefGateway addressXRefGateway)
         {
             _servicesGateway = servicesGateway;
+            _addressXRefGateway = addressXRefGateway;
         }
 
         public async Task<ServiceResponse> Execute(ServiceRequest request, int serviceId)
         {
+            if ((request.Locations != null) && (request.Locations.Count > 0))
+            {
+                request.Locations.ForEach(l => l.NHSNeighbourhood = _addressXRefGateway.GetNHSNeighbourhood(l.Uprn));
+            }
+
             var serviceDomain = await _servicesGateway.UpdateService(request, serviceId).ConfigureAwait(false);
 
             if (serviceDomain == null)

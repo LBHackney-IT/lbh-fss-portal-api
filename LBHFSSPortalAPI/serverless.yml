@@ -33,6 +33,7 @@ functions:
       REPOSITORY_BUCKET: ${ssm:/fss-portal-api/${self:provider.stage}/repository-bucket}
       IMAGES_BASE_URL: ${ssm:/fss-common-api/${self:provider.stage}/images-base-url}
       SESSION_DURATION: ${ssm:/fss-portal-api/${self:provider.stage}/session-duration}
+      ADDRESS_XREF_API_TOKEN: ${ssm:/fss-common-api/${self:provider.stage}/addresses-xref-api-token}
     events:
       - http:
           path: /{proxy+}

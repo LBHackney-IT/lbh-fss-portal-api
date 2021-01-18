@@ -47,7 +47,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                             City = domain.City,
                             StateProvince = domain.StateProvince,
                             PostalCode = domain.PostalCode,
-                            Country = domain.Country
+                            Country = domain.Country,
+                            NHSNeighbourhood = domain.NHSNeighbourhood
                         })
                         .ToList(),
                     Image = domain.Image == null
