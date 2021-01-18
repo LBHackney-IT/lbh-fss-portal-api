@@ -145,6 +145,7 @@ namespace LBHFSSPortalAPI
         {
             var addressApiUrl = Environment.GetEnvironmentVariable("ADDRESS_URL");
             var addressApiToken = Environment.GetEnvironmentVariable("ADDRESS_API_TOKEN");
+            var addressApiXRefToken = Environment.GetEnvironmentVariable("ADDRESS_XREF_API_TOKEN");
             var addressKey = Environment.GetEnvironmentVariable("ADDRESS_KEY");
             var connInfo = new ConnectionInfo
             {
@@ -166,6 +167,11 @@ namespace LBHFSSPortalAPI
                 a.BaseAddress = new Uri(addressApiUrl);
                 a.DefaultRequestHeaders.TryAddWithoutValidation("x-api-key", addressKey);
                 a.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", addressApiToken);
+            });
+            services.AddHttpClient<IAddressXRefGateway, AddressXRefGateway>(a =>
+            {
+                a.BaseAddress = new Uri(addressApiUrl);
+                a.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", addressApiXRefToken);
             });
         }
 

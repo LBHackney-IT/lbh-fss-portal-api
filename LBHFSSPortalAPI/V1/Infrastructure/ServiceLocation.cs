@@ -15,6 +15,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public string StateProvince { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
+        public string NHSNeighbourhood { get; set; }
         public DateTime? CreatedAt { get; set; }
 
         public virtual Service Service { get; set; }
