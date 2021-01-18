@@ -38,6 +38,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             var locationRequest = Randomm.Create<ServiceLocationRequest>();
             requestParams.Locations = new List<ServiceLocationRequest>() { locationRequest };
             var domainData = requestParams.ToDomain();
+            domainData.Organisation = Randomm.Create<OrganisationDomain>();
             var accessToken = Randomm.Word();
             _mockServicesGateway.Setup(g => g.CreateService(It.IsAny<ServiceRequest>())).ReturnsAsync(domainData);
             var myResult = await _classUnderTest.Execute(requestParams).ConfigureAwait(false);
