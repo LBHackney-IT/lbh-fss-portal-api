@@ -40,7 +40,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             var domainData = requestParams.ToDomain();
             domainData.Id = 123;
             var accessToken = Randomm.Word();
-            _mockServicesGateway.Setup(g => g.UpdateService(It.IsAny<ServiceRequest>(),123)).ReturnsAsync(domainData);
+            _mockServicesGateway.Setup(g => g.UpdateService(It.IsAny<ServiceRequest>(), 123)).ReturnsAsync(domainData);
             var myResult = await _classUnderTest.Execute(requestParams, 123).ConfigureAwait(false);
             _mockServicesGateway.Verify(u => u.UpdateService(It.IsAny<ServiceRequest>(), It.IsAny<int>()), Times.Once);
         }
@@ -57,7 +57,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             serviceDomainData.Organisation = orgDomain;
             serviceDomainData.Id = 123;
             var accessToken = Randomm.Word();
-            _mockServicesGateway.Setup(g => g.UpdateService(It.IsAny<ServiceRequest>(),123)).ReturnsAsync(serviceDomainData);
+            _mockServicesGateway.Setup(g => g.UpdateService(It.IsAny<ServiceRequest>(), 123)).ReturnsAsync(serviceDomainData);
             _mockAddressXRefGateway.Setup(g => g.GetNHSNeighbourhood(It.IsAny<string>())).Returns("NHS1");
             var response = await _classUnderTest.Execute(requestParams, 123).ConfigureAwait(false);
             response.Should().NotBeNull();
