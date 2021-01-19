@@ -76,7 +76,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         City = l.City,
                         StateProvince = l.StateProvince,
                         PostalCode = l.PostalCode,
-                        Country = l.Country
+                        Country = l.Country,
+                        NHSNeighbourhood = l.NHSNeighbourhood
                     })
                     .ToList(),
                 ServiceTaxonomies = new List<ServiceTaxonomy>(),
@@ -275,7 +276,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                         City = l.City,
                         StateProvince = l.StateProvince,
                         PostalCode = l.PostalCode,
-                        Country = l.Country
+                        Country = l.Country,
+                        NHSNeighbourhood = l.NHSNeighbourhood
                     })
                     .ToList();
             }

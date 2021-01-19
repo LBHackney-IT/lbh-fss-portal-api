@@ -19,5 +19,8 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         [JsonPropertyName("postal_code")]
         public string PostalCode { get; set; }
         public string Country { get; set; }
+
+        [JsonPropertyName("nhs_neighbourhood")]
+        public string NHSNeighbourhood { get; set; }
     }
 }
