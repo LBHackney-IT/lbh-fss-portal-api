@@ -11,5 +11,6 @@ namespace LBHFSSPortalAPI.V1.Domain
         public string StateProvince { get; internal set; }
         public string PostalCode { get; internal set; }
         public string Country { get; internal set; }
+        public string NHSNeighbourhood { get; internal set; }
     }
 }

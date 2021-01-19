@@ -223,6 +223,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
 
                 entity.Property(e => e.Uprn).HasColumnName("uprn");
 
+                entity.Property(e => e.NHSNeighbourhood).HasColumnName("nhs_neighbourhood");
+
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.ServiceLocations)
                     .HasForeignKey(d => d.ServiceId)
