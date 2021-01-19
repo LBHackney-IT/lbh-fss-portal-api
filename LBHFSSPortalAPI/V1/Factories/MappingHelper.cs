@@ -36,6 +36,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                     .ForMember(x => x.Sessions, opt => opt.Ignore())
                     .ForMember(x => x.UserOrganisations, opt => opt.Ignore())
                     .ForMember(x => x.UserRoles, opt => opt.Ignore());
+                cfg.CreateMap<AnalyticsEvent, AnalyticsEventDomain>();
             });
 
             mapperConfig.AssertConfigurationIsValid();
@@ -55,6 +56,11 @@ namespace LBHFSSPortalAPI.V1.Factories
         public TaxonomyDomain ToDomain(Taxonomy taxonomy)
         {
             return _mapper.Map<TaxonomyDomain>(taxonomy);
+        }
+
+        public AnalyticsEventDomain ToDomain(AnalyticsEvent analyticsEvent)
+        {
+            return _mapper.Map<AnalyticsEventDomain>(analyticsEvent);
         }
 
         public UserOrganisationDomain ToDomain(UserOrganisation userOrganisation)
@@ -125,6 +131,11 @@ namespace LBHFSSPortalAPI.V1.Factories
         public List<TaxonomyDomain> ToDomain(IEnumerable<Taxonomy> taxonomies)
         {
             return taxonomies.Select(s => ToDomain(s)).ToList();
+        }
+
+        public List<AnalyticsEventDomain> ToDomain(IEnumerable<AnalyticsEvent> analyticsEvents)
+        {
+            return analyticsEvents.Select(s => ToDomain(s)).ToList();
         }
     }
 }
