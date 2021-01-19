@@ -26,6 +26,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public virtual DbSet<UserOrganisation> UserOrganisations { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<AnalyticsEvent> AnalyticsEvents { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -525,6 +526,20 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnType("character varying");
             });
 
+            modelBuilder.Entity<AnalyticsEvent>(entity =>
+            {
+                entity.ToTable("service_analytics");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn(); ;
+                entity.Property(e => e.TimeStamp).HasColumnName("timestamp");
+                entity.Property(e => e.ServiceId).HasColumnName("service_id");
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.ServiceAnalytics)
+                    .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("service_analytics_service_id_fkey");
+            });
             //SetupSeedData(modelBuilder);
         }
 
