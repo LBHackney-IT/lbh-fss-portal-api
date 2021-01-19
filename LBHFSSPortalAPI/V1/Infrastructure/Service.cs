@@ -9,6 +9,7 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         {
             ServiceLocations = new HashSet<ServiceLocation>();
             ServiceTaxonomies = new HashSet<ServiceTaxonomy>();
+            ServiceAnalytics = new HashSet<AnalyticsEvent>();
         }
 
         public int Id { get; set; }
@@ -34,5 +35,6 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
         public virtual Organisation Organisation { get; set; }
         public virtual ICollection<ServiceLocation> ServiceLocations { get; set; }
         public virtual ICollection<ServiceTaxonomy> ServiceTaxonomies { get; set; }
+        public virtual ICollection<AnalyticsEvent> ServiceAnalytics { get; set; }
     }
 }

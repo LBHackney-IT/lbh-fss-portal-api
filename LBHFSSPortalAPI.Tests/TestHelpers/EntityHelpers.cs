@@ -142,6 +142,28 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return serviceTaxonomy;
         }
 
+        public static AnalyticsEvent CreateAnalyticsEvent()
+        {
+            var analyticsEvent = Randomm.Build<AnalyticsEvent>()
+                .Without(ae => ae.Id)
+                .With(st => st.Service, Randomm.Build<Service>().Without(s => s.Id)
+                    .With(s => s.Organisation, CreateOrganisation())
+                    .With(s => s.Image, CreateFile)
+                    .Create())
+                .Create();
+            return analyticsEvent;
+        }
+
+        public static ICollection<AnalyticsEvent> CreateAnalyticsEvents(int count = _count)
+        {
+            var analyticsEvents = new List<AnalyticsEvent>();
+            for (var a = 0; a < count; a++)
+            {
+                analyticsEvents.Add(CreateAnalyticsEvent());
+            }
+            return analyticsEvents;
+        }
+
         public static ICollection<Taxonomy> CreateTaxonomies(int count = _count)
         {
             var taxonomies = new List<Taxonomy>();
