@@ -66,7 +66,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                         {
                             Id = t.Taxonomy.Id,
                             Name = t.Taxonomy.Name,
-                            Description = t.Taxonomy.Description,
+                            Description = t.Description,
                             Vocabulary = t.Taxonomy.Vocabulary,
                             VocabularyId = 1,
                             Weight = t.Taxonomy.Weight
