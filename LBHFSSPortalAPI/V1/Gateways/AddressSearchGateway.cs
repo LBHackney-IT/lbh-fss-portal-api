@@ -35,6 +35,20 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
                 var addressDomain = JsonConvert.DeserializeObject<AddressAPIResponse>(content);
                 var addresses = addressDomain.Data.Addresses;
+                if(addressDomain.Data.PageCount > 1)
+                {
+                    for (int i = 2; i <= addressDomain.Data.PageCount; i++)
+                    {
+                        response = await _client.GetAsync(new Uri($"addresses/?format=detailed&postcode={postCode}&page={i}", UriKind.Relative)).ConfigureAwait(true);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            throw new Exception(response.ReasonPhrase);
+                        }
+                        content = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
+                        addressDomain = JsonConvert.DeserializeObject<AddressAPIResponse>(content);
+                        addresses = addresses.Concat(addressDomain.Data.Addresses).ToList();
+                    }
+                }
                 if (addresses != null)
                     return addresses;
                 return null;
