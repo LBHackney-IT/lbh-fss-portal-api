@@ -35,7 +35,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 var content = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
                 var addressDomain = JsonConvert.DeserializeObject<AddressAPIResponse>(content);
                 var addresses = addressDomain.Data.Addresses;
-                if(addressDomain.Data.PageCount > 1)
+                if (addressDomain.Data.PageCount > 1)
                 {
                     for (int i = 2; i <= addressDomain.Data.PageCount; i++)
                     {
