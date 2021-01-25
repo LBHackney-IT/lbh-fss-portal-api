@@ -129,7 +129,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         }
         #endregion
 
-        #region Delete Organisation
+        #region Delete Taxonomy
         [TestCase(TestName = "A call to the taxonomy use case delete method calls the gateway delete action")]
         public void DeleteTaxonomyUseCaseCallsGatewayDeleteTaxonomy()
         {

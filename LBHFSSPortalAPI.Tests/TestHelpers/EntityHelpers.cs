@@ -79,12 +79,14 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return organisation;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "<Pending>")]
         public static ServiceLocation CreateServiceLocation()
         {
             var serviceLocation = Randomm.Build<ServiceLocation>()
                 .Without(sl => sl.Id)
                 .With(sl => sl.Latitude, (decimal) Randomm.Latitude())
                 .With(sl => sl.Longitude, (decimal) Randomm.Longitude())
+                .With(sl => sl.Uprn, Randomm.Uprn().ToString())
                 .With(sl => sl.Service, Randomm.Build<Service>()
                     .Without(s => s.Id)
                     .With(s => s.Organisation, CreateOrganisation())

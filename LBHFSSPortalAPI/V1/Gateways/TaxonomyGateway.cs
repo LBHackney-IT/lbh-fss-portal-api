@@ -133,5 +133,21 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 throw;
             }
         }
+
+        public List<ServiceTaxonomyDomain> GetServiceTaxonomies(int taxonomyId)
+        {
+            try
+            {
+                var serviceTaxonomies = Context.ServiceTaxonomies
+                    .Where(x => x.TaxonomyId == taxonomyId);
+                return _mapper.ToDomain(serviceTaxonomies);
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
+        }
     }
 }
