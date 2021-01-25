@@ -139,7 +139,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
             try
             {
                 var serviceTaxonomies = Context.ServiceTaxonomies
-                    .Where(x => x.TaxonomyId == taxonomyId);
+                    .Where(x => x.TaxonomyId == taxonomyId)
+                    .Include(x => x.Service);
                 return _mapper.ToDomain(serviceTaxonomies);
             }
             catch (Exception e)

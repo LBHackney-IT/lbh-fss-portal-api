@@ -42,8 +42,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 throw new ServiceTaxonomyExistsException()
                 {
                     DevErrorMessage = $"Provided taxonomy is still linked to services. Ensure there are no services linked to taxonomy {id}",
-                    Services = gatewayResponse.ToDictionary(x => (int) x.ServiceId, y => y.Service.Name)
+                    Services = gatewayResponse.Select(x => new ServiceError { Id = (int) x.ServiceId, ServiceName = x.Service.Name }).ToList()
                 };
+
             LambdaLogger.Log($"Delete taxonomy {id}");
             _taxonomyGateway.DeleteTaxonomy(id);
         }
