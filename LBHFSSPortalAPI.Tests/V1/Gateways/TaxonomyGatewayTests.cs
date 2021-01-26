@@ -11,6 +11,7 @@ using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace LBHFSSPortalAPI.Tests.V1.Gateways
 {
@@ -132,6 +133,24 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
             gatewayResult.Should().BeEquivalentTo(expectedResult, options =>
             {
                 options.Excluding(ex => ex.ServiceTaxonomies);
+                return options;
+            });
+        }
+
+        [TestCase(TestName = "Given a taxonomy id when the gateway is called the gateway will return all matching Service Taxonomies")]
+        public void GivenATaxonomyIdMatchingServiceTaxonomiesAreReturned()
+        {
+            var service = EntityHelpers.CreateService();
+            DatabaseContext.Add(service);
+            DatabaseContext.SaveChanges();
+            var taxonomyId = service.ServiceTaxonomies.FirstOrDefault().TaxonomyId;
+            var gatewayResult = _classUnderTest.GetServiceTaxonomies(taxonomyId);
+            var expectedResult = DatabaseContext.ServiceTaxonomies.Where(x => x.TaxonomyId == taxonomyId);
+            gatewayResult.Should().NotBeNull();
+            gatewayResult.Should().BeEquivalentTo(expectedResult, options =>
+            {
+                options.Excluding(ex => ex.Service);
+                options.Excluding(ex => ex.Taxonomy.ServiceTaxonomies);
                 return options;
             });
         }

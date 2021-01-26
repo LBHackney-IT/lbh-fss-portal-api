@@ -67,6 +67,11 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
         {
             return _faker.Random.Double(51.513, 51.58);
         }
+
+        public static long Uprn()
+        {
+            return _faker.Random.Long(100000000000, 299999999999);
+        }
     }
     #region Autofixture Customization
     public class IgnoreVirtualMembers : ISpecimenBuilder

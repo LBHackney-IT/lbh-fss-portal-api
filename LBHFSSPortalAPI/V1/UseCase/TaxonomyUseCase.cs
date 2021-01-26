@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
+using LBHFSSPortalAPI.V1.Validations;
 
 namespace LBHFSSPortalAPI.V1.UseCase
 {
@@ -31,18 +33,30 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public TaxonomyResponse ExecuteCreate(TaxonomyRequest requestParams)
         {
+            if (!requestParams.IsValid())
+                throw new InvalidOperationException("vocabulary_id must be provided and can only be 1 or 2.");
             var gatewayResponse = _taxonomyGateway.CreateTaxonomy(requestParams.ToEntity());
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
         public void ExecuteDelete(int id)
         {
+            var gatewayResponse = _taxonomyGateway.GetServiceTaxonomies(id);
+            if (gatewayResponse.Count > 0)
+                throw new ServiceTaxonomyExistsException()
+                {
+                    DevErrorMessage = $"Provided taxonomy is still linked to services. Ensure there are no services linked to taxonomy {id}",
+                    Services = gatewayResponse.Select(x => new ServiceError { Id = (int) x.ServiceId, ServiceName = x.Service.Name }).ToList()
+                };
+
             LambdaLogger.Log($"Delete taxonomy {id}");
             _taxonomyGateway.DeleteTaxonomy(id);
         }
 
         public TaxonomyResponse ExecutePatch(int id, TaxonomyRequest requestParams)
         {
+            if (!requestParams.IsValid())
+                throw new InvalidOperationException("vocabulary_id must be provided and can only be 1 or 2.");
             var gatewayResponse = _taxonomyGateway.PatchTaxonomy(id, requestParams.ToEntity());
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
