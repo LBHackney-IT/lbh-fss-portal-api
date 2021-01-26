@@ -33,6 +33,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void CreateTaxonomyUseCaseCallsGatewayCreateTaxonomy()
         {
             var requestParams = Randomm.Create<TaxonomyRequest>();
+            requestParams.VocabularyId = 1;
             _classUnderTest.ExecuteCreate(requestParams);
             _mockTaxonomyGateway.Verify(u => u.CreateTaxonomy(It.IsAny<Taxonomy>()), Times.Once);
         }
@@ -41,12 +42,23 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void ReturnsCreatedTaxonomy()
         {
             var requestParams = Randomm.Create<TaxonomyRequest>();
+            requestParams.VocabularyId = 1;
             var domainData = requestParams.ToDomain();
             _mockTaxonomyGateway.Setup(g => g.CreateTaxonomy(It.IsAny<Taxonomy>())).Returns(domainData);
             var expectedResponse = domainData.ToResponse();
             var response = _classUnderTest.ExecuteCreate(requestParams);
             response.Should().NotBeNull();
             response.Should().BeEquivalentTo(expectedResponse);
+        }
+
+        [TestCase(TestName = "Given an invalid vocabulary id then an exception is thrown on POST")]
+        public void CallsGatewayPostAndThrowsErrorIfInvalidVocabularyIdProvided()
+        {
+            var taxonomy = Randomm.Create<TaxonomyRequest>();
+            taxonomy.VocabularyId = 0;
+            var requestId = Randomm.Id(); ;
+            _mockTaxonomyGateway.Setup(gw => gw.CreateTaxonomy(It.IsAny<Taxonomy>())).Returns(taxonomy.ToDomain());
+            _classUnderTest.Invoking(c => c.ExecuteCreate(taxonomy)).Should().Throw<InvalidOperationException>();
         }
 
         #endregion
@@ -160,10 +172,20 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void PatchTaxonomyUseCaseCallsGatewayPatchTaxonomy()
         {
             var taxonomy = Randomm.Create<TaxonomyRequest>();
+            taxonomy.VocabularyId = 1;
             var requestId = Randomm.Id();
             _mockTaxonomyGateway.Setup(gw => gw.PatchTaxonomy(It.IsAny<int>(), It.IsAny<Taxonomy>())).Returns(taxonomy.ToDomain());
             _classUnderTest.ExecutePatch(requestId, taxonomy);
             _mockTaxonomyGateway.Verify(u => u.PatchTaxonomy(It.IsAny<int>(), It.IsAny<Taxonomy>()), Times.Once);
+        }
+        [TestCase(TestName = "Given an invalid vocabulary id then an exception is thrown on PATCH")]
+        public void CallsGatewayPatchAndThrowsErrorIfInvalidVocabularyIdProvided()
+        {
+            var taxonomy = Randomm.Create<TaxonomyRequest>();
+            taxonomy.VocabularyId = 3;
+            var requestId = Randomm.Id(); ;
+            _mockTaxonomyGateway.Setup(gw => gw.PatchTaxonomy(It.IsAny<int>(), It.IsAny<Taxonomy>())).Returns(taxonomy.ToDomain());
+            _classUnderTest.Invoking(c => c.ExecutePatch(requestId, taxonomy)).Should().Throw<InvalidOperationException>();
         }
         #endregion
     }
