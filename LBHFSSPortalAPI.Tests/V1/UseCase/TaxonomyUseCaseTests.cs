@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Common;
 using LBHFSSPortalAPI.Tests.TestHelpers;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Domain;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
 using LBHFSSPortalAPI.V1.Infrastructure;
@@ -141,10 +143,12 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         }
         #endregion
 
-        #region Delete Organisation
+        #region Delete Taxonomy
         [TestCase(TestName = "A call to the taxonomy use case delete method calls the gateway delete action")]
         public void DeleteTaxonomyUseCaseCallsGatewayDeleteTaxonomy()
         {
+            var serviceTaxonomies = new List<ServiceTaxonomyDomain>();
+            _mockTaxonomyGateway.Setup(g => g.GetServiceTaxonomies(It.IsAny<int>())).Returns(serviceTaxonomies);
             var id = Randomm.Create<int>();
             _classUnderTest.ExecuteDelete(id);
             _mockTaxonomyGateway.Verify(u => u.DeleteTaxonomy(It.IsAny<int>()), Times.Once);
@@ -154,6 +158,8 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void CallsGatewayDeleteAndDoesNotThrowErrorIfSuccessful()
         {
             var id = Randomm.Create<int>();
+            var serviceTaxonomies = new List<ServiceTaxonomyDomain>();
+            _mockTaxonomyGateway.Setup(g => g.GetServiceTaxonomies(It.IsAny<int>())).Returns(serviceTaxonomies);
             _mockTaxonomyGateway.Setup(g => g.DeleteTaxonomy(It.IsAny<int>()));
             _classUnderTest.Invoking(c => c.ExecuteDelete(id)).Should().NotThrow();
         }
@@ -162,9 +168,44 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
         public void CallsGatewayDeleteAndThrowsErrorIfNotSuccessful()
         {
             var id = Randomm.Create<int>();
+            var serviceTaxonomies = new List<ServiceTaxonomyDomain>();
+            _mockTaxonomyGateway.Setup(g => g.GetServiceTaxonomies(It.IsAny<int>())).Returns(serviceTaxonomies);
             _mockTaxonomyGateway.Setup(g => g.DeleteTaxonomy(It.IsAny<int>())).Throws<InvalidOperationException>();
             _classUnderTest.Invoking(c => c.ExecuteDelete(id)).Should().Throw<InvalidOperationException>();
         }
+
+        [TestCase(TestName = "A call to the taxonomy use case delete method calls the gateway get servicetaxonomies action")]
+        public void DeleteTaxonomyUseCaseCallsGatewayGetServiceTaxonomies()
+        {
+            var id = Randomm.Create<int>();
+            var serviceTaxonomies = new List<ServiceTaxonomyDomain>();
+            _mockTaxonomyGateway.Setup(g => g.GetServiceTaxonomies(It.IsAny<int>())).Returns(serviceTaxonomies);
+            _classUnderTest.ExecuteDelete(id);
+            _mockTaxonomyGateway.Verify(u => u.GetServiceTaxonomies(It.IsAny<int>()), Times.Once);
+        }
+
+        [TestCase(TestName = "Given an taxonomy id is provided if matching servicetaxonomies exist then an exception is thrown")]
+        public void DeleteTaxonomyWhereTaxonomyStillLinkedToServiceThrowsError()
+        {
+            var id = Randomm.Create<int>();
+            var serviceTaxonomies = Randomm.CreateMany<ServiceTaxonomyDomain>().ToList();
+            _mockTaxonomyGateway.Setup(g => g.GetServiceTaxonomies(It.IsAny<int>())).Returns(serviceTaxonomies);
+            _classUnderTest.Invoking(c => c.ExecuteDelete(id)).Should().Throw<ServiceTaxonomyExistsException>();
+        }
+
+        [TestCase(TestName = "Given an taxonomy id is provided if matching servicetaxonomies exist then an exception is thrown and returns services")]
+        public void DeleteTaxonomyWhereTaxonomyStillLinkedToServiceThrowsErrorAndReturnsListOfServices()
+        {
+            var id = Randomm.Create<int>();
+            var serviceTaxonomies = Randomm.CreateMany<ServiceTaxonomyDomain>().ToList();
+            _mockTaxonomyGateway.Setup(g => g.GetServiceTaxonomies(It.IsAny<int>())).Returns(serviceTaxonomies);
+            _classUnderTest.Invoking(c => c.ExecuteDelete(id))
+                .Should()
+                .Throw<ServiceTaxonomyExistsException>()
+                .And
+                .Services.Count.IsSameOrEqualTo(serviceTaxonomies.Count);
+        }
+
         #endregion
 
         #region Patch Taxonomy

@@ -9,6 +9,7 @@ using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Controllers;
 using LBHFSSPortalAPI.V1.Domain;
+using LBHFSSPortalAPI.V1.Exceptions;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
@@ -174,6 +175,17 @@ namespace LBHFSSPortalAPI.Tests.V1.Controllers
             response.Should().NotBeNull();
             response.StatusCode.Should().Be(400);
         }
+
+        [TestCase(TestName = "When the taxonomy controller DeleteTaxonomy action is called with a taxonomy id which is still linked to a service, a 400 error response is returned")]
+        public void ExistingServiceTaxonomyLinksRespondsWith400Status()
+        {
+            var reqParam = Randomm.Create<int>();
+            _mockUseCase.Setup(u => u.ExecuteDelete(It.IsAny<int>())).Throws<ServiceTaxonomyExistsException>();
+            var response = _classUnderTest.DeleteTaxonomy(reqParam) as BadRequestObjectResult;
+            response.Should().NotBeNull();
+            response.StatusCode.Should().Be(400);
+        }
+
         #endregion
 
         #region Patch Taxonomy

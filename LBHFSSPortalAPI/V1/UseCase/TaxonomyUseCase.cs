@@ -41,6 +41,14 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public void ExecuteDelete(int id)
         {
+            var gatewayResponse = _taxonomyGateway.GetServiceTaxonomies(id);
+            if (gatewayResponse.Count > 0)
+                throw new ServiceTaxonomyExistsException()
+                {
+                    DevErrorMessage = $"Provided taxonomy is still linked to services. Ensure there are no services linked to taxonomy {id}",
+                    Services = gatewayResponse.Select(x => new ServiceError { Id = (int) x.ServiceId, ServiceName = x.Service.Name }).ToList()
+                };
+
             LambdaLogger.Log($"Delete taxonomy {id}");
             _taxonomyGateway.DeleteTaxonomy(id);
         }

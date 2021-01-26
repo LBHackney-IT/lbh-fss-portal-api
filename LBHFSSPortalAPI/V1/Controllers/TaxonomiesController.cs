@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
@@ -107,8 +108,6 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [Route("{Id}")]
         public IActionResult DeleteTaxonomy([FromRoute] int id)
         {
-            //add validation
-
             try
             {
                 _taxonomyUseCase.ExecuteDelete(id);
@@ -124,6 +123,15 @@ namespace LBHFSSPortalAPI.V1.Controllers
             catch (UseCaseException e)
             {
                 return BadRequest(e);
+            }
+            catch (ServiceTaxonomyExistsException ex)
+            {
+                var errorResponse = new ServiceErrorResponse
+                {
+                    ErrorMessage = ex.DevErrorMessage,
+                    Services = ex.Services
+                };
+                return BadRequest(errorResponse);
             }
         }
     }
