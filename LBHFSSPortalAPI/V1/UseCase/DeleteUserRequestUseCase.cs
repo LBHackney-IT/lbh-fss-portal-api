@@ -9,14 +9,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
     {
         private readonly IUsersGateway _usersGateway;
         private readonly ISessionsGateway _sessionsGateway;
+        private readonly IUserOrganisationGateway _userOrganisationGateway;
         private readonly IAuthenticateGateway _authenticateGateway;
 
         public DeleteUserRequestUseCase(IUsersGateway usersGateway,
                                         ISessionsGateway sessionsGateway,
+                                        IUserOrganisationGateway userOrganisationGateway,
                                         IAuthenticateGateway authenticateGateway)
         {
             _usersGateway = usersGateway;
             _sessionsGateway = sessionsGateway;
+            _userOrganisationGateway = userOrganisationGateway;
             _authenticateGateway = authenticateGateway;
         }
 
@@ -30,6 +33,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
             if (_authenticateGateway.DeleteUser(user.Email))
             {
                 _sessionsGateway.RemoveSessions(user.Id);
+                _userOrganisationGateway.DeleteUserOrganisationLink(user.Id);
+                _usersGateway.ClearUserRoles(user.Id);
                 _usersGateway.SetUserStatus(user, UserStatus.Deleted);
             }
         }

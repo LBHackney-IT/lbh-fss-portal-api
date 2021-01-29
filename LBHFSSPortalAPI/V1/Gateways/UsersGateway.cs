@@ -426,7 +426,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        private void ClearUserRoles(int userId)
+        public void ClearUserRoles(int userId)
         {
             try
             {
