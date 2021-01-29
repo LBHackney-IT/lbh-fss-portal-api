@@ -21,5 +21,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         UserDomain SetDefaultRole(UserDomain user);
         List<string> GetUserRoleList(int userId);
         void SetUserStatus(UserDomain user, string status);
+        void ClearUserRoles(int userId);
     }
 }
