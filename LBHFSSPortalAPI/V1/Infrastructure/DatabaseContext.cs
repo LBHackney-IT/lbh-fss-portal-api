@@ -83,6 +83,10 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                     .HasColumnName("charity_number")
                     .HasColumnType("character varying");
 
+                entity.Property(e => e.CommunityInterestCompanyNumber)
+                    .HasColumnName("community_interest_company_number")
+                    .HasColumnType("character varying");
+
                 entity.Property(e => e.ChildSafeguardingLeadFirstName)
                     .HasColumnName("child_safeguarding_lead_first_name")
                     .HasColumnType("character varying");
@@ -124,6 +128,8 @@ namespace LBHFSSPortalAPI.V1.Infrastructure
                 entity.Property(e => e.IsLotteryFunded).HasColumnName("is_lottery_funded");
 
                 entity.Property(e => e.IsRegisteredCharity).HasColumnName("is_registered_charity");
+
+                entity.Property(e => e.IsRegisteredCommunityInterestCompany).HasColumnName("is_registered_community_interest_company");
 
                 entity.Property(e => e.IsTraRegistered).HasColumnName("is_tra_registered");
 

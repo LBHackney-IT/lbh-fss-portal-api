@@ -59,6 +59,8 @@ namespace LBHFSSPortalAPI.V1.Factories
                 IsRegisteredCharity = domain.IsRegisteredCharity,
                 IsHackneyBased = domain.IsHackneyBased,
                 CharityNumber = domain.CharityNumber,
+                IsRegisteredCommunityInterestCompany = domain.IsRegisteredCommunityInterestCompany,
+                CommunityInterestCompanyNumber = domain.CommunityInterestCompanyNumber,
                 HasHcOrColGrant = domain.HasHcOrColGrant,
                 HasHcvsOrHgOrAelGrant = domain.HasHcvsOrHgOrAelGrant,
                 IsTraRegistered = domain.IsTraRegistered,

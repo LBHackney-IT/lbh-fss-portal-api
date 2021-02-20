@@ -24,6 +24,8 @@ namespace LBHFSSPortalAPI.V1.Domain
         public bool? IsHackneyBased { get; set; }
         public bool? IsRegisteredCharity { get; set; }
         public string CharityNumber { get; set; }
+        public bool? IsRegisteredCommunityInterestCompany { get; set; }
+        public string CommunityInterestCompanyNumber { get; set; }
         public bool? HasHcOrColGrant { get; set; }
         public bool? HasHcvsOrHgOrAelGrant { get; set; }
         public bool? IsTraRegistered { get; set; }

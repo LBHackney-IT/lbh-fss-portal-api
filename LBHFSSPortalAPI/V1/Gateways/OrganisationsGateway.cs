@@ -168,6 +168,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 org.Status = organisationDomain.Status;
                 org.IsRegisteredCharity = organisationDomain.IsRegisteredCharity;
                 org.CharityNumber = organisationDomain.CharityNumber;
+                org.IsRegisteredCommunityInterestCompany = organisationDomain.IsRegisteredCommunityInterestCompany;
+                org.CommunityInterestCompanyNumber = organisationDomain.CommunityInterestCompanyNumber;
                 org.HasHcOrColGrant = organisationDomain.HasHcOrColGrant;
                 org.HasHcvsOrHgOrAelGrant = organisationDomain.HasHcvsOrHgOrAelGrant;
                 org.IsTraRegistered = organisationDomain.IsTraRegistered;

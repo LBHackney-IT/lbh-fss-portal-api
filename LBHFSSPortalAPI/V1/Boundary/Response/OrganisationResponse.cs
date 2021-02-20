@@ -27,6 +27,10 @@ namespace LBHFSSPortalAPI.V1.Boundary.Response
         public bool? IsRegisteredCharity { get; set; }
         [JsonPropertyName("charity_number")]
         public string CharityNumber { get; set; }
+        [JsonPropertyName("is_registered_community_interest_company")]
+        public bool? IsRegisteredCommunityInterestCompany { get; set; }
+        [JsonPropertyName("community_interest_company_number")]
+        public string CommunityInterestCompanyNumber { get; set; }
         [JsonPropertyName("has_hc_or_col_grant")]
         public bool? HasHcOrColGrant { get; set; }
         [JsonPropertyName("has_hcvs_or_hg_or_ael_grant")]
