@@ -70,8 +70,10 @@ namespace LBHFSSPortalAPI.V1.UseCase
             organisationDomain.ReviewerMessage = request.ReviewerMessage ?? organisationDomain.ReviewerMessage;
             organisationDomain.Status = request.Status ?? organisationDomain.Status;
             organisationDomain.IsRegisteredCharity = request.IsRegisteredCharity ?? organisationDomain.IsRegisteredCharity;
+            organisationDomain.IsRegisteredCommunityInterestCompany = request.IsRegisteredCommunityInterestCompany ?? organisationDomain.IsRegisteredCommunityInterestCompany;
             organisationDomain.IsHackneyBased = request.IsHackneyBased ?? organisationDomain.IsRegisteredCharity;
             organisationDomain.CharityNumber = request.CharityNumber ?? organisationDomain.CharityNumber;
+            organisationDomain.CommunityInterestCompanyNumber = request.CommunityInterestCompanyNumber ?? organisationDomain.CommunityInterestCompanyNumber;
             organisationDomain.HasHcOrColGrant = request.HasHcOrColGrant ?? organisationDomain.HasHcOrColGrant;
             organisationDomain.HasHcvsOrHgOrAelGrant = request.HasHcvsOrHgOrAelGrant ?? organisationDomain.HasHcvsOrHgOrAelGrant;
             organisationDomain.IsTraRegistered = request.IsTraRegistered ?? organisationDomain.IsTraRegistered;
