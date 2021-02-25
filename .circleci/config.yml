@@ -209,10 +209,17 @@ workflows:
           filters:
             branches:
               only: master
+      - permit-production-release:
+          type: approval
+          requires:
+            - deploy-to-staging
+          filters:
+            branches:
+              only: master
       - assume-role-production:
           context: api-assume-role-production-context
           requires:
-            - deploy-to-staging
+            - permit-production-release
           filters:
             branches:
               only: master
@@ -222,16 +229,8 @@ workflows:
           filters:
             branches:
               only: master
-      - permit-production-release:
-          type: approval
-          requires:
-            - deploy-to-staging
-          filters:
-            branches:
-              only: master
       - deploy-to-production:
           requires:
-            - permit-production-release
             - assume-role-production
           filters:
             branches:
