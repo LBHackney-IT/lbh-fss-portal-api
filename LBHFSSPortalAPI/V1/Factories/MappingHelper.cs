@@ -37,6 +37,10 @@ namespace LBHFSSPortalAPI.V1.Factories
                     .ForMember(x => x.UserOrganisations, opt => opt.Ignore())
                     .ForMember(x => x.UserRoles, opt => opt.Ignore());
                 cfg.CreateMap<AnalyticsEvent, AnalyticsEventDomain>();
+                cfg.CreateMap<SynonymGroup, SynonymGroupDomain>();
+                cfg.CreateMap<SynonymGroupDomain, SynonymGroup>();
+                cfg.CreateMap<SynonymWord, SynonymWordDomain>();
+                cfg.CreateMap<SynonymWordDomain, SynonymWord>();
             });
 
             mapperConfig.AssertConfigurationIsValid();
@@ -136,6 +140,25 @@ namespace LBHFSSPortalAPI.V1.Factories
         public List<AnalyticsEventDomain> ToDomain(IEnumerable<AnalyticsEvent> analyticsEvents)
         {
             return analyticsEvents.Select(s => ToDomain(s)).ToList();
+        }
+
+        public SynonymGroupDomain ToDomain(SynonymGroup synonymGroup)
+        {
+            return _mapper.Map<SynonymGroupDomain>(synonymGroup);
+        }
+
+        public SynonymWordDomain ToDomain(SynonymWord synonymWord)
+        {
+            return _mapper.Map<SynonymWordDomain>(synonymWord);
+        }
+
+        public List<SynonymGroupDomain> ToDomain(IEnumerable<SynonymGroup> synonymGroups)
+        {
+            return synonymGroups.Select(s => ToDomain(s)).ToList();
+        }
+        public List<SynonymWordDomain> ToDomain(IEnumerable<SynonymWord> synonyms)
+        {
+            return synonyms.Select(s => ToDomain(s)).ToList();
         }
     }
 }
