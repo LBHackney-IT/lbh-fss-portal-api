@@ -163,6 +163,9 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IUserOrganisationGateway, UserOrganisationGateway>();
             services.AddScoped<ITaxonomyGateway, TaxonomyGateway>();
             services.AddScoped<IAnalyticsGateway, AnalyticsGateway>();
+            services.AddScoped<ISynonymGroupsGateway, SynonymGroupsGateway>();
+            services.AddScoped<ISynonymWordsGateway, SynonymWordsGateway>();
+            services.AddScoped<IGoogleClient, GoogleClient>();
             services.AddHttpClient<IAddressSearchGateway, AddressSearchGateway>(a =>
             {
                 a.BaseAddress = new Uri(addressApiUrl);
@@ -195,6 +198,7 @@ namespace LBHFSSPortalAPI
             services.AddScoped<IUserOrganisationUseCase, UserOrganisationLinksUseCase>();
             services.AddScoped<ITaxonomyUseCase, TaxonomyUseCase>();
             services.AddScoped<IAnalyticsUseCase, AnalyticsUseCase>();
+            services.AddScoped<ISynonymsUseCase, SynonymsUseCase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
