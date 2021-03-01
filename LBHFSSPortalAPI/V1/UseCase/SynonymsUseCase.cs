@@ -32,7 +32,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             SynonymsResponse response = new SynonymsResponse();
             UpdateSynonymChanges(accessToken, requestParams.GoogleFileId, requestParams.SheetName,
-                requestParams.SheetRange).Wait();
+                requestParams.SheetRange, requestParams.GoogleApiKey).Wait();
 
             response.Success = true;
             return response;
@@ -45,11 +45,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
         /// <param name="spreadSheetId">The spread sheet identifier.</param>
         /// <param name="sheetName">Name of the sheet to read.</param>
         /// <param name="sheetRange">The sheet range to read.</param>
+        /// <param name="googleApiKey">The Google Api Key.</param>
         public async Task UpdateSynonymChanges(string accessToken, string spreadSheetId, string sheetName,
-            string sheetRange)
+            string sheetRange, string googleApiKey)
         {
             IDictionary<string, string[]> synonymGroups =
-                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange);
+                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey);
             if (synonymGroups == null || synonymGroups.Count == 0)
             {
                 Console.WriteLine("There is no synonym data from the google spreadsheet.");
@@ -202,8 +203,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
-        public async Task<IDictionary<string, string[]>> ReadSpreadsheetAsync(string spreadSheetId, string sheetName, string sheetRange)
+        public async Task<IDictionary<string, string[]>> ReadSpreadsheetAsync(string spreadSheetId, string sheetName, string sheetRange, string googleApiKey)
         {
+            await _googleClient.InitialiseWithGoogleApiKey(googleApiKey);
             IList<IList<object>> values = await
                 _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange);
 

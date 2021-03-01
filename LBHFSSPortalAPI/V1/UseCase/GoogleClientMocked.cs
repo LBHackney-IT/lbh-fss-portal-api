@@ -18,6 +18,11 @@ namespace LBHFSSPortalAPI.V1.UseCase
 {
     public class GoogleClientMocked : IGoogleClient
     {
+        /// <summary>
+        /// The service initializer
+        /// </summary>
+        private BaseClientService.Initializer _initializer;
+
         public async Task<IList<File>> GetFilesInDriveAsync(string driveId)
         {
             IList<File> fileList = new List<File>();
@@ -54,6 +59,16 @@ namespace LBHFSSPortalAPI.V1.UseCase
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+
+        public Task InitialiseWithGoogleApiKey(string googleApiKey)
+        {
+            _initializer = new BaseClientService.Initializer
+            {
+                ApplicationName = "applicationName",
+                ApiKey = "apiKey"
+            };
+            return Task.CompletedTask;
         }
     }
 }

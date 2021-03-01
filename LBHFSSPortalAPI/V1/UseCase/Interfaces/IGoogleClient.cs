@@ -10,6 +10,13 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     public interface IGoogleClient
     {
         /// <summary>
+        /// InitialiseWithGoogleApiKey will initialise the Google drive access with a single API key. 
+        /// </summary>
+        /// <param name="googleApiKey"></param>
+        /// <returns>Task</returns>
+        public Task InitialiseWithGoogleApiKey(string googleApiKey);
+
+        /// <summary>
         /// Gets the files in drive asynchronous.
         /// </summary>
         /// <param name="driveId">The drive identifier.</param>
