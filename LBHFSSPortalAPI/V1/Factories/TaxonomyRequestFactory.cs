@@ -11,7 +11,6 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             return new TaxonomyDomain()
             {
-                Name = request.Name,
                 Description = request.Description,
                 Vocabulary = request.VocabularyId == 1 ? "category" : "demographic",
                 Weight = request.Weight
@@ -22,7 +21,6 @@ namespace LBHFSSPortalAPI.V1.Factories
         {
             return new Taxonomy()
             {
-                Name = request.Name,
                 Description = request.Description,
                 Weight = request.Weight,
                 Vocabulary = request.VocabularyId == 1 ? "category" : "demographic"
