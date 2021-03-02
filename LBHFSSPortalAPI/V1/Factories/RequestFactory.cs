@@ -88,5 +88,43 @@ namespace LBHFSSPortalAPI.V1.Factories
                 ReviewerUid = request.ReviewerId
             };
         }
+
+        public static SynonymGroupDomain ToDomain(this SynonymGroupRequest request)
+        {
+            return new SynonymGroupDomain()
+            {
+                Name = request.Name,
+                CreatedAt = request.CreatedAt
+            };
+        }
+
+        public static SynonymWordDomain ToDomain(this SynonymWordRequest request)
+        {
+            return new SynonymWordDomain()
+            {
+                Word = request.Word,
+                GroupId = request.GroupId,
+                CreatedAt = request.CreatedAt
+            };
+        }
+
+        public static SynonymGroup ToEntity(this SynonymGroupRequest request)
+        {
+            return new SynonymGroup()
+            {
+                Name = request.Name,
+                CreatedAt = request.CreatedAt
+            };
+        }
+
+        public static SynonymWord ToEntity(this SynonymWordRequest request)
+        {
+            return new SynonymWord()
+            {
+                Word = request.Word,
+                GroupId = request.GroupId,
+                CreatedAt = request.CreatedAt
+            };
+        }
     }
 }

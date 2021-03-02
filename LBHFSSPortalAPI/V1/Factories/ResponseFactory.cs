@@ -87,7 +87,7 @@ namespace LBHFSSPortalAPI.V1.Factories
                     Id = domain.ReviewerU.Id,
                     Name = domain.ReviewerU.Name
                 },
-                Users = formatUsers(domain.UserOrganisations)
+                Users = FormatUsers(domain.UserOrganisations)
             };
         }
 
@@ -110,7 +110,7 @@ namespace LBHFSSPortalAPI.V1.Factories
             return response;
         }
 
-        public static List<OrgUser> formatUsers(ICollection<UserOrganisationDomain> users)
+        public static List<OrgUser> FormatUsers(ICollection<UserOrganisationDomain> users)
         {
             var orgUsers = users == null ? null : users.Select(u => new OrgUser
             {
@@ -120,5 +120,37 @@ namespace LBHFSSPortalAPI.V1.Factories
             return orgUsers;
         }
 
+        public static SynonymGroupResponse ToResponse(this SynonymGroupDomain domain)
+        {
+            return new SynonymGroupResponse()
+            {
+                Id = domain.Id,
+                Name = domain.Name,
+                CreatedAt = domain.CreatedAt
+            };
+        }
+        public static SynonymGroupResponseList ToResponse(this IEnumerable<SynonymGroupDomain> synonymGroups)
+        {
+            if (synonymGroups == null)
+                return null;
+            return new SynonymGroupResponseList { SynonymGroups = synonymGroups.Select(o => o.ToResponse()).ToList() };
+        }
+
+        public static SynonymWordResponse ToResponse(this SynonymWordDomain domain)
+        {
+            return new SynonymWordResponse()
+            {
+                Id = domain.Id,
+                Word = domain.Word,
+                GroupId = domain.GroupId,
+                CreatedAt = domain.CreatedAt
+            };
+        }
+        public static SynonymWordResponseList ToResponse(this IEnumerable<SynonymWordDomain> synonymWords)
+        {
+            if (synonymWords == null)
+                return null;
+            return new SynonymWordResponseList { SynonymWords = synonymWords.Select(o => o.ToResponse()).ToList() };
+        }
     }
 }
