@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -8,22 +7,27 @@
       "sslPort": 44394
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "lbh-fss-portal-api": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api/v1/healthcheck/ping",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
         "CONNECTION_STRING": "Host=127.0.0.1;Database=testdb;port=6543;username=postgres;password=mypassword;",
         "DB_USERNAME": "postgres",
         "DB_DATABASE": "testdb",
+        "GOOGLE_API_KEY": "agoogleapikey",
         "DB_PORT": "6543",
         "DB_PASSWORD": "mypassword",
+        "SYNONYMS_SHEET_NAME": "Synonyms",
         "ADDRESSES_API_KEY": "Test",
+        "SYNONYMS_GOOGLE_FILE_ID": "afileid",
         "DB_HOST": "localhost",
         "ADDRESSES_API_BASE_URL": "Test",
-        "ADDRESSES_API_TOKEN": "ToDo"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ADDRESSES_API_TOKEN": "ToDo",
+        "SYNONYMS_SHEET_RANGE": "A:AU"
       },
       "applicationUrl": "http://localhost:5000",
       "ConnectionStrings": {
