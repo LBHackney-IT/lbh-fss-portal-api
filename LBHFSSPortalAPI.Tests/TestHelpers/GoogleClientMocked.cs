@@ -27,8 +27,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             IList<File> fileList = new List<File>();
             //var fileMock = new Mock<IFile>();
-
             //fileList
+            await Task.Run(() => { }).ConfigureAwait(false);
             return fileList;
         }
 
@@ -49,7 +49,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 }
                 mockedResult.Add(synonymGroup);
             }
-
+            await Task.Run(() => { }).ConfigureAwait(false);
             return mockedResult;
         }
 
