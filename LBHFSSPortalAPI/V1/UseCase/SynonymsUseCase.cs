@@ -83,22 +83,25 @@ namespace LBHFSSPortalAPI.V1.UseCase
             {
                 foreach (var databaseSg in synonymGroupsResponseList.SynonymGroups)
                 {
-                    if (!synonymGroups.Any(s => s.Key.ToLower().Trim() == databaseSg.Name.ToLower()))
+                    string databaseGroupStr = databaseSg.Name.ToLower();
+                    var dbGroupInSpreadsheet = synonymGroups
+                        .Where(s => s.Key.ToLower().Trim() == databaseGroupStr);
+                    //Get all words from database
+                    SynonymWordSearchRequest requestWordParams = new SynonymWordSearchRequest()
                     {
-                        //Delete all words for that group
-                        SynonymWordSearchRequest requestWordParams = new SynonymWordSearchRequest()
+                        Direction = "asc",
+                        GroupId = databaseSg.Id,
+                        Sort = "word"
+                    };
+                    //Get all words from database
+                    SynonymWordResponseList synonymWordResponseList = await ExecuteGetWord(requestWordParams);
+                    foreach (var databaseWd in synonymWordResponseList.SynonymWords)
+                    {
+                        //If db word is not in spreadsheet then delete
+                        if (!dbGroupInSpreadsheet.Any(s => s.Value.Contains(databaseWd.Word.Trim())))
                         {
-                            Direction = "asc",
-                            GroupId = databaseSg.Id,
-                            Sort = "word"
-                        };
-                        SynonymWordResponseList synonymWordResponseList = await ExecuteGetWord(requestWordParams);
-                        foreach (var word in synonymWordResponseList.SynonymWords)
-                        {
-                            ExecuteDeleteWord(accessToken, word.Id);
+                            ExecuteDeleteWord(accessToken, databaseWd.Id);
                         }
-                        //Delete the group
-                        ExecuteDelete(accessToken, databaseSg.Id);
                     }
                 }
             }
@@ -151,6 +154,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                                 SynonymWordRequest synonymWordRequest =
                                     new SynonymWordRequest() { Word = word, CreatedAt = today, GroupId = groupId };
                                 var response = ExecuteCreateWord(accessToken, synonymWordRequest);
+                                synonymWordResponseList = await ExecuteGetWord(requestWordParams);//Refresh list
                             }
                         }
                     }
