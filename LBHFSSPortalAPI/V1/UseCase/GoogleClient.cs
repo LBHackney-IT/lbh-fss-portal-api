@@ -63,7 +63,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         //{
         //    // HttpClientInitializer = _userCredential,
         //    ApplicationName = _applicationName,
-        //    ApiKey = "AIzaSyAAorjQBn4x3PxHCqW_RTheAEtbFbDnWRg"
+        //    ApiKey = "theapikey"
         //};
         //}
 
