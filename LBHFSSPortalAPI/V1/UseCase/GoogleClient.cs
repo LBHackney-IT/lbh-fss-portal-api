@@ -21,7 +21,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         /// <summary>
         /// The service initializer
         /// </summary>
-        private readonly BaseClientService.Initializer _initializer;
+        private BaseClientService.Initializer _initializer;
 
         /// <summary>
         /// The sheets service backing variable
@@ -39,28 +39,42 @@ namespace LBHFSSPortalAPI.V1.UseCase
         static string _applicationName = "SynonymsApi";
         static UserCredential _userCredential;
 
-        public GoogleClient()
+        //This is an ecample of how you can initialse the Google access using OAuth and not a simple API key.
+        //You will need to first create a credentials.json file in the root directory and copy the credentials
+        //generated from the Google console directly into the file.
+        //public GoogleClient()
+        //{
+        //using (var stream =
+        //    new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
+        //{
+        //    // The file token.json stores the user's access and refresh tokens, and is created
+        //    // automatically when the authorization flow completes for the first time.
+        //    string credPath = "token.json";
+        //    _userCredential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+        //        GoogleClientSecrets.Load(stream).Secrets,
+        //        _scopes,
+        //        "user",
+        //        CancellationToken.None,
+        //        new FileDataStore(credPath, true)).Result;
+        //    Console.WriteLine("Credential file saved to: " + credPath);
+        //}
+        // Create service initializer
+        //_initializer = new BaseClientService.Initializer
+        //{
+        //    // HttpClientInitializer = _userCredential,
+        //    ApplicationName = _applicationName,
+        //    ApiKey = "theapikey"
+        //};
+        //}
+
+        public Task InitialiseWithGoogleApiKey(string apiKey)
         {
-            using (var stream =
-                new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
-            {
-                // The file token.json stores the user's access and refresh tokens, and is created
-                // automatically when the authorization flow completes for the first time.
-                string credPath = "token.json";
-                _userCredential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                    _scopes,
-                    "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
-                Console.WriteLine("Credential file saved to: " + credPath);
-            }
-            // Create service initializer
             _initializer = new BaseClientService.Initializer
             {
-                HttpClientInitializer = _userCredential,
-                ApplicationName = _applicationName
+                ApplicationName = _applicationName,
+                ApiKey = apiKey
             };
+            return Task.CompletedTask;
         }
 
         #region Drive

@@ -33,6 +33,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         /// <param name="googleFileId"></param>
         /// <param name="sheetName"></param>
         /// <param name="sheetRange"></param>
+        /// <param name="googleApiKey"></param>
         /// <remarks>
         /// Sample request:
         ///     POST /
@@ -40,12 +41,14 @@ namespace LBHFSSPortalAPI.V1.Controllers
         ///        "googleFileId": "xxxxxx"
         ///        "sheetName": "Synonyms"
         ///        "sheetRange": "A:AU"
+        ///        "googleApiKey" : "xxxAAAyyy"
         ///     }
         ///     or
         ///     {
         ///        "googleFileId": null
         ///        "sheetName": null
         ///        "sheetRange": null
+        ///        "googleApiKey" : null
         ///     }
         /// </remarks>
         //[Authorize(Roles = "Admin, VCSO")]
@@ -54,7 +57,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
         [ProducesResponseType(typeof(SynonymsResponse), 200)]
         public IActionResult UpdateSynonyms([FromHeader(Name = "googleFileId")] string googleFileId,
             [FromHeader(Name = "sheetName")] string sheetName,
-            [FromHeader(Name = "sheetRange")] string sheetRange)
+            [FromHeader(Name = "sheetRange")] string sheetRange,
+            [FromHeader(Name = "googleApiKey")] string googleApiKey)
         {
             try
             {
@@ -75,11 +79,18 @@ namespace LBHFSSPortalAPI.V1.Controllers
                     sheetRange = Environment.GetEnvironmentVariable("SYNONYMS_SHEET_RANGE") ??
                                  "A:AU";
                 }
+                if (string.IsNullOrEmpty(googleApiKey))
+                {
+                    googleApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ??
+                                   "LongApiGoogleKeyFromGoogleConsoleGoesHere";
+                }
+
                 SynonymUpdateRequest synonymsRequest = new SynonymUpdateRequest
                 {
                     GoogleFileId = googleFileId,
                     SheetName = sheetName,
-                    SheetRange = sheetRange
+                    SheetRange = sheetRange,
+                    GoogleApiKey = googleApiKey
                 };
                 var response = _synonymsUseCase.ExecuteUpdate(AccessToken, synonymsRequest);
                 if (response != null)

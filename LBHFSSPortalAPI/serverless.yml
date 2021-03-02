@@ -36,6 +36,10 @@ functions:
       ADDRESS_XREF_API_TOKEN: ${ssm:/fss-common-api/${self:provider.stage}/addresses-xref-api-token}
       IMAGES_FOLDER: ${ssm:/fss-common-api/${self:provider.stage}/images-folder}
       ADDRESS_XREF_NHS_CODE: ${ssm:/fss-common-api/${self:provider.stage}/address-xref-nhs-code}
+      GOOGLE_API_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/google-api-key}
+      SYNONYMS_GOOGLE_FILE_ID: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-google-file-id}
+      SYNONYMS_SHEET_RANGE: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-sheet-range}
+
     events:
       - http:
           path: /{proxy+}

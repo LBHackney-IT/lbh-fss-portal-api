@@ -1,16 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Drive.v3;
 using Google.Apis.Services;
-using Google.Apis.Sheets.v4;
-using Google.Apis.Sheets.v4.Data;
-using Google.Apis.Util.Store;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using File = Google.Apis.Drive.v3.Data.File;
 
@@ -18,12 +10,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
 {
     public class GoogleClientMocked : IGoogleClient
     {
+        /// <summary>
+        /// The service initializer
+        /// </summary>
+        private BaseClientService.Initializer _initializer;
+
         public async Task<IList<File>> GetFilesInDriveAsync(string driveId)
         {
             IList<File> fileList = new List<File>();
             //var fileMock = new Mock<IFile>();
-
             //fileList
+            await Task.Run(() => { }).ConfigureAwait(false);
             return fileList;
         }
 
@@ -44,7 +41,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 }
                 mockedResult.Add(synonymGroup);
             }
-
+            await Task.Run(() => { }).ConfigureAwait(false);
             return mockedResult;
         }
 
@@ -54,6 +51,16 @@ namespace LBHFSSPortalAPI.V1.UseCase
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[_random.Next(s.Length)]).ToArray());
+        }
+
+        public Task InitialiseWithGoogleApiKey(string googleApiKey)
+        {
+            _initializer = new BaseClientService.Initializer
+            {
+                ApplicationName = "applicationName",
+                ApiKey = "apiKey"
+            };
+            return Task.CompletedTask;
         }
     }
 }
