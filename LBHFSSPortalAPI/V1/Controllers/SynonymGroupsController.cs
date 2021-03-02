@@ -51,7 +51,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
         ///        "googleApiKey" : null
         ///     }
         /// </remarks>
-        [Authorize(Roles = "Admin, VCSO")]
+        //[Authorize(Roles = "Admin, VCSO")]
         [HttpPost]
         [Route("UpdateFromGoogleDrive")]
         [ProducesResponseType(typeof(SynonymsResponse), 200)]
