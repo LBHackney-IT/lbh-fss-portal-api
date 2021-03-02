@@ -9,9 +9,7 @@ namespace LBHFSSPortalAPI.V1.Boundary.Requests
         public int Id { get; set; }
         [Required]
         public string Description { get; set; }
-        [JsonPropertyName("label")]
-        [Required]
-        public string Name { get; set; }
+
         [JsonPropertyName("vocabulary_id")]
         public int VocabularyId { get; set; }
         public int Weight { get; set; }
