@@ -28,11 +28,11 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _googleClient = googleClient;
         }
 
-        public SynonymsResponse ExecuteUpdate(string accessToken, SynonymUpdateRequest requestParams)
+        public async Task<SynonymsResponse> ExecuteUpdate(string accessToken, SynonymUpdateRequest requestParams)
         {
             SynonymsResponse response = new SynonymsResponse();
-            UpdateSynonymChanges(accessToken, requestParams.GoogleFileId, requestParams.SheetName,
-                requestParams.SheetRange, requestParams.GoogleApiKey).Wait();
+            await UpdateSynonymChanges(accessToken, requestParams.GoogleFileId, requestParams.SheetName,
+                requestParams.SheetRange, requestParams.GoogleApiKey).ConfigureAwait(true);
 
             response.Success = true;
             return response;

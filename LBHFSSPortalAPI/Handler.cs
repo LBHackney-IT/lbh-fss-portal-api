@@ -33,7 +33,7 @@ namespace LBHFSSPortalAPI
             _synonymsUseCase = new SynonymsUseCase(_synonymGroupsGateway, _synonymWordsGateway, _googleClient);
         }
 
-        public void UpdateSynonyms()
+        public async Task UpdateSynonyms()
         {
             var updateRequest = new SynonymUpdateRequest
             {
@@ -43,7 +43,7 @@ namespace LBHFSSPortalAPI
                 GoogleApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY")
             };
             LoggingHandler.LogInfo("Starting process of updating synonyms.");
-            _synonymsUseCase.ExecuteUpdate(null, updateRequest);
+            await _synonymsUseCase.ExecuteUpdate(null, updateRequest).ConfigureAwait(false);
         }
     }
 }

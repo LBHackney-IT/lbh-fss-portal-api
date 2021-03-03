@@ -73,7 +73,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
                 SheetRange = "A:AU"
             };
             var response = _classUnderTest.ExecuteUpdate(accessToken, synonymUpdateRequest);
-            Assert.IsTrue(response.Success == true);
+            Assert.IsTrue(response.Result.Success == true);
         }
 
     }
