@@ -8,6 +8,7 @@ using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Enums;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
+using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 
@@ -30,6 +31,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public async Task<SynonymsResponse> ExecuteUpdate(string accessToken, SynonymUpdateRequest requestParams)
         {
+            LoggingHandler.LogInfo("Initiating update process.");
             SynonymsResponse response = new SynonymsResponse();
             await UpdateSynonymChanges(accessToken, requestParams.GoogleFileId, requestParams.SheetName,
                 requestParams.SheetRange, requestParams.GoogleApiKey).ConfigureAwait(true);
@@ -49,11 +51,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public async Task UpdateSynonymChanges(string accessToken, string spreadSheetId, string sheetName,
             string sheetRange, string googleApiKey)
         {
+            LoggingHandler.LogInfo("Get data from source.");
             IDictionary<string, string[]> synonymGroups =
                 await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey);
             if (synonymGroups == null || synonymGroups.Count == 0)
             {
-                Console.WriteLine("There is no synonym data from the google spreadsheet.");
+                LoggingHandler.LogInfo("There is no synonym data from the google spreadsheet.");
                 return;
             }
 
@@ -64,17 +67,22 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 Search = string.Empty,
                 Sort = "name"
             };
+            LoggingHandler.LogInfo("Received synonyms from source.  Getting current data to update.");
             SynonymGroupResponseList synonymGroupsResponseList = await ExecuteGet(requestParams);
             try
             {
+                LoggingHandler.LogInfo("Deleting any items removed.");
                 await LoopDatabaseAndDeleteAnythingRemovedFromSpreadsheet(accessToken, synonymGroupsResponseList, synonymGroups);
+                LoggingHandler.LogInfo("Updating any changed items.");
                 await LoopSpreadsheetAndUpdateDatabaseWithChanges(accessToken, synonymGroupsResponseList, synonymGroups);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                LoggingHandler.LogError("Error updating data.");
+                LoggingHandler.LogError(e.Message);
                 Debugger.Break();
             }
+            LoggingHandler.LogInfo("Synonyms sync process complete.");
         }
 
         private async Task LoopDatabaseAndDeleteAnythingRemovedFromSpreadsheet(string accessToken, SynonymGroupResponseList synonymGroupsResponseList, IDictionary<string, string[]> synonymGroups)
