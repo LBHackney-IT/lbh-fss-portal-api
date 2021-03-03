@@ -53,7 +53,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             LoggingHandler.LogInfo("Get data from source.");
             IDictionary<string, string[]> synonymGroups =
-                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey);
+                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey).ConfigureAwait(true);
             if (synonymGroups == null || synonymGroups.Count == 0)
             {
                 LoggingHandler.LogInfo("There is no synonym data from the google spreadsheet.");
