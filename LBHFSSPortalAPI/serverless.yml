@@ -39,12 +39,26 @@ functions:
       GOOGLE_API_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/google-api-key}
       SYNONYMS_GOOGLE_FILE_ID: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-google-file-id}
       SYNONYMS_SHEET_RANGE: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-sheet-range}
+      SYNONYMS_SHEET_NAME: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-sheet-name}
 
     events:
       - http:
           path: /{proxy+}
           method: ANY
           private: true
+  updateSynonyms:
+    name: ${self:service}-${self:provider.stage}-scheduled
+    description: "The scheduler to check for FSS synonym changes and update the database as required."
+    handler: CsharpHandlers::LBHFSSPortalAPI.Handler::UpdateSynonyms
+    role: lambdaExecutionRole
+    environment:
+      CONNECTION_STRING: Host=${ssm:/fss-public-api/${self:provider.stage}/postgres-hostname};Port=${ssm:/fss-public-api/${self:provider.stage}/postgres-port};Database=${ssm:/fss-public-api/${self:provider.stage}/postgres-database};Username=${ssm:/fss-public-api/${self:provider.stage}/postgres-username};Password=${ssm:/fss-public-api/${self:provider.stage}/postgres-password}
+      GOOGLE_API_KEY: ${ssm:/fss-portal-api/${self:provider.stage}/google-api-key}
+      SYNONYMS_GOOGLE_FILE_ID: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-google-file-id}
+      SYNONYMS_SHEET_RANGE: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-sheet-range}
+      SYNONYMS_SHEET_NAME: ${ssm:/fss-portal-api/${self:provider.stage}/synonyms-sheet-name}
+    events:
+      - schedule: cron(0 12 * * ? *)
 resources:
   Resources:
     lambdaExecutionRole:
