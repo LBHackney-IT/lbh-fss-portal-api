@@ -3,6 +3,7 @@ provider:
   name: aws
   runtime: dotnetcore3.1
   timeout: 15
+  memorySize: 256
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
   region: eu-west-2
