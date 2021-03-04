@@ -90,7 +90,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
             searchParams.Search = sgToFind.Name;
             searchParams.Sort = "Name";
             searchParams.Direction = SortDirection.Asc.ToString();
-            var gatewayResult = _classUnderTest.SearchSynonymGroups(searchParams).Result;
+            var gatewayResult = _classUnderTest.SearchSynonymGroups(searchParams);
             gatewayResult.Should().NotBeNull();
             gatewayResult.First().Should().BeEquivalentTo(sgToFind, options =>
             {

@@ -87,7 +87,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
             searchParams.Search = sgToFind.Word;
             searchParams.Sort = "Word";
             searchParams.Direction = SortDirection.Asc.ToString();
-            var gatewayResult = _classUnderTest.SearchSynonymWords(searchParams).Result;
+            var gatewayResult = _classUnderTest.SearchSynonymWords(searchParams);
             gatewayResult.Should().NotBeNull();
             gatewayResult.First().Should().BeEquivalentTo(sgToFind, options =>
             {
