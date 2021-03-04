@@ -221,8 +221,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
             LoggingHandler.LogInfo("Initialise Google API.");
             await _googleClient.InitialiseWithGoogleApiKey(googleApiKey).ConfigureAwait(false);
             LoggingHandler.LogInfo("Initialisation complete.  Getting spreadsheet rows.");
-            IList<IList<object>> values = await
-                _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange).ConfigureAwait(false);
+            IList<IList<object>> values =
+                _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange).GetAwaiter().GetResult();
             if (values == null || !values.Any())
             {
                 LoggingHandler.LogError("No data found.  Unresolved issue, so just return without making any updates.");
