@@ -69,7 +69,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 Sort = "name"
             };
             LoggingHandler.LogInfo("Received synonyms from source.  Getting current data to update.");
-            SynonymGroupResponseList synonymGroupsResponseList = await ExecuteGet(requestParams);
+            SynonymGroupResponseList synonymGroupsResponseList = await ExecuteGet(requestParams).ConfigureAwait(false);
             try
             {
                 LoggingHandler.LogInfo("Deleting any items removed.");
