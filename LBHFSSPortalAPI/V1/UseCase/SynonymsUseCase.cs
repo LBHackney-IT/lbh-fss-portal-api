@@ -72,9 +72,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
             try
             {
                 LoggingHandler.LogInfo("Deleting any items removed.");
-                await LoopDatabaseAndDeleteAnythingRemovedFromSpreadsheet(accessToken, synonymGroupsResponseList, synonymGroups);
+                await LoopDatabaseAndDeleteAnythingRemovedFromSpreadsheet(accessToken, synonymGroupsResponseList, synonymGroups).ConfigureAwait(false);
                 LoggingHandler.LogInfo("Updating any changed items.");
-                await LoopSpreadsheetAndUpdateDatabaseWithChanges(accessToken, synonymGroupsResponseList, synonymGroups);
+                await LoopSpreadsheetAndUpdateDatabaseWithChanges(accessToken, synonymGroupsResponseList, synonymGroups).ConfigureAwait(false);
             }
             catch (Exception e)
             {

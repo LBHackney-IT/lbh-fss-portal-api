@@ -43,7 +43,7 @@ namespace LBHFSSPortalAPI
                 GoogleApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY")
             };
             LoggingHandler.LogInfo("Starting process of updating synonyms.");
-            await _synonymsUseCase.ExecuteUpdate(null, updateRequest).ConfigureAwait(true);
+            await _synonymsUseCase.ExecuteUpdate(null, updateRequest).ConfigureAwait(false);
         }
     }
 }
