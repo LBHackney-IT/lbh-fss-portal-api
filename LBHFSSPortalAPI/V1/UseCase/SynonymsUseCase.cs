@@ -217,19 +217,19 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public async Task<IDictionary<string, string[]>> ReadSpreadsheetAsync(string spreadSheetId, string sheetName, string sheetRange, string googleApiKey)
         {
+            LoggingHandler.LogInfo("Initialise Google API.");
             await _googleClient.InitialiseWithGoogleApiKey(googleApiKey).ConfigureAwait(false);
+            LoggingHandler.LogInfo("Initialisation complete.  Getting spreadsheet rows.");
             IList<IList<object>> values = await
                 _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange).ConfigureAwait(false);
-
             if (values == null || !values.Any())
             {
-                Console.WriteLine("No data found.  Unresolved issue, so just return without making any updates.");
+                LoggingHandler.LogError("No data found.  Unresolved issue, so just return without making any updates.");
                 return null;
             }
-
+            LoggingHandler.LogInfo("Spreadsheet rows received.  Parsing data.");
             //Start Synonyms
             IDictionary<string, string[]> synonymGroups = new Dictionary<string, string[]>();
-
             foreach (IList<object> row in values.Skip(2))
             {
                 if (row.Count > 1)
@@ -249,7 +249,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
                                         words.Add(word);
                                 }
                             }
-
                             synonymGroups.Add(synonymGroupName, words.ToArray());
                         }
                     }
@@ -260,7 +259,6 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     }
                 }
             }
-
             return synonymGroups;
         }
     }
