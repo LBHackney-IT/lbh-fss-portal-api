@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Enums;
@@ -254,7 +255,8 @@ namespace LBHFSSPortalAPI.V1.UseCase
                     }
                     catch (NullReferenceException e)
                     {
-                        Console.WriteLine(e);
+                        LoggingHandler.LogError(e.Message);
+                        LoggingHandler.LogError(e.StackTrace);
                         Debugger.Break();
                     }
                 }

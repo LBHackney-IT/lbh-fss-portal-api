@@ -79,7 +79,7 @@ namespace LBHFSSPortalAPI.V1.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                LoggingHandler.LogError(e.Message);
                 return BadRequest(
                     new ErrorResponse($"An error occurred") { Status = "Error", Errors = new List<string> { $"An error occurred while processing this request.  Please see logs for details." } });
             }
