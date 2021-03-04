@@ -53,7 +53,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             LoggingHandler.LogInfo("Get data from source.");
             IDictionary<string, string[]> synonymGroups =
-                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey).ConfigureAwait(true);
+                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey).ConfigureAwait(false);
             if (synonymGroups == null || synonymGroups.Count == 0)
             {
                 LoggingHandler.LogInfo("There is no synonym data from the google spreadsheet.");
@@ -217,9 +217,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
         public async Task<IDictionary<string, string[]>> ReadSpreadsheetAsync(string spreadSheetId, string sheetName, string sheetRange, string googleApiKey)
         {
-            await _googleClient.InitialiseWithGoogleApiKey(googleApiKey);
+            await _googleClient.InitialiseWithGoogleApiKey(googleApiKey).ConfigureAwait(false);
             IList<IList<object>> values = await
-                _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange);
+                _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange).ConfigureAwait(false);
 
             if (values == null || !values.Any())
             {
