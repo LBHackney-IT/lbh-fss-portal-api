@@ -102,7 +102,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public async Task<List<SynonymGroupDomain>> SearchSynonymGroups(SynonymGroupSearchRequest requestParams)
+        public List<SynonymGroupDomain> SearchSynonymGroups(SynonymGroupSearchRequest requestParams)
         {
             // Search       search term to use (searches on [name] column for the MVP)
             // Sort         the column name by which to sort
@@ -116,7 +116,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 {
                     UserErrorMessage = "The sort direction was not valid (must be one of asc, desc)"
                 };
-
+            LoggingHandler.LogInfo("Initialise Google API.");
             var matchingSynonymGroups = Context.SynonymGroups.AsQueryable();
 
             // handle search
@@ -139,11 +139,10 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             try
             {
-                var synonymGroupList = await matchingSynonymGroups
+                var synonymGroupList = matchingSynonymGroups
                     .Include(o => o.SynonymWords)
                     .AsNoTracking()
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                    .ToList();
 
                 response = _mapper.ToDomain(synonymGroupList);
             }
@@ -155,7 +154,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     DevErrorMessage = e.Message
                 };
             }
-
             return response;
         }
     }

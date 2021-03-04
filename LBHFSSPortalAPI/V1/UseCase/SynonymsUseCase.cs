@@ -35,7 +35,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             LoggingHandler.LogInfo("Initiating update process.");
             SynonymsResponse response = new SynonymsResponse();
             await UpdateSynonymChanges(accessToken, requestParams.GoogleFileId, requestParams.SheetName,
-                requestParams.SheetRange, requestParams.GoogleApiKey).ConfigureAwait(true);
+                requestParams.SheetRange, requestParams.GoogleApiKey).ConfigureAwait(false);
 
             response.Success = true;
             return response;
@@ -69,7 +69,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 Sort = "name"
             };
             LoggingHandler.LogInfo("Received synonyms from source.  Getting current data to update.");
-            SynonymGroupResponseList synonymGroupsResponseList = await ExecuteGet(requestParams).ConfigureAwait(false);
+            SynonymGroupResponseList synonymGroupsResponseList = ExecuteGet(requestParams);
             try
             {
                 LoggingHandler.LogInfo("Deleting any items removed.");
@@ -103,7 +103,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                         Sort = "word"
                     };
                     //Get all words from database
-                    SynonymWordResponseList synonymWordResponseList = await ExecuteGetWord(requestWordParams);
+                    SynonymWordResponseList synonymWordResponseList = ExecuteGetWord(requestWordParams);
                     foreach (var databaseWd in synonymWordResponseList.SynonymWords)
                     {
                         //If db word is not in spreadsheet then delete
@@ -148,7 +148,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                         GroupId = groupId,
                         Sort = "word"
                     };
-                    SynonymWordResponseList synonymWordResponseList = await ExecuteGetWord(requestWordParams);
+                    SynonymWordResponseList synonymWordResponseList = ExecuteGetWord(requestWordParams);
                     if (synonymWordResponseList == null)
                         synonymWordResponseList = new SynonymWordResponseList() { SynonymWords = new List<SynonymWordResponse>() };
                     List<SynonymWord> words = new List<SynonymWord>();
@@ -163,7 +163,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                                 SynonymWordRequest synonymWordRequest =
                                     new SynonymWordRequest() { Word = word, CreatedAt = today, GroupId = groupId };
                                 var response = ExecuteCreateWord(accessToken, synonymWordRequest);
-                                synonymWordResponseList = await ExecuteGetWord(requestWordParams);//Refresh list
+                                synonymWordResponseList = ExecuteGetWord(requestWordParams);//Refresh list
                             }
                         }
                     }
@@ -204,15 +204,16 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
-        public async Task<SynonymGroupResponseList> ExecuteGet(SynonymGroupSearchRequest requestParams)
+        public SynonymGroupResponseList ExecuteGet(SynonymGroupSearchRequest requestParams)
         {
-            var gatewayResponse = await _synonymGroupsGateway.SearchSynonymGroups(requestParams).ConfigureAwait(false);
+            LoggingHandler.LogInfo("Call synonyms gateway.");
+            var gatewayResponse = _synonymGroupsGateway.SearchSynonymGroups(requestParams);
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
-        public async Task<SynonymWordResponseList> ExecuteGetWord(SynonymWordSearchRequest requestParams)
+        public SynonymWordResponseList ExecuteGetWord(SynonymWordSearchRequest requestParams)
         {
-            var gatewayResponse = await _synonymWordsGateway.SearchSynonymWords(requestParams).ConfigureAwait(false);
+            var gatewayResponse = _synonymWordsGateway.SearchSynonymWords(requestParams);
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 

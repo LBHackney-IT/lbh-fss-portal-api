@@ -10,7 +10,7 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     {
         SynonymWordDomain CreateSynonymWord(SynonymWord request);
         SynonymWordDomain GetSynonymWord(int id);
-        Task<List<SynonymWordDomain>> SearchSynonymWords(SynonymWordSearchRequest requestParams);
+        List<SynonymWordDomain> SearchSynonymWords(SynonymWordSearchRequest requestParams);
         void DeleteSynonymWord(int id);
         SynonymWordDomain PatchSynonymWord(SynonymWordDomain synonymWord);
     }
