@@ -2,8 +2,8 @@ service: fss-portal-api
 provider:
   name: aws
   runtime: dotnetcore3.1
-  timeout: 15
-  memorySize: 256
+  timeout: 20
+  memorySize: 512
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
   region: eu-west-2
