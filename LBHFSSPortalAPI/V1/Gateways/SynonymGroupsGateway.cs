@@ -116,7 +116,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 {
                     UserErrorMessage = "The sort direction was not valid (must be one of asc, desc)"
                 };
-            LoggingHandler.LogInfo("Initialise Google API.");
+            LoggingHandler.LogInfo("Getting existing synonyms from the db.");
             var matchingSynonymGroups = Context.SynonymGroups.AsQueryable();
 
             // handle search
