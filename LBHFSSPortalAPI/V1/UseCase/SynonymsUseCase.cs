@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 using LBHFSSPortalAPI.V1.Boundary.Requests;
 using LBHFSSPortalAPI.V1.Boundary.Response;
 using LBHFSSPortalAPI.V1.Enums;
 using LBHFSSPortalAPI.V1.Factories;
 using LBHFSSPortalAPI.V1.Gateways.Interfaces;
+using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.Infrastructure;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 
@@ -28,11 +30,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
             _googleClient = googleClient;
         }
 
-        public SynonymsResponse ExecuteUpdate(string accessToken, SynonymUpdateRequest requestParams)
+        public async Task<SynonymsResponse> ExecuteUpdate(string accessToken, SynonymUpdateRequest requestParams)
         {
+            LoggingHandler.LogInfo("Initiating update process.");
             SynonymsResponse response = new SynonymsResponse();
-            UpdateSynonymChanges(accessToken, requestParams.GoogleFileId, requestParams.SheetName,
-                requestParams.SheetRange, requestParams.GoogleApiKey).Wait();
+            await UpdateSynonymChanges(accessToken, requestParams.GoogleFileId, requestParams.SheetName,
+                requestParams.SheetRange, requestParams.GoogleApiKey).ConfigureAwait(false);
 
             response.Success = true;
             return response;
@@ -49,11 +52,12 @@ namespace LBHFSSPortalAPI.V1.UseCase
         public async Task UpdateSynonymChanges(string accessToken, string spreadSheetId, string sheetName,
             string sheetRange, string googleApiKey)
         {
+            LoggingHandler.LogInfo("Get data from source.");
             IDictionary<string, string[]> synonymGroups =
-                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey);
+                await ReadSpreadsheetAsync(spreadSheetId, sheetName, sheetRange, googleApiKey).ConfigureAwait(false);
             if (synonymGroups == null || synonymGroups.Count == 0)
             {
-                Console.WriteLine("There is no synonym data from the google spreadsheet.");
+                LoggingHandler.LogInfo("There is no synonym data from the google spreadsheet.");
                 return;
             }
 
@@ -64,17 +68,22 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 Search = string.Empty,
                 Sort = "name"
             };
-            SynonymGroupResponseList synonymGroupsResponseList = await ExecuteGet(requestParams);
+            LoggingHandler.LogInfo("Received synonyms from source.  Getting current data to update.");
+            SynonymGroupResponseList synonymGroupsResponseList = ExecuteGet(requestParams);
             try
             {
-                await LoopDatabaseAndDeleteAnythingRemovedFromSpreadsheet(accessToken, synonymGroupsResponseList, synonymGroups);
-                await LoopSpreadsheetAndUpdateDatabaseWithChanges(accessToken, synonymGroupsResponseList, synonymGroups);
+                LoggingHandler.LogInfo("Deleting any items removed.");
+                await LoopDatabaseAndDeleteAnythingRemovedFromSpreadsheet(accessToken, synonymGroupsResponseList, synonymGroups).ConfigureAwait(false);
+                LoggingHandler.LogInfo("Updating any changed items.");
+                await LoopSpreadsheetAndUpdateDatabaseWithChanges(accessToken, synonymGroupsResponseList, synonymGroups).ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                LoggingHandler.LogError("Error updating data.");
+                LoggingHandler.LogError(e.Message);
                 Debugger.Break();
             }
+            LoggingHandler.LogInfo("Synonyms sync process complete.");
         }
 
         private async Task LoopDatabaseAndDeleteAnythingRemovedFromSpreadsheet(string accessToken, SynonymGroupResponseList synonymGroupsResponseList, IDictionary<string, string[]> synonymGroups)
@@ -94,7 +103,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                         Sort = "word"
                     };
                     //Get all words from database
-                    SynonymWordResponseList synonymWordResponseList = await ExecuteGetWord(requestWordParams);
+                    SynonymWordResponseList synonymWordResponseList = ExecuteGetWord(requestWordParams);
                     foreach (var databaseWd in synonymWordResponseList.SynonymWords)
                     {
                         //If db word is not in spreadsheet then delete
@@ -139,7 +148,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                         GroupId = groupId,
                         Sort = "word"
                     };
-                    SynonymWordResponseList synonymWordResponseList = await ExecuteGetWord(requestWordParams);
+                    SynonymWordResponseList synonymWordResponseList = ExecuteGetWord(requestWordParams);
                     if (synonymWordResponseList == null)
                         synonymWordResponseList = new SynonymWordResponseList() { SynonymWords = new List<SynonymWordResponse>() };
                     List<SynonymWord> words = new List<SynonymWord>();
@@ -154,7 +163,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                                 SynonymWordRequest synonymWordRequest =
                                     new SynonymWordRequest() { Word = word, CreatedAt = today, GroupId = groupId };
                                 var response = ExecuteCreateWord(accessToken, synonymWordRequest);
-                                synonymWordResponseList = await ExecuteGetWord(requestWordParams);//Refresh list
+                                synonymWordResponseList = ExecuteGetWord(requestWordParams);//Refresh list
                             }
                         }
                     }
@@ -195,33 +204,34 @@ namespace LBHFSSPortalAPI.V1.UseCase
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
-        public async Task<SynonymGroupResponseList> ExecuteGet(SynonymGroupSearchRequest requestParams)
+        public SynonymGroupResponseList ExecuteGet(SynonymGroupSearchRequest requestParams)
         {
-            var gatewayResponse = await _synonymGroupsGateway.SearchSynonymGroups(requestParams).ConfigureAwait(false);
+            LoggingHandler.LogInfo("Call synonyms gateway.");
+            var gatewayResponse = _synonymGroupsGateway.SearchSynonymGroups(requestParams);
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
-        public async Task<SynonymWordResponseList> ExecuteGetWord(SynonymWordSearchRequest requestParams)
+        public SynonymWordResponseList ExecuteGetWord(SynonymWordSearchRequest requestParams)
         {
-            var gatewayResponse = await _synonymWordsGateway.SearchSynonymWords(requestParams).ConfigureAwait(false);
+            var gatewayResponse = _synonymWordsGateway.SearchSynonymWords(requestParams);
             return gatewayResponse == null ? null : gatewayResponse.ToResponse();
         }
 
         public async Task<IDictionary<string, string[]>> ReadSpreadsheetAsync(string spreadSheetId, string sheetName, string sheetRange, string googleApiKey)
         {
-            await _googleClient.InitialiseWithGoogleApiKey(googleApiKey);
-            IList<IList<object>> values = await
-                _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange);
-
+            LoggingHandler.LogInfo("Initialise Google API.");
+            await _googleClient.InitialiseWithGoogleApiKey(googleApiKey).ConfigureAwait(false);
+            LoggingHandler.LogInfo("Initialisation complete.  Getting spreadsheet rows.");
+            IList<IList<object>> values =
+                await _googleClient.ReadSheetToObjectRowListAsync(spreadSheetId, sheetName, sheetRange).ConfigureAwait(false);
             if (values == null || !values.Any())
             {
-                Console.WriteLine("No data found.  Unresolved issue, so just return without making any updates.");
+                LoggingHandler.LogError("No data found.  Unresolved issue, so just return without making any updates.");
                 return null;
             }
-
+            LoggingHandler.LogInfo("Spreadsheet rows received.  Parsing data.");
             //Start Synonyms
             IDictionary<string, string[]> synonymGroups = new Dictionary<string, string[]>();
-
             foreach (IList<object> row in values.Skip(2))
             {
                 if (row.Count > 1)
@@ -241,18 +251,17 @@ namespace LBHFSSPortalAPI.V1.UseCase
                                         words.Add(word);
                                 }
                             }
-
                             synonymGroups.Add(synonymGroupName, words.ToArray());
                         }
                     }
                     catch (NullReferenceException e)
                     {
-                        Console.WriteLine(e);
+                        LoggingHandler.LogError(e.Message);
+                        LoggingHandler.LogError(e.StackTrace);
                         Debugger.Break();
                     }
                 }
             }
-
             return synonymGroups;
         }
     }

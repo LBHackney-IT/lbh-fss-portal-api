@@ -10,7 +10,7 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     {
         SynonymGroupDomain CreateSynonymGroup(SynonymGroup request);
         SynonymGroupDomain GetSynonymGroup(int id);
-        Task<List<SynonymGroupDomain>> SearchSynonymGroups(SynonymGroupSearchRequest requestParams);
+        List<SynonymGroupDomain> SearchSynonymGroups(SynonymGroupSearchRequest requestParams);
         void DeleteSynonymGroup(int id);
         SynonymGroupDomain PatchSynonymGroup(SynonymGroupDomain synonymGroup);
     }

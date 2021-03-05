@@ -11,6 +11,7 @@ using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Util.Store;
+using LBHFSSPortalAPI.V1.Handlers;
 using LBHFSSPortalAPI.V1.UseCase.Interfaces;
 using File = Google.Apis.Drive.v3.Data.File;
 
@@ -89,7 +90,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
             listRequest.Corpora = "Drive";
 
             // Recursively get files from drive
-            return await GetFilesInDrive(listRequest, null);
+            return await GetFilesInDrive(listRequest, null).ConfigureAwait(false);
         }
 
         private static async Task<IList<File>> GetFilesInDrive(FilesResource.ListRequest listRequest, string nextPage)
@@ -101,7 +102,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
                 listRequest.PageToken = nextPage;
             }
 
-            FileList requestResult = await listRequest.ExecuteAsync();
+            FileList requestResult = await listRequest.ExecuteAsync().ConfigureAwait(false);
 
             if (requestResult.Files?.Any() ?? false)
             {
@@ -109,7 +110,7 @@ namespace LBHFSSPortalAPI.V1.UseCase
 
                 if (!string.IsNullOrWhiteSpace(requestResult.NextPageToken))
                 {
-                    results.AddRange(await GetFilesInDrive(listRequest, requestResult.NextPageToken));
+                    results.AddRange(await GetFilesInDrive(listRequest, requestResult.NextPageToken).ConfigureAwait(false));
                 }
             }
 
@@ -122,7 +123,9 @@ namespace LBHFSSPortalAPI.V1.UseCase
         {
             SpreadsheetsResource.ValuesResource.GetRequest getter =
                 _sheetsService.Spreadsheets.Values.Get(spreadSheetId, $"{sheetName}!{sheetRange}");
-            ValueRange response = await getter.ExecuteAsync();
+            LoggingHandler.LogInfo("Executing client API call");
+            ValueRange response = await getter.ExecuteAsync().ConfigureAwait(false);
+            LoggingHandler.LogInfo("Execution completed");
             IList<IList<object>> values = response.Values;
             return values;
         }

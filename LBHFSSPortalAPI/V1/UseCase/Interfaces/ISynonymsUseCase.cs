@@ -8,6 +8,6 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     public interface ISynonymsUseCase
     {
         SynonymGroupResponse ExecuteCreate(string accessToken, SynonymGroupRequest requestParams);
-        SynonymsResponse ExecuteUpdate(string accessToken, SynonymUpdateRequest requestParams);
+        Task<SynonymsResponse> ExecuteUpdate(string accessToken, SynonymUpdateRequest requestParams);
     }
 }

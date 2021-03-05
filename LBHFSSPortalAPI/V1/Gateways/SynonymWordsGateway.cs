@@ -100,7 +100,7 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
         }
 
-        public async Task<List<SynonymWordDomain>> SearchSynonymWords(SynonymWordSearchRequest requestParams)
+        public List<SynonymWordDomain> SearchSynonymWords(SynonymWordSearchRequest requestParams)
         {
             // Search       search term to use (searches on [name] column for the MVP)
             // Sort         the column name by which to sort
@@ -140,10 +140,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
 
             try
             {
-                var synonymGroupList = await matchingSynonymWords
+                var synonymGroupList = matchingSynonymWords
                     .AsNoTracking()
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                    .ToList();
 
                 response = _mapper.ToDomain(synonymGroupList);
             }
