@@ -355,9 +355,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
         {
             try
             {
-                Context.Files.Remove(file);
-                await Context.SaveChangesAsync().ConfigureAwait(false);
-                LoggingHandler.LogInfo("Image deleted successfully.");
                 var service = Context.Services.FirstOrDefault(s => s.Id == serviceId);
                 if (service == null)
                 {
@@ -367,6 +364,9 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 service.ImageId = null;
                 Context.Services.Attach(service);
                 await Context.SaveChangesAsync().ConfigureAwait(false);
+                Context.Files.Remove(file);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+                LoggingHandler.LogInfo("Image deleted successfully.");
             }
             catch (Exception e)
             {
