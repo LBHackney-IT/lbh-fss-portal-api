@@ -30,7 +30,7 @@ namespace LBHFSSPortalAPI.Tests.V1.UseCase
             var file = EntityHelpers.CreateFile();
             _mockServicesGateway.Setup(sg => sg.GetFile(It.IsAny<int>())).ReturnsAsync(file);
             _classUnderTest.ExecuteDelete(serviceId, imageId);
-            _mockServicesGateway.Verify(sg => sg.DeleteFileInfo( It.IsAny<int>(), It.IsAny<File>()), Times.Once);
+            _mockServicesGateway.Verify(sg => sg.DeleteFileInfo(It.IsAny<int>(), It.IsAny<File>()), Times.Once);
         }
     }
 }
