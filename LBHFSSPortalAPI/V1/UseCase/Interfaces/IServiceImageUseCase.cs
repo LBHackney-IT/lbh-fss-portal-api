@@ -6,5 +6,6 @@ namespace LBHFSSPortalAPI.V1.UseCase.Interfaces
     public interface IServiceImageUseCase
     {
         Task ExecuteCreate(ServiceImageRequest request);
+        Task ExecuteDelete(int serviceId, int imageId);
     }
 }

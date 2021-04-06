@@ -14,11 +14,11 @@
       "launchBrowser": true,
       "launchUrl": "api/v1/healthcheck/ping",
       "environmentVariables": {
-        "CONNECTION_STRING": "Host=127.0.0.1;Database=testdb;port=6543;username=postgres;password=mypassword;",
+        "CONNECTION_STRING": "Host=127.0.0.1;Database=testdb;port=6544;username=postgres;password=mypassword;",
         "DB_USERNAME": "postgres",
         "DB_DATABASE": "testdb",
         "GOOGLE_API_KEY": "agoogleapikey",
-        "DB_PORT": "6543",
+        "DB_PORT": "6544",
         "DB_PASSWORD": "mypassword",
         "SYNONYMS_SHEET_NAME": "Synonyms",
         "ADDRESSES_API_KEY": "Test",
@@ -31,7 +31,7 @@
       },
       "applicationUrl": "http://localhost:5000",
       "ConnectionStrings": {
-        "DefaultConnection": "host=localhost;port=5432;username=postgres;password=mypassword;database=testdb"
+        "DefaultConnection": "host=localhost;port=6544;username=postgres;password=mypassword;database=testdb"
       }
     }
   }

@@ -228,7 +228,6 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
             return synonymGroup;
         }
 
-
         public static UserRole CreateUserRole(User user, string role)
         {
             var userRole = Randomm.Build<UserRole>()

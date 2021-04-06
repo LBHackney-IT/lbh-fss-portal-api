@@ -77,7 +77,7 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
             DatabaseContext.Add(serviceTaxonomy);
             DatabaseContext.SaveChanges();
             _classUnderTest.DeleteTaxonomy(taxonomy.Id);
-            var expectedResult = DatabaseContext.Taxonomies.Find(serviceTaxonomy.Id);
+            var expectedResult = DatabaseContext.Taxonomies.Find(taxonomy.Id);
             expectedResult.Should().BeNull();
             var expectedResult2 = DatabaseContext.ServiceTaxonomies.Where(x => x.TaxonomyId == taxonomy.Id);
             expectedResult2.Should().BeEmpty();
