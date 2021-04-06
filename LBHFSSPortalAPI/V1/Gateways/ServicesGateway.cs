@@ -260,7 +260,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
             service.Keywords = request.Keywords ?? service.Keywords;
             service.ReferralLink = request.ReferralLink ?? service.ReferralLink;
             service.ReferralEmail = request.ReferralEmail ?? service.ReferralEmail;
-
             service.OrganisationId = request.OrganisationId ?? service.OrganisationId;
 
             if (request.Locations != null)
@@ -337,10 +336,10 @@ namespace LBHFSSPortalAPI.V1.Gateways
             return serviceDomain;
         }
 
-        public void AddFileInfo(int serviceId, File fileEntity)
+        public async Task AddFileInfo(int serviceId, File fileEntity)
         {
-            Context.Files.Add(fileEntity);
-            Context.SaveChanges();
+            await Context.Files.AddAsync(fileEntity).ConfigureAwait(false);
+            await Context.SaveChangesAsync().ConfigureAwait(false);
             var service = Context.Services.FirstOrDefault(s => s.Id == serviceId);
             if (service == null)
             {
@@ -349,7 +348,38 @@ namespace LBHFSSPortalAPI.V1.Gateways
             }
             service.ImageId = fileEntity.Id;
             Context.Services.Attach(service);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task DeleteFileInfo(int serviceId, File file)
+        {
+            try
+            {
+                Context.Files.Remove(file);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+                LoggingHandler.LogInfo("Image deleted successfully.");
+                var service = Context.Services.FirstOrDefault(s => s.Id == serviceId);
+                if (service == null)
+                {
+                    LoggingHandler.LogError("The specified service does not exist");
+                    throw new UseCaseException() { UserErrorMessage = "The specified service does not exist" };
+                }
+                service.ImageId = null;
+                Context.Services.Attach(service);
+                await Context.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError("Error deleting image");
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
+        }
+
+        public async Task<File> GetFile(int fileId)
+        {
+            return await Context.Files.SingleOrDefaultAsync(f => f.Id == fileId).ConfigureAwait(false);
         }
 
         public async Task DeleteService(int serviceId)

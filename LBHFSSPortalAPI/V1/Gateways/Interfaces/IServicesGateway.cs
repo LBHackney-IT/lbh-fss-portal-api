@@ -13,6 +13,8 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
         Task<ServiceDomain> CreateService(ServiceRequest request);
         Task DeleteService(int serviceId);
         Task<ServiceDomain> UpdateService(ServiceRequest request, int serviceId);
-        void AddFileInfo(int serviceId, File fileEntity);
+        Task AddFileInfo(int serviceId, File fileEntity);
+        Task DeleteFileInfo(int serviceId, File file);
+        Task<File> GetFile(int fileId);
     }
 }
