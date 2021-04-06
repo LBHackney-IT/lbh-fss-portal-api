@@ -19,8 +19,8 @@ namespace LBHFSSPortalAPI.V1.Controllers
     [ApiVersion("1.0")]
     public class ServicesController : BaseController
     {
-        private ICreateServiceUseCase _createServiceUseCase;
-        private IGetServicesUseCase _getServicesUseCase;
+        private readonly ICreateServiceUseCase _createServiceUseCase;
+        private readonly IGetServicesUseCase _getServicesUseCase;
         private readonly IUpdateServiceUseCase _updateServiceUseCase;
         private readonly IDeleteServiceUseCase _deleteServiceUseCase;
         private readonly IGetAddressesUseCase _getAddressesUseCase;
@@ -157,6 +157,29 @@ namespace LBHFSSPortalAPI.V1.Controllers
             try
             {
                 await _serviceImageUseCase.ExecuteCreate(request).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (UseCaseException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [Authorize(Roles = "Admin, VCSO")]
+        [Route("services/{serviceId}/image/{imageId}")]
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteServiceImage([FromRoute(Name = "serviceId")] int? serviceId,
+            [FromRoute(Name = "imageId")] int? imageId)
+        {
+            if (!(serviceId.HasValue && imageId.HasValue))
+            {
+                return BadRequest("Both service id and image id must be provided");
+            }
+
+            try
+            {
+                await _serviceImageUseCase.ExecuteDelete(serviceId.Value, imageId.Value).ConfigureAwait(false);
                 return Ok();
             }
             catch (UseCaseException e)

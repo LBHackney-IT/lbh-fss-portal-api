@@ -7,5 +7,6 @@ namespace LBHFSSPortalAPI.V1.Gateways.Interfaces
     public interface IRepositoryGateway
     {
         Task<Infrastructure.File> UploadImage(ServiceImageRequest request);
+        Task DeleteImage(string fileInfo);
     }
 }

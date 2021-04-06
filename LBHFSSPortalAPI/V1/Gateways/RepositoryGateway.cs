@@ -12,6 +12,7 @@ using LBHFSSPortalAPI.V1.Infrastructure;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
+using File = LBHFSSPortalAPI.V1.Infrastructure.File;
 
 namespace LBHFSSPortalAPI.V1.Gateways
 {
@@ -88,6 +89,25 @@ namespace LBHFSSPortalAPI.V1.Gateways
             fileEntity.Url = $"{_imagesBaseUrl}/{_imagesFolder}/{originalFileName};{_imagesBaseUrl}/{_imagesFolder}/{resizedFileName}";
             fileEntity.CreatedAt = DateTime.Now;
             return fileEntity;
+        }
+
+        public async Task DeleteImage(string request)
+        {
+            var deleteObjectRequest = new DeleteObjectRequest();
+            deleteObjectRequest.BucketName = _repositoryBucket;
+            deleteObjectRequest.Key = _imagesFolder + "/" + request;
+            try
+            {
+                await _s3Client.DeleteObjectAsync(deleteObjectRequest).ConfigureAwait(false);
+                LoggingHandler.LogInfo($"File {request} deleted successfully.");
+            }
+            catch (Exception e)
+            {
+                LoggingHandler.LogError($"Error deleting file {request}.");
+                LoggingHandler.LogError(e.Message);
+                LoggingHandler.LogError(e.StackTrace);
+                throw;
+            }
         }
     }
 }
