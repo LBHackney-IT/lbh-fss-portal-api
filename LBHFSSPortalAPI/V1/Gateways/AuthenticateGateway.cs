@@ -333,6 +333,11 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     return false;
                 }
             }
+            catch (UserNotFoundException e)
+            {
+                LoggingHandler.LogWarning("User does not exist on Cognito");
+                return true;
+            }
             catch (Exception e)
             {
                 LoggingHandler.LogError(e.Message);
