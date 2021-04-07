@@ -30,9 +30,16 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 var userOrganisationLink = Context.UserOrganisations
                     .FirstOrDefault(o => o.UserId == userId);
                 if (userOrganisationLink == null)
-                    throw new InvalidOperationException("User Organisation Link does not exist");
-                Context.UserOrganisations.Remove(userOrganisationLink);
-                Context.SaveChanges();
+                {
+                    LoggingHandler.LogWarning("User Organisation Link does not exist");
+                }
+                else
+                {
+                    Context.UserOrganisations.Remove(userOrganisationLink);
+                    Context.SaveChanges();
+                    LoggingHandler.LogInfo("User organisation link removed successfully");
+                }
+
             }
             catch (Exception e)
             {

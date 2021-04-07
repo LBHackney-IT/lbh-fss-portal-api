@@ -333,10 +333,24 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     return false;
                 }
             }
-            catch (UserNotFoundException e)
+            catch (AggregateException e)
             {
-                LoggingHandler.LogWarning("User does not exist on Cognito");
-                return true;
+                bool response = false;  // Let anything we can't handle stop the application.
+                e.Handle((x) =>
+                {
+                    if (x is NotAuthorizedException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogError("Authentication Gateway:  Invalid credentials provided.");
+                        response = false;
+                    }
+                    if (x is UserNotFoundException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogWarning("Authentication Gateway:  User not found.");
+                        response = true;
+                    }
+                    return response;
+                });
+                return response;
             }
             catch (Exception e)
             {
@@ -360,6 +374,24 @@ namespace LBHFSSPortalAPI.V1.Gateways
                 {
                     return response.UserStatus;
                 }
+            }
+            catch (AggregateException e)
+            {
+                e.Handle((x) =>
+                {
+                    if (x is NotAuthorizedException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogError("Authentication Gateway:  Invalid credentials provided.");
+                        return false;
+                    }
+                    if (x is UserNotFoundException)  // This we know how to handle.
+                    {
+                        LoggingHandler.LogWarning("Authentication Gateway:  User not found.");
+                        return true;
+                    }
+                    return false;
+                });
+                return null;
             }
             catch (Exception e)
             {
