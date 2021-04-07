@@ -28,6 +28,12 @@ namespace LBHFSSPortalAPI.Tests
         {
             _transaction.Rollback();
             _transaction.Dispose();
+            ClearDb();
+        }
+
+        private void ClearDb()
+        {
+            DatabaseContext.Database.ExecuteSqlRaw("TRUNCATE TABLE users CASCADE");
         }
     }
 }

@@ -25,7 +25,21 @@ namespace LBHFSSPortalAPI.Tests.TestHelpers
 
         public static User CreateUser()
         {
-            return Randomm.Build<User>().Without(u => u.Id).Create();
+            return Randomm.Build<User>()
+                .Without(u => u.Id)
+                .Without(u => u.UserOrganisations)
+                .Without(u => u.UserRoles)
+                .Create();
+        }
+
+        public static List<User> CreateUsers(int count = 5)
+        {
+            var users = new List<User>();
+            for (var a = 0; a < count; a++)
+            {
+                users.Add(CreateUser());
+            }
+            return users;
         }
 
         public static File CreateFile()
