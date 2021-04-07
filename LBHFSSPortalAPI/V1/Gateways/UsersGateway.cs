@@ -41,7 +41,8 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     UserErrorMessage = "The sort direction was not valid (must be one of asc, desc)"
                 };
 
-            var matchingUsers = Context.Users.AsQueryable();
+            var matchingUsers = Context.Users.AsQueryable()
+                .Where(u => u.Status.ToLower() != "deleted");
 
             // handle search
             if (!string.IsNullOrWhiteSpace(userQueryParam.Search))
@@ -91,7 +92,6 @@ namespace LBHFSSPortalAPI.V1.Gateways
                     DevErrorMessage = e.Message
                 };
             }
-
             return response;
         }
 
