@@ -91,14 +91,5 @@ namespace LBHFSSPortalAPI.Tests.V1.Gateways
                 .Should()
                 .Throw<Exception>();
         }
-
-        [TestCase(TestName = "Given a User organisation link that does not have the provided UserId when the Gateway is called the gateway will throw an exception on create")]
-        public void GivenNoUserOrganisationLinkExistsForProvidedUserIdOnDeleteExceptionWillBeThrown()
-        {
-            _classUnderTest.Invoking(c => c.DeleteUserOrganisationLink(999999))
-                .Should()
-                .Throw<Exception>()
-                .WithMessage("User Organisation Link does not exist");
-        }
     }
 }
