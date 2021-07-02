@@ -4,7 +4,6 @@ WORKDIR /app
 
 # Copy csproj and config and restore as distinct layers
 COPY *.csproj ./
-COPY *.config ./
 RUN dotnet restore
 
 # Copy everything else and build
